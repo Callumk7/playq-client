@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1698313989290,
+      "tag": "0000_uneven_rockslide",
+      "breakpoints": true
+    }
+  ]
+}
