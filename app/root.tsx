@@ -20,10 +20,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
-        <form action="/sign-out" method="POST">
-          <button>Logout</button>
-        </form>
+      <body className="bg-background text-foreground">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
