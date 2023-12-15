@@ -6,7 +6,6 @@ import { fetchGamesFromIGDB } from "@/lib/igdb";
 import { GameCover, gameCoverArray } from "@/types/game/game";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const search = url.searchParams.get("search");

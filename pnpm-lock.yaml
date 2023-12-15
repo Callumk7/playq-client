@@ -79,6 +79,9 @@ devDependencies:
   '@remix-run/eslint-config':
     specifier: ^2.3.1
     version: 2.3.1(eslint@8.55.0)(react@18.2.0)(typescript@5.3.3)
+  '@tanstack/eslint-plugin-query':
+    specifier: ^5.12.1
+    version: 5.12.1(eslint@8.55.0)(typescript@5.3.3)
   '@types/better-sqlite3':
     specifier: ^7.6.8
     version: 7.6.8
@@ -1487,6 +1490,18 @@ packages:
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.3.6
     dev: false
+
+  /@tanstack/eslint-plugin-query@5.12.1(eslint@8.55.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-FuG/mN9cUO8KlT7KJzl8Yiw55uyXz1vzxXfoMnBbgiH8vk5WtUbEMdFeDF4ujgO+VSKR10uDdZ1+TIOpHhDUfQ==}
+    peerDependencies:
+      eslint: ^8.0.0
+    dependencies:
+      '@typescript-eslint/utils': 5.62.0(eslint@8.55.0)(typescript@5.3.3)
+      eslint: 8.55.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: true
 
   /@tanstack/query-core@5.14.0:
     resolution: {integrity: sha512-OEri9fVDYT8XEqgh/dc6fFp1niyqu+MDY+Vp/LwU+scdk9xQLZ7KdUMEUh/sqTEjRM5BlFzAhAv+EIYcvSxt0Q==}

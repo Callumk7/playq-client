@@ -1,12 +1,13 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
-	plugins: ["eslint-plugin-react", "eslint-plugin-react-hooks", "@typescript-eslint"],
+	plugins: ["eslint-plugin-react", "eslint-plugin-react-hooks", "@typescript-eslint", "@tanstack/query"],
 	extends: [
 		"eslint:recommended",
 		"plugin:react/recommended",
 		"plugin:react-hooks/recommended",
 		"plugin:@typescript-eslint/recommended-type-checked",
 		"plugin:@typescript-eslint/stylistic",
+        "plugin:@tanstack/eslint-plugin-query/recommended",
 		"prettier",
 	],
 	rules: {
