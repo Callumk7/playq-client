@@ -1,8 +1,8 @@
+import { Container } from "@/features/layout/container";
+import { Navbar } from "@/features/layout/navigation";
+import { Sidebar } from "@/features/layout/sidebar";
 import type { MetaFunction } from "@remix-run/node";
-import { Container } from "./_app/layout/container";
 import { Outlet } from "@remix-run/react";
-import { Sidebar } from "./_app/layout/sidebar";
-import { Navbar } from "./_app/layout/navigation";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -16,7 +16,7 @@ export default function AppLayout() {
       </div>
       <div className="col-span-8 h-screen">
         <Navbar />
-        <Container>
+        <Container className="mt-10">
           <Outlet />
         </Container>
       </div>

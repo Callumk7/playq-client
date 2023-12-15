@@ -11,10 +11,6 @@ const links = [
     name: "Explore",
   },
   {
-    to: "/search",
-    name: "Search",
-  },
-  {
     to: "/collection",
     name: "Collection",
   },
@@ -22,15 +18,11 @@ const links = [
     to: "/playlists",
     name: "Playlists",
   },
-  {
-    to: "/popular",
-    name: "Popular",
-  },
 ];
 
 export function Navbar() {
   return (
-    <nav className="fixed top-0 z-50 flex w-full flex-row items-center justify-between border bg-background/80 px-6 py-4 backdrop-blur">
+    <nav className="top-0 z-50 flex w-full flex-row items-center justify-between bg-background/80 px-6 py-4 backdrop-blur">
       <div className="flex flex-row justify-start gap-4">
         {links.map((link) => (
           <NavigationLink key={link.name} link={link} />
