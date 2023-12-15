@@ -1,12 +1,12 @@
 {
   "version": "5",
-  "dialect": "sqlite",
+  "dialect": "pg",
   "entries": [
     {
       "idx": 0,
       "version": "5",
-      "when": 1698313989290,
-      "tag": "0000_uneven_rockslide",
+      "when": 1702676550579,
+      "tag": "0000_past_puppet_master",
       "breakpoints": true
     }
   ]

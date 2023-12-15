@@ -37,13 +37,16 @@ dependencies:
     version: 2.0.0
   drizzle-orm:
     specifier: ^0.28.6
-    version: 0.28.6(@types/better-sqlite3@7.6.8)(better-sqlite3@9.2.2)
+    version: 0.28.6(@types/better-sqlite3@7.6.8)(better-sqlite3@9.2.2)(postgres@3.4.3)
   framer-motion:
     specifier: ^10.16.16
     version: 10.16.16(react-dom@18.2.0)(react@18.2.0)
   isbot:
     specifier: ^3.7.1
     version: 3.7.1
+  postgres:
+    specifier: ^3.4.3
+    version: 3.4.3
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -2785,7 +2788,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.28.6(@types/better-sqlite3@7.6.8)(better-sqlite3@9.2.2):
+  /drizzle-orm@0.28.6(@types/better-sqlite3@7.6.8)(better-sqlite3@9.2.2)(postgres@3.4.3):
     resolution: {integrity: sha512-yBe+F9htrlYER7uXgDJUQsTHFoIrI5yMm5A0bg0GiZ/kY5jNXTWoEy4KQtg35cE27sw1VbgzoMWHAgCckUUUww==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -2849,6 +2852,7 @@ packages:
     dependencies:
       '@types/better-sqlite3': 7.6.8
       better-sqlite3: 9.2.2
+      postgres: 3.4.3
     dev: false
 
   /duplexify@3.7.1:
@@ -5824,6 +5828,11 @@ packages:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
+
+  /postgres@3.4.3:
+    resolution: {integrity: sha512-iHJn4+M9vbTdHSdDzNkC0crHq+1CUdFhx+YqCE+SqWxPjm+Zu63jq7yZborOBF64c8pc58O5uMudyL1FQcHacA==}
+    engines: {node: '>=12'}
+    dev: false
 
   /prebuild-install@7.1.1:
     resolution: {integrity: sha512-jAXscXWMcCK8GgCoHOfIr0ODh5ai8mj63L2nWrjuAgXE6tDyYGnx4/8o/rCgU+B4JSyZBKbeZqzhtwtC3ovxjw==}

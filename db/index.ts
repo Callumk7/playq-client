@@ -1,7 +1,15 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
 import { singleton } from "@/util/singleton.server";
-import * as schema from "./schema";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as gamesSchema from "./schema/games";
+import * as usersSchema from "./schema/users";
 
-const sqlite = new Database("./db/sqlite.db");
-export const db = singleton("drizzle", () => drizzle(sqlite, { schema }));
+const pg = postgres(process.env.DATABASE_URL!);
+
+export const db = singleton("drizzle", () =>
+	drizzle(pg, {
+		schema: { ...usersSchema, ...gamesSchema },
+	}),
+);
+
+export type DB = typeof db;

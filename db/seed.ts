@@ -1,29 +1,37 @@
 import { db } from "db";
-import { users } from "./schema";
+import { users } from "./schema/users";
+import { uuidv4 } from "@/util/generate-uuid";
 
 const seedUsers = [
 	{
-		fullName: "Tom Thumb",
+		id: `user_${uuidv4()}`,
+		username: "Thumber",
+		firstName: "Tom",
+		lastName: "Thumb",
 		email: "tom@email.com",
 		password: "passW00rd",
 	},
 	{
-		fullName: "Alice Wonder",
+		id: `user_${uuidv4()}`,
+		username: "Alice Wonder",
 		email: "alice@email.com",
 		password: "passW00rd",
 	},
 	{
-		fullName: "Callum Kloos",
+		id: `user_${uuidv4()}`,
+		username: "Callum Kloos",
 		email: "callum@email.com",
 		password: "passW00rd",
 	},
 	{
-		fullName: "Martin O",
+		id: `user_${uuidv4()}`,
+		username: "Martin O",
 		email: "martin@email.com",
 		password: "passW00rd",
 	},
 	{
-		fullName: "Emile Smith",
+		id: `user_${uuidv4()}`,
+		username: "Emile Smith",
 		email: "emile@email.com",
 		password: "passW00rd",
 	},
