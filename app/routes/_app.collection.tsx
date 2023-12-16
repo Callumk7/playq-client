@@ -24,23 +24,21 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     where: eq(usersToGames.userId, session.id),
   });
 
-  // iterate over these to create promises to get each game from the external store
-  const fetchGamePromises = userCollection.map(async (game) =>
-    fetchGamesFromIGDB(IGDB_BASE_URL, {
-      fields: "full",
-      filters: [`id = ${game.gameId}`],
-    }),
-  );
+  const gameIds: number[] = [];
+  userCollection.forEach((game) => {
+    gameIds.push(game.gameId!);
+  });
 
-  // fetch each game in parallel
-  const fetchedGames = await Promise.all(fetchGamePromises);
+  const rawGames = await fetchGamesFromIGDB(IGDB_BASE_URL, {
+    fields: "full",
+    limit: 100,
+    filters: [`id = (${gameIds.join(",")})`],
+  })
 
   const games: IGDBGameNoArtwork[] = [];
-
-  // in this way, we should get a partial array, even if we have some zod problems
-  fetchedGames.forEach((fetchedGame) => {
+  rawGames.forEach((rawGame) => {
     try {
-      games.push(IGDBGameNoArtworkSchema.parse(fetchedGame[0]));
+      games.push(IGDBGameNoArtworkSchema.parse(rawGame));
     } catch (e) {
       console.error(e);
     }

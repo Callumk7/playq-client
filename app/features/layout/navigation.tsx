@@ -35,8 +35,8 @@ export function Navbar() {
 const NavigationLink = ({ link }: { link: { to: string; name: string } }) => (
   <NavLink key={link.name} to={link.to}>
     {({ isActive, isPending }) => (
-      <Button variant={isActive ? "default" : "ghost"}>
-        {isPending ? "loading" : link.name}
+      <Button variant={isActive ? "default" : isPending ? "secondary" : "ghost"}>
+        {link.name}
       </Button>
     )}
   </NavLink>
