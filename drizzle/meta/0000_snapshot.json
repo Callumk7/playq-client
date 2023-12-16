@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "794dd48b-eca5-44c4-8fa0-600422d451e2",
+  "id": "1469ca0e-7bb4-4462-8d23-b5c340d68aea",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "artworks": {
@@ -255,6 +255,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "first_name": {
           "name": "first_name",
           "type": "text",
@@ -304,6 +310,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "username"
+          ]
+        },
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
           ]
         }
       }

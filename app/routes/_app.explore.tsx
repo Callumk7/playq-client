@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { IGDB_BASE_URL } from "@/constants";
+import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
 import { GameCard } from "@/features/library/game-card";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
 import { GameCover, gameCoverArray } from "@/types/game/game";
@@ -51,7 +52,9 @@ export default function ExploreRoute() {
       </Form>
       <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         {searchResults.map((game) => (
-          <GameCard key={game.id} game={game} />
+          <GameCard key={game.id} game={game}>
+            <SearchEntryControls gameId={game.id} />
+          </GameCard>
         ))}
       </div>
     </div>
