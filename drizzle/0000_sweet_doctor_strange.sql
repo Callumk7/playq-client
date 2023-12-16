@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users_to_games" (
 	"user_id" text,
-	"game_id" text,
+	"game_id" integer,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"is_updated" boolean DEFAULT false,
