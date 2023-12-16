@@ -8,6 +8,13 @@
       "when": 1702738387507,
       "tag": "0000_sweet_doctor_strange",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1702752573001,
+      "tag": "0001_friendly_veda",
+      "breakpoints": true
     }
   ]
 }

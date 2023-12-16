@@ -49,3 +49,6 @@ export const gamesOnPlaylistsRelations = relations(gamesOnPlaylists, ({ one }) =
 	}),
 }));
 
+// Inferred Types:
+type Playlist = typeof playlists.$inferSelect;
+export type { Playlist };

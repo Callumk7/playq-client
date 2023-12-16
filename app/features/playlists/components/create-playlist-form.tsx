@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
-import { Form, useNavigation } from "@remix-run/react";
+import { Form, useFetcher } from "@remix-run/react";
 
 export function CreatePlaylistForm({ userId }: { userId: string }) {
-  const navigation = useNavigation();
-  const isSubmitting = navigation.formAction === "/playlists";
+  const fetcher = useFetcher();
+  const isSubmitting = fetcher.state === "submitting";
   return (
-    <Form
+    <fetcher.Form
       method="post"
-      action="/playlists"
+      action="/api/playlists"
       className="flex flex-row items-center space-x-3"
     >
       <Input
@@ -21,6 +21,6 @@ export function CreatePlaylistForm({ userId }: { userId: string }) {
       <Button variant={"outline"} size={"sm"} disabled={isSubmitting}>
         add
       </Button>
-    </Form>
+    </fetcher.Form>
   );
 }
