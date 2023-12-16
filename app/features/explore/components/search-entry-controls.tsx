@@ -16,9 +16,13 @@ export function SearchEntryControls({ gameId, userId }: SearchEntryControlsProps
       <fetcher.Form method="post" action="/explore">
         <input type="hidden" value={gameId} name="gameId" />
         <input type="hidden" value={userId} name="userId" />
-        <Button variant={"ghost"} size={"icon"}>
-          <DiscIcon />
-        </Button>
+        {fetcher.state === "idle" ? (
+          <Button variant={"ghost"} size={"icon"}>
+            <DiscIcon />
+          </Button>
+        ) : (
+          <div>working on it..</div>
+        )}
       </fetcher.Form>
     </div>
   );

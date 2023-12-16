@@ -3,7 +3,7 @@ import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
 import { GameCard } from "@/features/library/game-card";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
-import { IGDBGame, IGDBGameSchema } from "@/types/igdb/reponses";
+import { IGDBGame, IGDBGameNoArtwork, IGDBGameNoArtworkSchema, IGDBGameSchema } from "@/types/igdb/reponses";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
@@ -35,12 +35,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // fetch each game in parallel
   const fetchedGames = await Promise.all(fetchGamePromises);
 
-  const games: IGDBGame[] = [];
+  const games: IGDBGameNoArtwork[] = [];
 
   // in this way, we should get a partial array, even if we have some zod problems
   fetchedGames.forEach((fetchedGame) => {
     try {
-      games.push(IGDBGameSchema.parse(fetchedGame[0]));
+      games.push(IGDBGameNoArtworkSchema.parse(fetchedGame[0]));
     } catch (e) {
       console.error(e);
     }
