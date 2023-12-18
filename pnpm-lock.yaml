@@ -53,6 +53,9 @@ dependencies:
   isbot:
     specifier: ^3.7.1
     version: 3.7.1
+  orm:
+    specifier: link:/Users/callumkloos/Projects/warp-monster/playq/orm
+    version: link:../orm
   postgres:
     specifier: ^3.4.3
     version: 3.4.3

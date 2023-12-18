@@ -28,6 +28,7 @@
 		"drizzle-orm": "^0.28.6",
 		"framer-motion": "^10.16.16",
 		"isbot": "^3.7.1",
+		"orm": "link:/Users/callumkloos/Projects/warp-monster/playq/orm",
 		"postgres": "^3.4.3",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
