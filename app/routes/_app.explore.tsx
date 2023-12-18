@@ -1,12 +1,21 @@
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { IGDB_BASE_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
+import { Container } from "@/features/layout/container";
 import { GameCard } from "@/features/library/game-card";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
 import { GameCover, gameCoverArray } from "@/types/game/game";
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { usersToGames } from "db/schema/users";
@@ -23,13 +32,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (search) {
     const results = await fetchGamesFromIGDB(IGDB_BASE_URL, {
       search: search,
-      fields: "full",
-      limit: 10,
+      fields: ["name", "cover.image_id"],
+      limit: 50,
       filters: [
-        "cover != null",
+        "cover.image_id != null",
         "rating != null",
         "rating > 50",
-        "follows > 10",
+        "follows > 5",
         "parent_game = null",
         "version_parent = null",
         "themes != (42)",
@@ -77,16 +86,34 @@ export default function ExploreRoute() {
   const { searchResults, session } = useLoaderData<typeof loader>();
   return (
     <div>
-      <Form method="get" className="flex gap-3">
-        <Input name="search" type="search" placeholder="What are you looking for?" />
-        <Button>Search</Button>
-      </Form>
-      <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-        {searchResults.map((game) => (
-          <GameCard key={game.id} game={game}>
-            <SearchEntryControls gameId={game.id} userId={session.id} />
-          </GameCard>
-        ))}
+      <div className="grid grid-cols-4 gap-3">
+        <div className="col-span-3">
+          <Form method="get" className="flex gap-3 max-w-md">
+            <Input name="search" type="search" placeholder="What are you looking for?" />
+            <Button variant={"secondary"}>Search</Button>
+          </Form>
+          <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+            {searchResults.map((game) => (
+              <GameCard key={game.id} game={game}>
+                <SearchEntryControls gameId={game.id} userId={session.id} />
+              </GameCard>
+            ))}
+          </div>
+        </div>
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Filters</CardTitle>
+              <CardDescription>Lets find what you are looking for</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RadioGroup>
+                <RadioGroupItem value="all">All</RadioGroupItem>
+                <RadioGroupItem value="filtered">Filtered</RadioGroupItem>
+              </RadioGroup>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
