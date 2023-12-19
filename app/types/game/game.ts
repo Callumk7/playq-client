@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const gameCover = z.object({
+export const gameCoverSchema = z.object({
 	id: z.number(),
 	cover: z.object({
 		id: z.number(),
@@ -9,7 +9,7 @@ export const gameCover = z.object({
 	name: z.string(),
 });
 
-export const gameCoverArray = z.array(gameCover);
+export const gameCoverArraySchema = z.array(gameCoverSchema);
 
-export type GameCover = z.infer<typeof gameCover>;
-export type GameCoverArray = z.infer<typeof gameCoverArray>;
+export type GameCover = z.infer<typeof gameCoverSchema>;
+export type GameCoverArray = z.infer<typeof gameCoverArraySchema>;

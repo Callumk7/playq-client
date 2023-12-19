@@ -11,14 +11,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { IGDB_BASE_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
-import { Container } from "@/features/layout/container";
 import { GameCard } from "@/features/library/game-card";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
-import { GameCover, gameCoverArray } from "@/types/game/game";
+import { GameCover, gameCoverArraySchema } from "@/types/game/game";
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { usersToGames } from "db/schema/users";
+import { useState } from "react";
 import { z } from "zod";
 import { zx } from "zodix";
 
@@ -46,7 +46,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
 
     try {
-      const parsedGames = gameCoverArray.parse(results);
+      const parsedGames = gameCoverArraySchema.parse(results);
       searchResults = parsedGames;
     } catch (e) {
       console.error(e);
@@ -82,8 +82,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 };
 
+// Filter State:
+// Multi-select for genres
+
 export default function ExploreRoute() {
   const { searchResults, session } = useLoaderData<typeof loader>();
+  const [genreFilter, setGenreFilter] = useState<string[]>([]);
   return (
     <div>
       <div className="grid grid-cols-4 gap-3">
