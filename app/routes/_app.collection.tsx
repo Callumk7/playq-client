@@ -1,9 +1,14 @@
-import { IGDB_BASE_URL } from "@/constants";
+import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
 import { GameCard } from "@/features/library/game-card";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
-import { IGDBGame, IGDBGameNoArtwork, IGDBGameNoArtworkSchema, IGDBGameSchema } from "@/types/igdb/reponses";
+import {
+  IGDBGame,
+  IGDBGameNoArtwork,
+  IGDBGameNoArtworkSchema,
+  IGDBGameSchema,
+} from "@/types/igdb/reponses";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
@@ -22,18 +27,40 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // Get all the external game Ids from our own database
   const userCollection = await db.query.usersToGames.findMany({
     where: eq(usersToGames.userId, session.id),
+    with: {
+      game: {
+        with: {
+          cover: true,
+        },
+      },
+    },
   });
 
   const gameIds: number[] = [];
   userCollection.forEach((game) => {
-    gameIds.push(game.gameId!);
+    gameIds.push(game.gameId);
   });
 
+  userCollection.forEach(async (game) => {
+    if (!game.game) {
+      const res = await fetch(`${WORKER_URL}/games/${game.gameId}`, {
+        method: "POST",
+      });
+      if (res.ok) {
+        console.log(`Successfully saved ${game.gameId} to our database.`);
+      } else {
+        console.error(`Failed to save ${game.gameId} to our database.`);
+      }
+    }
+  });
+
+  // This could be where I use react-query, as well as where I check to see if I need
+  // to save this data to our db.
   const rawGames = await fetchGamesFromIGDB(IGDB_BASE_URL, {
     fields: "full",
     limit: 100,
     filters: [`id = (${gameIds.join(",")})`],
-  })
+  });
 
   const games: IGDBGameNoArtwork[] = [];
   rawGames.forEach((rawGame) => {

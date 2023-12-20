@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { IGDB_BASE_URL } from "@/constants";
+import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
 import { GameCard } from "@/features/library/game-card";
@@ -27,13 +27,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const search = url.searchParams.get("search");
 
+  // Search results from IGDB
   let searchResults: GameCover[] = [];
 
   if (search) {
     const results = await fetchGamesFromIGDB(IGDB_BASE_URL, {
       search: search,
       fields: ["name", "cover.image_id"],
-      limit: 50,
+      limit: 100,
       filters: [
         "cover.image_id != null",
         "rating != null",
@@ -53,7 +54,18 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }
   }
 
-  return json({ searchResults, session });
+  // Recently saved games from our database
+  const recentlySavedGames = await db.query.usersToGames.findMany({
+    with: {
+      game: {
+        with: {
+          cover: true,
+        }
+      }
+    }
+  })
+
+  return json({ searchResults, recentlySavedGames, session });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -92,7 +104,7 @@ export default function ExploreRoute() {
     <div>
       <div className="grid grid-cols-4 gap-3">
         <div className="col-span-3">
-          <Form method="get" className="flex gap-3 max-w-md">
+          <Form method="get" className="flex max-w-md gap-3">
             <Input name="search" type="search" placeholder="What are you looking for?" />
             <Button variant={"secondary"}>Search</Button>
           </Form>

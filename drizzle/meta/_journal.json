@@ -22,6 +22,20 @@
       "when": 1702986992351,
       "tag": "0002_steady_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1703075418211,
+      "tag": "0003_known_warbound",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1703077886175,
+      "tag": "0004_workable_rictor",
+      "breakpoints": true
     }
   ]
 }

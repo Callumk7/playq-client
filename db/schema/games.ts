@@ -33,7 +33,7 @@ export const gamesRelations = relations(games, ({ one, many }) => ({
 export const covers = pgTable("covers", {
 	id: text("id").primaryKey(),
 	gameId: integer("game_id").notNull(),
-	imageId: text("image_id").notNull(),
+	imageId: text("image_id").notNull().unique(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	isUpdated: boolean("is_updated").default(false),
@@ -42,7 +42,7 @@ export const covers = pgTable("covers", {
 export const artworks = pgTable("artworks", {
 	id: text("id").primaryKey(),
 	gameId: integer("game_id").notNull(),
-	imageId: text("image_id").notNull(),
+	imageId: text("image_id").notNull().unique(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	isUpdated: boolean("is_updated").default(false),
@@ -58,7 +58,7 @@ export const artworksRelations = relations(artworks, ({ one }) => ({
 export const screenshots = pgTable("screenshots", {
 	id: text("id").primaryKey(),
 	gameId: integer("game_id").notNull(),
-	imageId: text("image_id").notNull(),
+	imageId: text("image_id").notNull().unique(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	isUpdated: boolean("is_updated").default(false),

@@ -32,8 +32,8 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const usersToGames = pgTable(
 	"users_to_games",
 	{
-		userId: text("user_id"),
-		gameId: integer("game_id"),
+		userId: text("user_id").notNull(),
+		gameId: integer("game_id").notNull(),
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 		updatedAt: timestamp("updated_at").notNull().defaultNow(),
 		isUpdated: boolean("is_updated").default(false),

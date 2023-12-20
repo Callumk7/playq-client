@@ -12,7 +12,7 @@ import { useState } from "react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const testGames = await fetchGamesFromIGDB(IGDB_BASE_URL, {
-    search: "age of",
+    search: "spyro",
     fields: "full",
     filters: [
       "cover.image_id != null",
