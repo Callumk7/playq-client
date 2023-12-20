@@ -9,6 +9,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { games } from "./games";
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
 export const playlists = pgTable("playlists", {
 	id: text("id").primaryKey(),
@@ -49,6 +51,8 @@ export const gamesOnPlaylistsRelations = relations(gamesOnPlaylists, ({ one }) =
 	}),
 }));
 
-// Inferred Types:
-type Playlist = typeof playlists.$inferSelect;
-export type { Playlist };
+export const playlistsSelectSchema = createSelectSchema(playlists);
+export const playlistsInsertSchema = createInsertSchema(playlists);
+
+export type Playlist = z.infer<typeof playlistsSelectSchema>;
+export type InsertPlaylist = z.infer<typeof playlistsInsertSchema>;
