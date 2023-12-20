@@ -9,12 +9,12 @@ import {
 import { Input } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
-import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
+import { IGDB_BASE_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
 import { GameCard } from "@/features/library/game-card";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
-import { GameCover, gameCoverArraySchema } from "@/types/game/game";
+import { IGDBGame, IGDBGameSchemaArray } from "@/types/igdb";
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "db";
@@ -24,12 +24,15 @@ import { z } from "zod";
 import { zx } from "zodix";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  // I will need this to show the user which games they already have
+  // in their collection.
   const session = await auth(request);
+
   const url = new URL(request.url);
   const search = url.searchParams.get("search");
 
   // Search results from IGDB
-  let searchResults: GameCover[] = [];
+  let searchResults: IGDBGame[] = [];
 
   if (search) {
     const results = await fetchGamesFromIGDB(IGDB_BASE_URL, {
@@ -48,30 +51,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
 
     try {
-      const parsedGames = gameCoverArraySchema.parse(results);
+      const parsedGames = IGDBGameSchemaArray.parse(results);
       searchResults = parsedGames;
     } catch (e) {
       console.error(e);
     }
   }
 
-  // Recently saved games from our database
-  const recentlySavedGames = await db.query.usersToGames.findMany({
-    with: {
-      game: {
-        with: {
-          cover: true,
-        }
-      }
-    },
-  })
-
-  // this is a bit of a hack, but it works for now
-  const gamesWithCovers = recentlySavedGames.filter((game) => {
-    return game.game?.cover !== null && game.game?.cover !== undefined;
-  });
-
-  return json({ searchResults, gamesWithCovers, session });
+  return json({ searchResults, session });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -104,7 +91,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 // Multi-select for genres
 
 export default function ExploreRoute() {
-  const { searchResults, gamesWithCovers, session } = useLoaderData<typeof loader>();
+  const { searchResults, session } = useLoaderData<typeof loader>();
   const [genreFilter, setGenreFilter] = useState<string[]>([]);
   return (
     <div>
@@ -114,15 +101,6 @@ export default function ExploreRoute() {
             <Input name="search" type="search" placeholder="What are you looking for?" />
             <Button variant={"secondary"}>Search</Button>
           </Form>
-          <Separator />
-          <h1>Recently Saved Games</h1>
-          <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-            {gamesWithCovers.map((game) => (
-              <GameCard key={game.gameId} coverId={game.game.cover.imageId}>
-                <SearchEntryControls gameId={game.gameId} userId={session.id} />
-              </GameCard>
-            ))}
-          </div>
           <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
             {searchResults.map((game) => (
               <GameCard key={game.id} coverId={game.cover.image_id}>

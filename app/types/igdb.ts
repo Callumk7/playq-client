@@ -5,7 +5,6 @@ const genreType = z.object({
 	name: z.string(),
 });
 
-
 const screenshotType = z.object({
 	id: z.number(),
 	image_id: z.string(),
@@ -16,19 +15,16 @@ const artworkType = z.object({
 	image_id: z.string(),
 });
 
-export const CoverType = z.object({
+export const coverType = z.object({
 	id: z.number(),
 	image_id: z.string(),
 });
 
-// Considering just using the one schema for all IGDB responses,
-// but later I can remove some fields and create purpose made
-// schemas for each  response.
 export const IGDBGameSchema = z.object({
 	id: z.number(),
 	genres: z.array(genreType).optional(),
 	name: z.string(),
-	cover: CoverType,
+	cover: coverType,
 	storyline: z.string().optional(),
 	screenshots: z.array(screenshotType).optional(),
 	artworks: z.array(artworkType).optional(),

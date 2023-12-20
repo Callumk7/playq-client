@@ -8,8 +8,6 @@ import {
 	timestamp,
 } from "drizzle-orm/pg-core";
 import { games } from "./games";
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { z } from 'zod';
 
 export const users = pgTable("users", {
 	id: text("id").primaryKey(),
@@ -59,8 +57,3 @@ export const usersToGamesRelations = relations(usersToGames, ({ one }) => ({
 	}),
 }));
 
-export const insertUserSchema = createInsertSchema(users);
-export const selectUserSchema = createSelectSchema(users);
-
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = z.infer<typeof selectUserSchema>;

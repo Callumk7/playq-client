@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
 import { Container } from "@/features/layout/container";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
-import { IGDBGame, IGDBGameSchemaArray } from "@/types/igdb/reponses";
+import { IGDBGameSchemaArray } from "@/types/igdb";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useState } from "react";

@@ -2,8 +2,6 @@ import { relations } from "drizzle-orm";
 import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { usersToGames } from "./users";
 import { gamesOnPlaylists } from "./playlists";
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { z } from 'zod';
 
 export const games = pgTable("games", {
 	id: text("id").primaryKey(),
@@ -72,26 +70,3 @@ export const screenshotsRelations = relations(screenshots, ({ one }) => ({
 		references: [games.gameId],
 	}),
 }));
-
-export const gamesInsertSchema = createInsertSchema(games);
-export const gamesSelectSchema = createSelectSchema(games);
-
-export const coversInsertSchema = createInsertSchema(covers);
-export const coversSelectSchema = createSelectSchema(covers);
-
-export const artworksInsertSchema = createInsertSchema(artworks);
-export const artworksSelectSchema = createSelectSchema(artworks);
-
-export const screenshotsInsertSchema = createInsertSchema(screenshots);
-export const screenshotsSelectSchema = createSelectSchema(screenshots);
-
-export type Game = z.infer<typeof gamesSelectSchema>;
-export type Cover = z.infer<typeof coversSelectSchema>;
-export type Artwork = z.infer<typeof artworksSelectSchema>;
-export type Screenshot = z.infer<typeof screenshotsSelectSchema>;
-
-export type InsertGame = z.infer<typeof gamesInsertSchema>;
-export type InsertCover = z.infer<typeof coversInsertSchema>;
-export type InsertArtwork = z.infer<typeof artworksInsertSchema>;
-export type InsertScreenshot = z.infer<typeof screenshotsInsertSchema>;
-

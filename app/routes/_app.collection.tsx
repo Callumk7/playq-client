@@ -1,15 +1,9 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/form";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
 import { GameCard } from "@/features/library/game-card";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
-import {
-  IGDBGameNoArtwork,
-  IGDBGameNoArtworkSchema,
-} from "@/types/igdb/reponses";
+import { IGDBGameNoArtwork, IGDBGameNoArtworkSchema } from "@/types/igdb";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "db";

@@ -1,9 +1,7 @@
 import { IGDB_BASE_URL } from "@/constants";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
-import { IGDBGameSchema } from "@/types/igdb/reponses";
+import { IGDBGameSchema } from "@/types/igdb";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { z } from "zod";
-import { zx } from "zodix";
 
 export const action = async ({ request }: LoaderFunctionArgs) => {
 	console.log("route hit")
