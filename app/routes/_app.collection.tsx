@@ -1,13 +1,14 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/form";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
 import { GameCard } from "@/features/library/game-card";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
 import {
-  IGDBGame,
   IGDBGameNoArtwork,
   IGDBGameNoArtworkSchema,
-  IGDBGameSchema,
 } from "@/types/igdb/reponses";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -77,12 +78,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function CollectionRoute() {
   const { games, session } = useLoaderData<typeof loader>();
   return (
-    <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-      {games.map((game) => (
-        <GameCard key={game.id} game={game}>
-          <SearchEntryControls gameId={game.id} userId={session.id} />
-        </GameCard>
-      ))}
+    <div>
+      <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        {games.map((game) => (
+          <GameCard key={game.id} coverId={game.cover.image_id}>
+            <SearchEntryControls gameId={game.id} userId={session.id} />
+          </GameCard>
+        ))}
+      </div>
     </div>
   );
 }

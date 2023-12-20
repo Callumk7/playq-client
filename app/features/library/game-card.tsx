@@ -1,15 +1,14 @@
-import { GameCover } from "@/types/game/game";
 import { IGDBImage } from "@/types/igdb/reponses";
 import clsx from "clsx";
 
 interface GameCardProps {
-  game: GameCover;
+  coverId: string;
   isSelected?: boolean;
   children?: React.ReactNode;
 }
 
 export function GameCard({
-  game,
+  coverId,
   isSelected,
   children,
 }: GameCardProps) {
@@ -31,7 +30,7 @@ export function GameCard({
       >
         <img
           className="animate-in"
-          src={`https://images.igdb.com/igdb/image/upload/t_${size}/${game.cover.image_id}.jpg`}
+          src={`https://images.igdb.com/igdb/image/upload/t_${size}/${coverId}.jpg`}
           alt="cover image"
           width={720}
           height={1280}

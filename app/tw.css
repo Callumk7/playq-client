@@ -4,21 +4,21 @@
 
 @layer base {
 	:root {
-		--background: 209 17% 95%;
-		--foreground: 240 17% 10%;
-		--foreground-muted: 240 17% 17%;
+        --primary: 63 91% 65%; /* yellow */
+        --primary-foreground: 240 17% 10%;
 
-		--primary: 63 91% 65%; /* yellow */
-		--primary-foreground: 240 17% 10%;
+        --secondary: 25 41% 63%; /* orange */
+        --secondary-foreground: 25 59% 9%;
 
-		--secondary: 25 41% 63%; /* orange */
-		--secondary-foreground: 25 59% 9%;
+        --destructive: 348 53% 58%; /* red */
+        --destructive-foreground: 65 17% 98%;
 
-		--destructive: 348 53% 58%; /* red */
-		--destructive-foreground: 65 17% 98%;
+        --success: 166 91% 65%; /* green */
+        --success-foreground: 240 17% 10%;
 
-		--success: 166 91% 65%; /* green */
-		--success-foreground: 240 17% 10%;
+        --background: 209 17% 95%;
+        --foreground: 240 17% 10%;
+        --foreground-muted: 240 17% 17%;
 
 		--alt: 336 29% 39%;
 		--alt-foreground: 336 17% 90%;

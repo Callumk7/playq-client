@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
 import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
@@ -62,10 +63,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
           cover: true,
         }
       }
-    }
+    },
   })
 
-  return json({ searchResults, recentlySavedGames, session });
+  // this is a bit of a hack, but it works for now
+  const gamesWithCovers = recentlySavedGames.filter((game) => {
+    return game.game?.cover !== null && game.game?.cover !== undefined;
+  });
+
+  return json({ searchResults, gamesWithCovers, session });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -98,19 +104,28 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 // Multi-select for genres
 
 export default function ExploreRoute() {
-  const { searchResults, session } = useLoaderData<typeof loader>();
+  const { searchResults, gamesWithCovers, session } = useLoaderData<typeof loader>();
   const [genreFilter, setGenreFilter] = useState<string[]>([]);
   return (
     <div>
       <div className="grid grid-cols-4 gap-3">
-        <div className="col-span-3">
+        <div className="col-span-3 flex flex-col gap-y-6">
           <Form method="get" className="flex max-w-md gap-3">
             <Input name="search" type="search" placeholder="What are you looking for?" />
             <Button variant={"secondary"}>Search</Button>
           </Form>
+          <Separator />
+          <h1>Recently Saved Games</h1>
+          <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+            {gamesWithCovers.map((game) => (
+              <GameCard key={game.gameId} coverId={game.game.cover.imageId}>
+                <SearchEntryControls gameId={game.gameId} userId={session.id} />
+              </GameCard>
+            ))}
+          </div>
           <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
             {searchResults.map((game) => (
-              <GameCard key={game.id} game={game}>
+              <GameCard key={game.id} coverId={game.cover.image_id}>
                 <SearchEntryControls gameId={game.id} userId={session.id} />
               </GameCard>
             ))}
