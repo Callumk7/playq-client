@@ -1,12 +1,12 @@
 import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
-import { GameSearch } from "@/features/collection/components/GameSearch";
+import { GameSearch } from "@/features/collection/components/game-search";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
 import { GameCover } from "@/features/library/game-cover";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
 import { IGDBGameNoArtwork, IGDBGameNoArtworkSchema } from "@/types/igdb";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { usersToGames } from "db/schema/users";
 import { eq } from "drizzle-orm";

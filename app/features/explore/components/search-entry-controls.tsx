@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { SaveToCollectionButton } from "@/features/collection/components/save-to-collection-button";
 import { ArrowDownIcon, ArrowUpIcon, DiscIcon, TrashIcon, UpdateIcon } from "@radix-ui/react-icons";
 import { useFetcher, useSubmit } from "@remix-run/react";
 
@@ -17,23 +18,6 @@ export function SearchEntryControls({ gameId, userId }: SearchEntryControlsProps
   );
 }
 
-function SaveToCollectionButton({ gameId, userId }: SearchEntryControlsProps) {
-  const saveFetcher = useFetcher();
-
-  return (
-    <saveFetcher.Form method="post" action="/explore">
-      <input type="hidden" value={gameId} name="gameId" />
-      <input type="hidden" value={userId} name="userId" />
-      {saveFetcher.state === "idle" ? (
-        <Button variant={"ghost"} size={"icon"}>
-          <DiscIcon />
-        </Button>
-      ) : (
-        <div>working on it..</div>
-      )}
-    </saveFetcher.Form>
-  );
-}
 
 function RemoveFromCollectionButton({ gameId, userId }: SearchEntryControlsProps) {
   const deleteFetcher = useFetcher();
