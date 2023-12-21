@@ -1,11 +1,12 @@
 import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
+import { GameSearch } from "@/features/collection/components/GameSearch";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
-import { GameCard } from "@/features/library/game-card";
+import { GameCover } from "@/features/library/game-cover";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
 import { IGDBGameNoArtwork, IGDBGameNoArtworkSchema } from "@/types/igdb";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { usersToGames } from "db/schema/users";
 import { eq } from "drizzle-orm";
@@ -31,11 +32,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     },
   });
 
+  console.log(userCollection);
+
   const gameIds: number[] = [];
   userCollection.forEach((game) => {
     gameIds.push(game.gameId);
   });
 
+  // WARN: This is a really weird way to save games to our database. I would rather
+  // perform the save when a user adds a game to their collection. I want this work
+  // ideally to be done in the background, but I don't know how to do that yet.
+  //
   userCollection.forEach(async (game) => {
     if (!game.game) {
       const res = await fetch(`${WORKER_URL}/games/${game.gameId}`, {
@@ -73,11 +80,12 @@ export default function CollectionRoute() {
   const { games, session } = useLoaderData<typeof loader>();
   return (
     <div>
+      <GameSearch userId={session.id} />
       <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         {games.map((game) => (
-          <GameCard key={game.id} coverId={game.cover.image_id}>
+          <GameCover key={game.id} coverId={game.cover.image_id}>
             <SearchEntryControls gameId={game.id} userId={session.id} />
-          </GameCard>
+          </GameCover>
         ))}
       </div>
     </div>

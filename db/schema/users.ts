@@ -40,6 +40,7 @@ export const usersToGames = pgTable(
 		played: boolean("played").default(false),
 		playerRating: integer("player_rating"),
 		completed: boolean("completed").default(false),
+		position: integer("position"),
 	},
 	(t) => ({
 		pk: primaryKey(t.userId, t.gameId),

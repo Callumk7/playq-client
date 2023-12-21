@@ -1,42 +1,41 @@
-import { IGDBImage } from "@/types/igdb/reponses";
-import clsx from "clsx";
+import { IGDBImage } from "@/types/igdb";
+import { cn } from "@/util/cn";
 
-interface GameCardProps {
+interface GameCoverProps {
   coverId: string;
   isSelected?: boolean;
   children?: React.ReactNode;
 }
 
-export function GameCard({
+export function GameCover({
   coverId,
   isSelected,
   children,
-}: GameCardProps) {
+}: GameCoverProps) {
   const size: IGDBImage = "720p";
 
-  let borderStyle = "border hover:border-foreground";
-  if (isSelected) {
-    borderStyle =
-      "border border-lime-500/40 hover:border-lime-500 shadow-lg shadow-lime-500/20 hover:shadow-lime-500/40";
-  }
+  const getBorderStyle = (isSelected: boolean) => isSelected 
+    ? "border border-lime-500/40 hover:border-lime-500 shadow-lg shadow-lime-500/20 hover:shadow-lime-500/40"
+    : "border hover:border-foreground";
+
+  const borderStyle = getBorderStyle(isSelected || false);
 
   return (
-    <div className="max-w-max">
+    <div>
       <div
-        className={clsx(
+        className={cn(
           borderStyle,
           "relative flex max-w-sm flex-col items-center justify-between overflow-hidden rounded-lg text-foreground",
         )}
       >
         <img
-          className="animate-in"
           src={`https://images.igdb.com/igdb/image/upload/t_${size}/${coverId}.jpg`}
           alt="cover image"
           width={720}
           height={1280}
         />
       </div>
-      <div className="max-w-[720px] pt-3 animate-in">{children}</div>
+      <div className="pt-3">{children}</div>
     </div>
   );
 }

@@ -8,11 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Separator } from "@/components/ui/separator";
 import { IGDB_BASE_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
-import { GameCard } from "@/features/library/game-card";
+import { GameCover } from "@/features/library/game-cover";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
 import { IGDBGame, IGDBGameSchemaArray } from "@/types/igdb";
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
@@ -49,6 +48,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         "themes != (42)",
       ],
     });
+
+    console.log(results);
 
     try {
       const parsedGames = IGDBGameSchemaArray.parse(results);
@@ -103,9 +104,9 @@ export default function ExploreRoute() {
           </Form>
           <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
             {searchResults.map((game) => (
-              <GameCard key={game.id} coverId={game.cover.image_id}>
+              <GameCover key={game.id} coverId={game.cover.image_id}>
                 <SearchEntryControls gameId={game.id} userId={session.id} />
-              </GameCard>
+              </GameCover>
             ))}
           </div>
         </div>
