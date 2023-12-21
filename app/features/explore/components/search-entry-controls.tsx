@@ -4,13 +4,21 @@ import { RemoveFromCollectionButton } from "@/features/collection/components/del
 interface SearchEntryControlsProps {
   gameId: number;
   userId: string;
+  isSaved: boolean;
 }
 
-export function SearchEntryControls({ gameId, userId }: SearchEntryControlsProps) {
+export function SearchEntryControls({
+  gameId,
+  userId,
+  isSaved,
+}: SearchEntryControlsProps) {
   return (
     <div className="flex w-fit flex-row items-center justify-end gap-2 rounded-md border bg-background-3 p-1">
-      <SaveToCollectionButton gameId={gameId} userId={userId} />
-      <RemoveFromCollectionButton gameId={gameId} userId={userId} />
+      {isSaved ? (
+        <RemoveFromCollectionButton gameId={gameId} userId={userId} />
+      ) : (
+        <SaveToCollectionButton gameId={gameId} userId={userId} />
+      )}
     </div>
   );
 }

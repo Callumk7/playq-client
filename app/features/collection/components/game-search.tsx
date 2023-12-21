@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SaveToCollectionButton } from "@/features/explore/components/save-to-collection-button";
 import { IGDBGame, IGDBGameSchema, IGDBGameSchemaArray } from "@/types/igdb";
 import { MagnifyingGlassIcon, PlusIcon } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { SaveToCollectionButton } from "./save-to-collection-button";
 
 interface GameSearchProps {
   userId: string;

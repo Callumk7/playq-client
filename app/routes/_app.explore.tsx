@@ -10,7 +10,9 @@ import { Input } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { IGDB_BASE_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
+import { getCollectionGameIds } from "@/features/collection/lib/get-collection-gameIds";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
+import { markResultsAsSaved } from "@/features/explore/lib/mark-results-as-saved";
 import { GameCover } from "@/features/library/game-cover";
 import { fetchGamesFromIGDB } from "@/lib/igdb";
 import { IGDBGame, IGDBGameSchemaArray } from "@/types/igdb";
@@ -26,12 +28,7 @@ import { zx } from "zodix";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   // Get the signed in user's collection, so we can display which games they already have
   const session = await auth(request);
-  const userCollection = await db.query.usersToGames.findMany({
-    where: eq(usersToGames.userId, session.id),
-    include: {
-      gameId: true,
-    }
-  })
+  const gameIds = await getCollectionGameIds(session.id);
 
   const url = new URL(request.url);
   const search = url.searchParams.get("search");
@@ -63,7 +60,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }
   }
 
-  return json({ searchResults, session });
+  const resultsMarkedAsSaved = markResultsAsSaved(searchResults, gameIds);
+
+  return json({ resultsMarkedAsSaved, session });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -96,7 +95,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 // Multi-select for genres
 
 export default function ExploreRoute() {
-  const { searchResults, session } = useLoaderData<typeof loader>();
+  const { resultsMarkedAsSaved, session } = useLoaderData<typeof loader>();
   const [genreFilter, setGenreFilter] = useState<string[]>([]);
   return (
     <div>
@@ -107,9 +106,9 @@ export default function ExploreRoute() {
             <Button variant={"secondary"}>Search</Button>
           </Form>
           <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-            {searchResults.map((game) => (
+            {resultsMarkedAsSaved.map((game) => (
               <GameCover key={game.id} coverId={game.cover.image_id}>
-                <SearchEntryControls gameId={game.id} userId={session.id} />
+                <SearchEntryControls isSaved={game.saved} gameId={game.id} userId={session.id} />
               </GameCover>
             ))}
           </div>

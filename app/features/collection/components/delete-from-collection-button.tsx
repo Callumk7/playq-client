@@ -15,7 +15,7 @@ export function RemoveFromCollectionButton({ gameId, userId }: RemoveFromCollect
       <input type="hidden" value={gameId} name="gameId" />
       <input type="hidden" value={userId} name="userId" />
       {deleteFetcher.state === "idle" ? (
-        <Button variant={"ghost"} size={"icon"}>
+        <Button variant={"destructive"} size={"icon"}>
           <TrashIcon />
         </Button>
       ) : (
