@@ -18,14 +18,20 @@ import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { usersToGames } from "db/schema/users";
+import { eq } from "drizzle-orm";
 import { useState } from "react";
 import { z } from "zod";
 import { zx } from "zodix";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  // I will need this to show the user which games they already have
-  // in their collection.
+  // Get the signed in user's collection, so we can display which games they already have
   const session = await auth(request);
+  const userCollection = await db.query.usersToGames.findMany({
+    where: eq(usersToGames.userId, session.id),
+    include: {
+      gameId: true,
+    }
+  })
 
   const url = new URL(request.url);
   const search = url.searchParams.get("search");
@@ -48,8 +54,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         "themes != (42)",
       ],
     });
-
-    console.log(results);
 
     try {
       const parsedGames = IGDBGameSchemaArray.parse(results);

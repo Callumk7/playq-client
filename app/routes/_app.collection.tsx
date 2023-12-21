@@ -1,5 +1,6 @@
 import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
+import { CollectionControls } from "@/features/collection/components/collection-controls";
 import { GameSearch } from "@/features/collection/components/game-search";
 import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
 import { GameCover } from "@/features/library/game-cover";
@@ -84,7 +85,7 @@ export default function CollectionRoute() {
       <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         {games.map((game) => (
           <GameCover key={game.id} coverId={game.cover.image_id}>
-            <SearchEntryControls gameId={game.id} userId={session.id} />
+            <CollectionControls gameId={game.id} userId={session.id} />
           </GameCover>
         ))}
       </div>
