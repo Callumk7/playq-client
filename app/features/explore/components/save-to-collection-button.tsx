@@ -11,7 +11,7 @@ export function SaveToCollectionButton({ gameId, userId }: SaveToCollectionButto
   const saveFetcher = useFetcher();
 
   return (
-    <saveFetcher.Form method="post" action="/explore">
+    <saveFetcher.Form method="post" action="/api/collections">
       <input type="hidden" value={gameId} name="gameId" />
       <input type="hidden" value={userId} name="userId" />
       {saveFetcher.state === "idle" ? (

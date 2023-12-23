@@ -1,3 +1,4 @@
+import { WORKER_URL } from "@/constants";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/users";
@@ -17,14 +18,26 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		});
 
 		if (formData.success) {
+			const { gameId, userId } = formData.data;
 			// save a game to the user's collection
 			const savedGame = await db
 				.insert(usersToGames)
 				.values({
-					gameId: formData.data.gameId,
-					userId: formData.data.userId,
+					gameId,
+					userId
 				})
 				.returning();
+
+			// This is offloading the work to a cloudflare worker
+			fetch(`${WORKER_URL}/games/${gameId}`, {
+				method: "POST",
+			}).then((res) => {
+				if (res.ok) {
+					console.log(`Successfully saved ${gameId} to our database.`);
+				} else {
+					console.error(`Failed to save ${gameId} to our database.`);
+				}
+			});
 
 			return json({
 				success: savedGame,

@@ -65,35 +65,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ resultsMarkedAsSaved, session });
 };
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const formData = await zx.parseFormSafe(request, {
-    gameId: zx.NumAsString,
-    userId: z.string(),
-  });
-
-  if (formData.success) {
-    // save a game to the user's collection
-    const savedGame = await db
-      .insert(usersToGames)
-      .values({
-        gameId: formData.data.gameId,
-        userId: formData.data.userId,
-      })
-      .returning();
-
-    return json({
-      success: savedGame,
-    });
-  } else {
-    return json({
-      error: formData.error,
-    });
-  }
-};
-
-// Filter State:
-// Multi-select for genres
-
 export default function ExploreRoute() {
   const { resultsMarkedAsSaved, session } = useLoaderData<typeof loader>();
   const [genreFilter, setGenreFilter] = useState<string[]>([]);
@@ -120,10 +91,6 @@ export default function ExploreRoute() {
               <CardDescription>Lets find what you are looking for</CardDescription>
             </CardHeader>
             <CardContent>
-              <RadioGroup>
-                <RadioGroupItem value="all">All</RadioGroupItem>
-                <RadioGroupItem value="filtered">Filtered</RadioGroupItem>
-              </RadioGroup>
             </CardContent>
           </Card>
         </div>
