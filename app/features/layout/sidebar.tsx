@@ -1,38 +1,32 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { CreatePlaylistDialog } from "../playlists/components/create-playlist-dialog";
-import { Playlist } from "db/schema/playlists";
+import { Separator } from "@/components/ui/separator";
+import { Playlist } from "@/types/playlists";
+import { PlusIcon } from "@radix-ui/react-icons";
 
 interface SidebarProps {
-  userId: string;
   playlists: Playlist[];
+  setDialogOpen: (open: boolean) => void;
 }
 
-export function Sidebar({ userId, playlists }: SidebarProps) {
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+export function Sidebar({ playlists, setDialogOpen }: SidebarProps) {
   return (
-    <>
-      <div className="h-full w-full rounded-md border p-3">
+    <div className="h-full w-full border py-3 pr-3 pl-8">
+      <div className="flex w-full justify-between">
+        <h2 className="pb-2 pt-4 font-bold">Playlists</h2>
         <Button
           onClick={() => setDialogOpen(true)}
-          className="mx-4 my-6"
-          variant={"secondary"}
+          variant={"ghost"}
         >
-          <span className="mr-1">Add Playlist</span>
+          <PlusIcon />
         </Button>
-        <div className="flex flex-col gap-2">
-          {playlists.map((playlist) => (
-            <SidebarPlaylistEntry key={playlist.id} playlist={playlist} />
-          ))}
-        </div>
       </div>
-
-      <CreatePlaylistDialog
-        userId={userId}
-        dialogOpen={dialogOpen}
-        setDialogOpen={setDialogOpen}
-      />
-    </>
+      <Separator />
+      <div className="flex flex-col gap-2 py-4">
+        {playlists.map((playlist) => (
+          <SidebarPlaylistEntry key={playlist.id} playlist={playlist} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -42,8 +36,8 @@ interface SidebarPlaylistEntryProps {
 
 function SidebarPlaylistEntry({ playlist }: SidebarPlaylistEntryProps) {
   return (
-    <div className="p-4 rounded-md hover:bg-background-hover">
-      <span className="font-bold">{playlist.name}</span>
+    <div className="rounded-md p-4 hover:bg-background-hover">
+      <span className="font-bold text-sm">{playlist.name}</span>
     </div>
-  )
+  );
 }

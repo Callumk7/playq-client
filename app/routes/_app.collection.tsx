@@ -1,4 +1,11 @@
-import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
+import { IGDB_BASE_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { CollectionControls } from "@/features/collection/components/collection-controls";
 import { GameSearch } from "@/features/collection/components/game-search";
@@ -41,7 +48,25 @@ export default function CollectionRoute() {
   const { session, userCollection, games } = useLoaderData<typeof loader>();
   return (
     <div>
-      <GameSearch userId={session.id} />
+      <div className="flex w-full justify-between">
+        <GameSearch userId={session.id} />
+        <Menubar>
+          <MenubarMenu>
+            <MenubarTrigger>Sort</MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem>Alphabetical</MenubarItem>
+              <MenubarItem>Recently Played</MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+          <MenubarMenu>
+            <MenubarTrigger>Filters</MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem>Completed</MenubarItem>
+              <MenubarItem>Playing</MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
+      </div>
       <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         {userCollection.map((game) => (
           <GameCover key={game.game.id} coverId={game.game.cover.imageId}>

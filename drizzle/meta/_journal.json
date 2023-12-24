@@ -43,6 +43,13 @@
       "when": 1703173501296,
       "tag": "0005_optimal_roland_deschain",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1703367664670,
+      "tag": "0006_organic_scalphunter",
+      "breakpoints": true
     }
   ]
 }

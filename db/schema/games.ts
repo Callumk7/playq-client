@@ -28,6 +28,7 @@ export const gamesRelations = relations(games, ({ one, many }) => ({
 	screenshots: many(screenshots),
 	users: many(usersToGames),
 	playlists: many(gamesOnPlaylists),
+	genres: many(genresToGames),
 }));
 
 export const covers = pgTable("covers", {
@@ -67,6 +68,37 @@ export const screenshots = pgTable("screenshots", {
 export const screenshotsRelations = relations(screenshots, ({ one }) => ({
 	game: one(games, {
 		fields: [screenshots.gameId],
+		references: [games.gameId],
+	}),
+}));
+
+export const genres = pgTable("genres", {
+	id: integer("id").primaryKey(), // Using the IGDB id as the primary key
+	name: text("name").notNull().unique(),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+	isUpdated: boolean("is_updated").default(false),
+});
+
+export const genresRelations = relations(genres, ({ many }) => ({
+	games: many(genresToGames),
+}));
+
+export const genresToGames = pgTable("genres_to_games", {
+	genreId: integer("genre_id").notNull(),
+	gameId: integer("game_id").notNull(),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+	isUpdated: boolean("is_updated").default(false),
+});
+
+export const genresToGamesRelations = relations(genresToGames, ({ one }) => ({
+	genre: one(genres, {
+		fields: [genresToGames.genreId],
+		references: [genres.id],
+	}),
+	game: one(games, {
+		fields: [genresToGames.gameId],
 		references: [games.gameId],
 	}),
 }));
