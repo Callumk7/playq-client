@@ -1,13 +1,8 @@
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
+import { Button } from "@/components/ui/button";
 import { IGDB_BASE_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
 import { CollectionControls } from "@/features/collection/components/collection-controls";
+import { CollectionMenubar } from "@/features/collection/components/collection-menubar";
 import { GameSearch } from "@/features/collection/components/game-search";
 import { getUserGameCollection } from "@/features/collection/lib/get-game-collection";
 import { GameCover } from "@/features/library/game-cover";
@@ -15,6 +10,7 @@ import { fetchGamesFromIGDB } from "@/lib/igdb";
 import { IGDBGameNoArtwork, IGDBGameNoArtworkSchema } from "@/types/igdb";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { useEffect, useState } from "react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await auth(request);
@@ -46,31 +42,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function CollectionRoute() {
   const { session, userCollection, games } = useLoaderData<typeof loader>();
+
   return (
     <div>
       <div className="flex w-full justify-between">
         <GameSearch userId={session.id} />
-        <Menubar>
-          <MenubarMenu>
-            <MenubarTrigger>Sort</MenubarTrigger>
-            <MenubarContent>
-              <MenubarItem>Alphabetical</MenubarItem>
-              <MenubarItem>Recently Played</MenubarItem>
-            </MenubarContent>
-          </MenubarMenu>
-          <MenubarMenu>
-            <MenubarTrigger>Filters</MenubarTrigger>
-            <MenubarContent>
-              <MenubarItem>Completed</MenubarItem>
-              <MenubarItem>Playing</MenubarItem>
-            </MenubarContent>
-          </MenubarMenu>
-        </Menubar>
+        <CollectionMenubar />
       </div>
       <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-        {userCollection.map((game) => (
+        {userCollection.map((game, i) => (
           <GameCover key={game.game.id} coverId={game.game.cover.imageId}>
-            <CollectionControls gameId={game.gameId} userId={session.id} />
+            <CollectionControls gameId={game.gameId} userId={session.id} index={i} />
           </GameCover>
         ))}
       </div>

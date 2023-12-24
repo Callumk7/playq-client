@@ -26,6 +26,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					gameId,
 					userId
 				})
+				.onConflictDoNothing()
 				.returning();
 
 			// This is offloading the work to a cloudflare worker

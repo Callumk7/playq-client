@@ -3,27 +3,19 @@ import { Input } from "@/components/ui/form";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SaveToCollectionButton } from "@/features/explore/components/save-to-collection-button";
-import { IGDBGame, IGDBGameSchema, IGDBGameSchemaArray } from "@/types/igdb";
-import { MagnifyingGlassIcon, PlusIcon } from "@radix-ui/react-icons";
+import { IGDBGame } from "@/types/igdb";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import type { loader } from "@/routes/api.search"
 
 interface GameSearchProps {
   userId: string;
 }
 
 export function GameSearch({ userId }: GameSearchProps) {
-  const [results, setResults] = useState<IGDBGame[]>([]);
-  const fetcher = useFetcher();
-
-  // WARN: If this fails, then the page crashes. This error should be handled
-  // such that the search component is disabled, but not the entire page.
-  useEffect(() => {
-    if (fetcher.data) {
-      const typedResults = IGDBGameSchemaArray.parse(fetcher.data);
-      setResults(typedResults);
-    }
-  }, [fetcher.data]);
+  // recommended from discord: you can import the type from the route,
+  // and then use it as a type arg.
+  const fetcher = useFetcher<typeof loader>();
 
   return (
     <Popover>
@@ -45,8 +37,8 @@ export function GameSearch({ userId }: GameSearchProps) {
         </fetcher.Form>
         <ScrollArea className="h-80 w-full">
           <div>
-            {results
-              ? results.map((game) => (
+            {fetcher.data
+              ? fetcher.data.map((game) => (
                   <SearchResult key={game.id} game={game} userId={userId} />
                 ))
               : null}
