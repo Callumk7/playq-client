@@ -32,6 +32,7 @@ export const gamesOnPlaylists = pgTable(
 	{
 		gameId: integer("game_id").notNull(),
 		playlistId: text("playlist_id").notNull(),
+		addedBy: text("added_by").notNull(),
 	},
 	(t) => ({
 		pk: primaryKey(t.gameId, t.playlistId),
@@ -46,6 +47,10 @@ export const gamesOnPlaylistsRelations = relations(gamesOnPlaylists, ({ one }) =
 	playlist: one(playlists, {
 		fields: [gamesOnPlaylists.playlistId],
 		references: [playlists.id],
+	}),
+	addedBy: one(users, {
+		fields: [gamesOnPlaylists.addedBy],
+		references: [users.id],
 	}),
 }));
 

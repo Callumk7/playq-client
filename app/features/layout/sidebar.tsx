@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Playlist } from "@/types/playlists";
 import { PlusIcon } from "@radix-ui/react-icons";
+import { Link } from "@remix-run/react";
 
 interface SidebarProps {
   playlists: Playlist[];
@@ -36,8 +37,8 @@ interface SidebarPlaylistEntryProps {
 
 function SidebarPlaylistEntry({ playlist }: SidebarPlaylistEntryProps) {
   return (
-    <div className="rounded-md p-4 hover:bg-background-hover">
+    <Link to={`playlists/${playlist.id}`} className="rounded-md p-4 hover:bg-background-hover">
       <span className="font-bold text-sm">{playlist.name}</span>
-    </div>
+    </Link>
   );
 }

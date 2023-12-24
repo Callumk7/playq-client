@@ -50,6 +50,13 @@
       "when": 1703367664670,
       "tag": "0006_organic_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1703433533056,
+      "tag": "0007_pink_silk_fever",
+      "breakpoints": true
     }
   ]
 }
