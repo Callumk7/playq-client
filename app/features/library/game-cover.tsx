@@ -4,6 +4,7 @@ import { CollectionContextMenu } from "../collection/components/collection-conte
 import { Playlist } from "@/types/playlists";
 
 interface GameCoverProps {
+  gameId: number;
   coverId: string;
   isSelected?: boolean;
   playlists: Playlist[];
@@ -11,6 +12,7 @@ interface GameCoverProps {
 }
 
 export function GameCover({
+  gameId,
   coverId,
   isSelected,
   playlists,
@@ -18,9 +20,10 @@ export function GameCover({
 }: GameCoverProps) {
   const size: IGDBImage = "720p";
 
-  const getBorderStyle = (isSelected: boolean) => isSelected 
-    ? "border border-lime-500/40 hover:border-lime-500 shadow-lg shadow-lime-500/20 hover:shadow-lime-500/40"
-    : "border hover:border-foreground";
+  const getBorderStyle = (isSelected: boolean) =>
+    isSelected
+      ? "border border-lime-500/40 hover:border-lime-500 shadow-lg shadow-lime-500/20 hover:shadow-lime-500/40"
+      : "border hover:border-foreground";
 
   const borderStyle = getBorderStyle(isSelected || false);
 
@@ -32,7 +35,7 @@ export function GameCover({
           "relative flex max-w-sm flex-col items-center justify-between overflow-hidden rounded-lg text-foreground",
         )}
       >
-        <CollectionContextMenu gameId={123} userId="string" playlists={playlists}>
+        <CollectionContextMenu gameId={gameId} userId="string" playlists={playlists}>
           <img
             src={`https://images.igdb.com/igdb/image/upload/t_${size}/${coverId}.jpg`}
             alt="cover image"

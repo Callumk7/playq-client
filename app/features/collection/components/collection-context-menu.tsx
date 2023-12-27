@@ -8,6 +8,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { Playlist } from "@/types/playlists";
+import { useFetcher } from "@remix-run/react";
 
 interface CollectionContextMenuProps {
   gameId: number;
@@ -22,6 +23,7 @@ export function CollectionContextMenu({
   playlists,
   children,
 }: CollectionContextMenuProps) {
+  const addToPlaylistFetcher = useFetcher();
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
@@ -30,7 +32,22 @@ export function CollectionContextMenu({
           <ContextMenuSubTrigger>Add to playlist</ContextMenuSubTrigger>
           <ContextMenuSubContent>
             {playlists.map((playlist) => (
-              <ContextMenuItem key={playlist.id}>{playlist.name}</ContextMenuItem>
+              <ContextMenuItem
+                key={playlist.id}
+                onClick={() =>
+                  addToPlaylistFetcher.submit(
+                    {
+                      gameId,
+                    },
+                    {
+                      method: "POST",
+                      action: `/api/playlists/${playlist.id}/games`,
+                    },
+                  )
+                }
+              >
+                {playlist.name}
+              </ContextMenuItem>
             ))}
           </ContextMenuSubContent>
         </ContextMenuSub>

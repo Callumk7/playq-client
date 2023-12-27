@@ -9,6 +9,7 @@ import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await auth(request);
@@ -17,20 +18,25 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const userPlaylists = await db.query.playlists.findMany({
     where: eq(playlists.creatorId, session.id),
-  })
+  });
 
-  return json({ userCollection, session, userPlaylists });
+  return typedjson({ userCollection, session, userPlaylists });
 };
 
 export default function CollectionRoute() {
-  const { session, userCollection, userPlaylists } = useLoaderData<typeof loader>();
+  const { session, userCollection, userPlaylists } = useTypedLoaderData<typeof loader>();
 
   return (
     <div>
       <CollectionMenubar userId={session.id} />
       <div className="grid grid-cols-1 gap-4 rounded-md py-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         {userCollection.map((game, i) => (
-          <GameCover key={game.gameId} coverId={game.game.cover.imageId} playlists={userPlaylists}>
+          <GameCover
+            key={game.gameId}
+            coverId={game.game.cover.imageId}
+            gameId={game.gameId}
+            playlists={userPlaylists}
+          >
             <CollectionControls gameId={game.gameId} userId={session.id} index={i} />
           </GameCover>
         ))}
