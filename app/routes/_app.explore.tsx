@@ -75,7 +75,7 @@ export default function ExploreRoute() {
         </div>
         <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
           {resultsMarkedAsSaved.map((game) => (
-            <GameCover key={game.id} coverId={game.cover.image_id}>
+            <GameCover key={game.id} gameId={game.id} playlists={[]} coverId={game.cover.image_id}>
               <SearchEntryControls
                 isSaved={game.saved}
                 gameId={game.id}
