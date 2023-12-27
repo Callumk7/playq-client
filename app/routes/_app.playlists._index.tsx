@@ -20,23 +20,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return json({ userPlaylists });
 };
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const res = await zx.parseFormSafe(request, insertGameToPlaylistSchema);
-
-  if (res.success) {
-    const addedGame = await db.insert(gamesOnPlaylists).values({
-      playlistId: res.data.playlistId,
-      gameId: res.data.gameId,
-      addedBy: res.data.addedBy,
-    });
-
-    return json({ addedGame });
-  }
-
-  else {
-    return json({ error: res.error });
-  }
-};
 
 export default function PlaylistView() {
   const { userPlaylists } = useLoaderData<typeof loader>();

@@ -20,9 +20,9 @@ export function GameSearch({ userId }: GameSearchProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant={"ghost"} className="w-40 flex gap-4">
+        <Button variant={"outline"}>
+          <MagnifyingGlassIcon className="w-4 h-4 mr-3" />
           <span>Add more</span>
-          <MagnifyingGlassIcon className="w-5 h-5" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[500px]">

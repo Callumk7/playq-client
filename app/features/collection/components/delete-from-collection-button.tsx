@@ -5,9 +5,10 @@ import { useFetcher } from "@remix-run/react";
 interface RemoveFromCollectionButtonProps {
   gameId: number;
   userId: string;
+  label?: string;
 }
 
-export function RemoveFromCollectionButton({ gameId, userId }: RemoveFromCollectionButtonProps) {
+export function RemoveFromCollectionButton({ gameId, userId, label }: RemoveFromCollectionButtonProps) {
   const deleteFetcher = useFetcher();
 
   return (
@@ -16,7 +17,7 @@ export function RemoveFromCollectionButton({ gameId, userId }: RemoveFromCollect
       <input type="hidden" value={userId} name="userId" />
       {deleteFetcher.state === "idle" ? (
         <Button variant={"destructive"} size={"icon"}>
-          <TrashIcon />
+          {label ? label : <TrashIcon />}
         </Button>
       ) : (
         <div className="p-2">
