@@ -5,9 +5,9 @@ import { insertGameToPlaylistSchema } from "@/types/api";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
-import { games } from "db/schema/games";
 import { gamesOnPlaylists, playlists } from "db/schema/playlists";
-import { eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { zx } from "zodix";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -20,15 +20,19 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
         with: {
           game: {
             with: {
-              cover: true
-            }
-          }
-        }
-      }
-    }
-  })
+              cover: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
-  return json({ playlistId, playlistGames });
+  const allPlaylists = await db.query.playlists.findMany({
+    where: eq(playlists.creatorId, session.id),
+  });
+
+  return typedjson({ playlistId, playlistGames, allPlaylists });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -42,22 +46,25 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     });
 
     return json({ addedGame });
-  }
-
-  else {
+  } else {
     return json({ error: res.error });
   }
 };
 
-
-
 export default function PlaylistRoute() {
-  const { playlistId, playlistGames } = useLoaderData<typeof loader>();
+  const { playlistId, playlistGames, allPlaylists } = useTypedLoaderData<typeof loader>();
   return (
     <LibraryView>
-      {playlistGames?.games.map(game => (
-        <GameCover key={game.game.id} coverId={game.game.cover.imageId} gameId={game.gameId} playlists={[]}>Controls</GameCover>
+      {playlistGames?.games.map((game) => (
+        <GameCover
+          key={game.game.id}
+          coverId={game.game.cover.imageId}
+          gameId={game.gameId}
+          playlists={allPlaylists}
+        >
+          Controls
+        </GameCover>
       ))}
     </LibraryView>
-  )
+  );
 }
