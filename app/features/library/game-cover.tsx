@@ -1,16 +1,19 @@
 import { IGDBImage } from "@/types/igdb";
 import { cn } from "@/util/cn";
 import { CollectionContextMenu } from "../collection/components/collection-context-menu";
+import { Playlist } from "@/types/playlists";
 
 interface GameCoverProps {
   coverId: string;
   isSelected?: boolean;
+  playlists: Playlist[];
   children?: React.ReactNode;
 }
 
 export function GameCover({
   coverId,
   isSelected,
+  playlists,
   children,
 }: GameCoverProps) {
   const size: IGDBImage = "720p";
@@ -29,12 +32,10 @@ export function GameCover({
           "relative flex max-w-sm flex-col items-center justify-between overflow-hidden rounded-lg text-foreground",
         )}
       >
-        <CollectionContextMenu gameId={123} userId="string">
+        <CollectionContextMenu gameId={123} userId="string" playlists={playlists}>
           <img
             src={`https://images.igdb.com/igdb/image/upload/t_${size}/${coverId}.jpg`}
             alt="cover image"
-            width={720}
-            height={1280}
           />
         </CollectionContextMenu>
       </div>

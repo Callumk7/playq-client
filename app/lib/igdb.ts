@@ -1,6 +1,6 @@
 import { FULL_GAME_FIELDS } from "@/constants";
 
-interface FetchOptions {
+export interface FetchOptions {
 	fields?: string[] | "full";
 	limit?: number;
 	filters?: string[];

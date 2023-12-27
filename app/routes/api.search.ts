@@ -1,24 +1,34 @@
 import { IGDB_BASE_URL, WORKER_URL } from "@/constants";
-import { fetchGamesFromIGDB } from "@/lib/igdb";
+import { FetchOptions, fetchGamesFromIGDB } from "@/lib/igdb";
 import { IGDBGameSchema } from "@/types/igdb";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 
+// Search IGDB for games.
+// An array of genre ids can be passed in to filter the results.
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-	console.log("route hit");
 	const url = new URL(request.url);
 	const search = url.searchParams.get("search");
+	const genreIdsParam = url.searchParams.get("genre_ids");
+
+	const genreIds: number[] = genreIdsParam ? genreIdsParam.split(",").map(Number) : [];
 
 	if (search) {
-		console.log(`searching for ${search}`);
-		const results = await fetchGamesFromIGDB(IGDB_BASE_URL, {
+		const options: FetchOptions = {
 			search: search,
 			limit: 20,
 			fields: "full",
 			filters: ["cover != null"],
-		});
+		};
+
+		if (genreIds.length > 0) {
+			options.filters?.push(`genres = (${genreIds.join(",")})`);
+		}
+
+		console.log(`searching for ${search}`);
+		const results = await fetchGamesFromIGDB(IGDB_BASE_URL, options);
 
 		const games = results.map((game) => IGDBGameSchema.parse(game));
-		
+
 		return json(games);
 	}
 
