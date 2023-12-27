@@ -1,5 +1,6 @@
 import { auth } from "@/features/auth/helper";
 import { GameCover } from "@/features/library/game-cover";
+import { LibraryView } from "@/features/library/library-view";
 import { insertGameToPlaylistSchema } from "@/types/api";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -53,11 +54,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function PlaylistRoute() {
   const { playlistId, playlistGames } = useLoaderData<typeof loader>();
   return (
-    <div>
-      <h1>Playlsit: {playlistId}</h1>
+    <LibraryView>
       {playlistGames?.games.map(game => (
         <GameCover key={game.game.id} coverId={game.game.cover.imageId} gameId={game.gameId} playlists={[]}>Controls</GameCover>
       ))}
-    </div>
+    </LibraryView>
   )
 }

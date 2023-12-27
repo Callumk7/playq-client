@@ -69,7 +69,7 @@ export default function ExploreRoute() {
       <div className="flex flex-col gap-y-6">
         <Form method="get" className="flex max-w-md gap-3">
           <Input name="search" type="search" placeholder="What are you looking for?" />
-          <Button variant={"secondary"}>Search</Button>
+          <Button variant={"outline"}>Search</Button>
         </Form>
         <div>
         </div>

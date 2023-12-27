@@ -4,6 +4,7 @@ import { CollectionMenubar } from "@/features/collection/components/collection-m
 import { GameSearch } from "@/features/collection/components/game-search";
 import { getUserGameCollection } from "@/features/collection/lib/get-game-collection";
 import { GameCover } from "@/features/library/game-cover";
+import { LibraryView } from "@/features/library/library-view";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
@@ -29,7 +30,7 @@ export default function CollectionRoute() {
   return (
     <div>
       <CollectionMenubar userId={session.id} />
-      <div className="grid grid-cols-1 gap-4 rounded-md py-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+      <LibraryView>
         {userCollection.map((game, i) => (
           <GameCover
             key={game.gameId}
@@ -40,7 +41,7 @@ export default function CollectionRoute() {
             <CollectionControls gameId={game.gameId} userId={session.id} index={i} />
           </GameCover>
         ))}
-      </div>
+      </LibraryView>
     </div>
   );
 }
