@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const genreType = z.object({
+export const genreType = z.object({
 	id: z.number(),
 	name: z.string(),
 });
@@ -46,6 +46,8 @@ export const IGDBGameNoArtworkSchemaArray = z.array(IGDBGameNoArtworkSchema);
 
 export type IGDBGame = z.infer<typeof IGDBGameSchema>;
 export type IGDBGameNoArtwork = z.infer<typeof IGDBGameNoArtworkSchema>;
+
+export type IGDBGenre = z.infer<typeof genreType>;
 
 export type IGDBImage =
 	| "cover_small"

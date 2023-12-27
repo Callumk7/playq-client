@@ -62,3 +62,23 @@ export const fetchGamesFromIGDB = async (
 		throw new Error("Error fetching games from IGDB");
 	}
 };
+
+export const fetchGenresFromIGDB = async () => {
+	const url = "https://api.igdb.com/v4/genres";
+	const body = "fields name; limit 50;";
+
+	const headers: Record<string, string> = {
+		"Client-ID": process.env.IGDB_CLIENT_ID!,
+		Authorization: `Bearer ${process.env.IGDB_BEARER_TOKEN!}`,
+		"content-type": "text/plain",
+	};
+
+	try {
+		const res = await fetch(url, { method: "POST", headers, body });
+		const json = await res.json();
+		return json as unknown[];
+	} catch (e) {
+		console.error(e);
+		throw new Error("Error fetching games from IGDB");
+	}
+}

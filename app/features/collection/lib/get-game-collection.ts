@@ -1,4 +1,3 @@
-import { UsersToGames } from "@/types/users"
 import { db } from "db"
 import { usersToGames } from "db/schema/users"
 import { eq } from "drizzle-orm"

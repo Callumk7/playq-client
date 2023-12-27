@@ -30,7 +30,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				.returning();
 
 			// This is offloading the work to a cloudflare worker
-			fetch(`${WORKER_URL}/games/${gameId}`, {
+			await fetch(`${WORKER_URL}/games/${gameId}`, {
 				method: "POST",
 			}).then((res) => {
 				if (res.ok) {
