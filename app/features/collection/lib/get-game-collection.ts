@@ -1,6 +1,6 @@
-import { db } from "db"
-import { usersToGames } from "db/schema/users"
-import { eq } from "drizzle-orm"
+import { db } from "db";
+import { usersToGames } from "db/schema/users";
+import { eq } from "drizzle-orm";
 
 export const getUserGameCollection = async (userId: string) => {
 	const userCollection = await db.query.usersToGames.findMany({
@@ -9,10 +9,15 @@ export const getUserGameCollection = async (userId: string) => {
 			game: {
 				with: {
 					cover: true,
-				}
-			}
-		}
-	})
+					playlists: {
+						with: {
+							playlist: true,
+						},
+					},
+				},
+			},
+		},
+	});
 
 	return userCollection;
-}
+};

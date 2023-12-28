@@ -1,38 +1,31 @@
 import { auth } from "@/features/auth/helper";
 import { GameCover } from "@/features/library/game-cover";
 import { LibraryView } from "@/features/library/library-view";
+import { getPlaylistWithGames } from "@/features/playlists/queries/get-playlist-with-games";
+import { getUserPlaylists } from "@/features/playlists/queries/get-user-playlists";
 import { insertGameToPlaylistSchema } from "@/types/api";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
-import { gamesOnPlaylists, playlists } from "db/schema/playlists";
-import { eq } from "drizzle-orm";
+import { gamesOnPlaylists } from "db/schema/playlists";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import { z } from "zod";
 import { zx } from "zodix";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const { playlistId } = params;
+  const { playlistId } = zx.parseParams(params, {
+    playlistId: z.string(),
+  });
   const session = await auth(request);
-  const playlistGames = await db.query.playlists.findFirst({
-    where: eq(playlists.id, playlistId!),
-    with: {
-      games: {
-        with: {
-          game: {
-            with: {
-              cover: true,
-            },
-          },
-        },
-      },
-    },
-  });
 
-  const allPlaylists = await db.query.playlists.findMany({
-    where: eq(playlists.creatorId, session.id),
-  });
+  const playlistWithGamesPromise = getPlaylistWithGames(playlistId);
+  const allPlaylistsPromise = getUserPlaylists(session.id);
 
-  return typedjson({ playlistId, playlistGames, allPlaylists });
+  const [playlistWithGames, allPlaylists] = await Promise.all([
+    playlistWithGamesPromise,
+    allPlaylistsPromise,
+  ]);
+
+  return typedjson({ playlistId, playlistWithGames, allPlaylists });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -52,10 +45,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function PlaylistRoute() {
-  const { playlistId, playlistGames, allPlaylists } = useTypedLoaderData<typeof loader>();
+  const { playlistWithGames, allPlaylists } = useTypedLoaderData<typeof loader>();
   return (
     <LibraryView>
-      {playlistGames?.games.map((game) => (
+      {playlistWithGames?.games.map((game) => (
         <GameCover
           key={game.game.id}
           coverId={game.game.cover.imageId}

@@ -1,6 +1,7 @@
 import { games, covers, artworks, screenshots } from "db/schema/games";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+import { GamesOnPlaylist, Playlist } from "./playlists";
 
 export const gamesInsertSchema = createInsertSchema(games);
 export const gamesSelectSchema = createSelectSchema(games);
@@ -24,3 +25,5 @@ export type InsertCover = z.infer<typeof coversInsertSchema>;
 export type InsertArtwork = z.infer<typeof artworksInsertSchema>;
 export type InsertScreenshot = z.infer<typeof screenshotsInsertSchema>;
 
+export type GameWithCover = Game & { cover: Cover };
+export type GameWithPlaylists = GameWithCover & { playlists }

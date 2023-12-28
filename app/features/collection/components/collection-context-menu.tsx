@@ -1,5 +1,6 @@
 import {
   ContextMenu,
+  ContextMenuCheckboxItem,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSub,
@@ -9,18 +10,19 @@ import {
 } from "@/components/ui/context-menu";
 import { Playlist } from "@/types/playlists";
 import { useFetcher } from "@remix-run/react";
+import { useState } from "react";
 
 interface CollectionContextMenuProps {
   gameId: number;
-  userId: string;
   playlists: Playlist[];
+  gamePlaylists?: Playlist[];
   children: React.ReactNode;
 }
 
 export function CollectionContextMenu({
   gameId,
-  userId,
   playlists,
+  gamePlaylists,
   children,
 }: CollectionContextMenuProps) {
   const addToPlaylistFetcher = useFetcher();
@@ -32,22 +34,35 @@ export function CollectionContextMenu({
           <ContextMenuSubTrigger>Add to playlist</ContextMenuSubTrigger>
           <ContextMenuSubContent>
             {playlists.map((playlist) => (
-              <ContextMenuItem
+              <ContextMenuCheckboxItem
                 key={playlist.id}
-                onClick={() =>
-                  addToPlaylistFetcher.submit(
-                    {
-                      gameId,
-                    },
-                    {
-                      method: "POST",
-                      action: `/api/playlists/${playlist.id}/games`,
-                    },
-                  )
-                }
+                checked={gamePlaylists?.some((p) => p.id === playlist.id)}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    addToPlaylistFetcher.submit(
+                      {
+                        gameId,
+                      },
+                      {
+                        method: "POST",
+                        action: `/api/playlists/${playlist.id}/games`,
+                      },
+                    );
+                  } else {
+                    addToPlaylistFetcher.submit(
+                      {
+                        gameId,
+                      },
+                      {
+                        method: "DELETE",
+                        action: `/api/playlists/${playlist.id}/games`,
+                      },
+                    );
+                 }
+                }}
               >
                 {playlist.name}
-              </ContextMenuItem>
+              </ContextMenuCheckboxItem>
             ))}
           </ContextMenuSubContent>
         </ContextMenuSub>

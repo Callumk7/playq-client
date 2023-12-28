@@ -35,12 +35,10 @@ export function GameCover({
           "relative flex max-w-sm flex-col items-center justify-between overflow-hidden rounded-lg text-foreground",
         )}
       >
-        <CollectionContextMenu gameId={gameId} userId="string" playlists={playlists}>
-          <img
-            src={`https://images.igdb.com/igdb/image/upload/t_${size}/${coverId}.jpg`}
-            alt="cover image"
-          />
-        </CollectionContextMenu>
+        <img
+          src={`https://images.igdb.com/igdb/image/upload/t_${size}/${coverId}.jpg`}
+          alt="cover image"
+        />
       </div>
       <div className="pt-3">{children}</div>
     </div>

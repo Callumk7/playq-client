@@ -28,7 +28,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   let searchResults: IGDBGame[] = [];
   const searchOptions: FetchOptions = {
     fields: ["name", "cover.image_id"],
-    limit: 100,
+    limit: 30,
     filters: [
       "cover != null",
       "parent_game = null",
