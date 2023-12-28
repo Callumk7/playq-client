@@ -3,9 +3,8 @@ import {
   CollectionGame,
   CollectionMenubar,
   getUserGameCollection,
-  useSearch,
 } from "@/features/collection";
-import { LibraryView } from "@/features/library";
+import { LibraryView, useSearch } from "@/features/library";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "db";
 import { playlists } from "db/schema/playlists";

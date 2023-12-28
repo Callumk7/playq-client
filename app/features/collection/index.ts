@@ -7,9 +7,6 @@ import { RemoveFromCollectionButton } from "./components/remove-from-collection-
 import { GameMenuButton } from "./components/game-menu-button";
 import { GameSearch } from "./components/game-search";
 
-// Hooks
-import { useSearch } from "./hooks/search";
-
 // Lib
 import { getCollectionGameIds } from "./lib/get-collection-gameIds";
 import { getUserGameCollection } from "./lib/get-game-collection";
@@ -22,7 +19,6 @@ export {
 	RemoveFromCollectionButton,
 	GameMenuButton,
 	GameSearch,
-	useSearch,
 	getCollectionGameIds,
 	getUserGameCollection,
 };
