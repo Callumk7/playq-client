@@ -64,6 +64,7 @@ export default function CollectionRoute() {
 
   const [games, setGames] = useState(searchedGames);
 
+  // I think this is not that good.
   const moveGame = (gameId: number, direction: 1 | -1) => {
     const newGames = [...games];
     const index = newGames.findIndex((g) => g.game.gameId === gameId);
