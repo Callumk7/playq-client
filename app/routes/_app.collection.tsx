@@ -3,13 +3,16 @@ import { CollectionGame } from "@/features/collection/components/collection-game
 import { CollectionMenubar } from "@/features/collection/components/collection-menubar";
 import { useSearch } from "@/features/collection/hooks/search";
 import { getUserGameCollection } from "@/features/collection/lib/get-game-collection";
-import { LibraryView } from "@/features/library/library-view";
+import { LibraryView } from "@/features/library";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "db";
 import { playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
+///
+/// LOADER FUNCTION
+///
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await auth(request);
 
@@ -23,6 +26,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return typedjson({ userCollection, session, userPlaylists, games });
 };
 
+///
+/// ROUTE 
+///
 export default function CollectionRoute() {
   const { session, userPlaylists, games } =
     useTypedLoaderData<typeof loader>();

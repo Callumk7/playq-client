@@ -1,4 +1,3 @@
-import { useSession } from "@/features/auth/components/session-context";
 import { auth } from "@/features/auth/helper";
 import { GameCover } from "@/features/library/game-cover";
 import { LibraryView } from "@/features/library/library-view";
@@ -30,27 +29,24 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const res = await zx.parseFormSafe(request, insertGameToPlaylistSchema);
+  const result = await zx.parseFormSafe(request, insertGameToPlaylistSchema);
 
-  if (res.success) {
+  if (result.success) {
     const addedGame = await db.insert(gamesOnPlaylists).values({
-      playlistId: res.data.playlistId,
-      gameId: res.data.gameId,
-      addedBy: res.data.addedBy,
+      playlistId: result.data.playlistId,
+      gameId: result.data.gameId,
+      addedBy: result.data.addedBy,
     });
 
     return json({ addedGame });
   } else {
-    return json({ error: res.error });
+    return json({ error: result.error });
   }
 };
 
 export default function PlaylistRoute() {
   const { playlistWithGames, allPlaylists } = useTypedLoaderData<typeof loader>();
-  const session = useSession();
   return (
-    <>
-      <div>Your session id: {session?.id}</div>
       <LibraryView>
         {playlistWithGames?.games.map((game) => (
           <GameCover
@@ -63,6 +59,5 @@ export default function PlaylistRoute() {
           </GameCover>
         ))}
       </LibraryView>
-    </>
   );
 }
