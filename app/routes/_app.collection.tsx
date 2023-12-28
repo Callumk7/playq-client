@@ -1,8 +1,10 @@
 import { auth } from "@/features/auth/helper";
-import { CollectionGame } from "@/features/collection/components/collection-game";
-import { CollectionMenubar } from "@/features/collection/components/collection-menubar";
-import { useSearch } from "@/features/collection/hooks/search";
-import { getUserGameCollection } from "@/features/collection/lib/get-game-collection";
+import {
+  CollectionGame,
+  CollectionMenubar,
+  getUserGameCollection,
+  useSearch,
+} from "@/features/collection";
 import { LibraryView } from "@/features/library";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "db";
@@ -27,14 +29,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 ///
-/// ROUTE 
+/// ROUTE
 ///
 export default function CollectionRoute() {
-  const { session, userPlaylists, games } =
-    useTypedLoaderData<typeof loader>();
+  const { session, userPlaylists, games } = useTypedLoaderData<typeof loader>();
 
-  const { searchTerm, searchedGames, handleSearchTermChanged } =
-    useSearch(games);
+  const { searchTerm, searchedGames, handleSearchTermChanged } = useSearch(games);
 
   return (
     <div>

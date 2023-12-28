@@ -1,11 +1,9 @@
 import { auth } from "@/features/auth/helper";
-import { insertGameToPlaylistSchema } from "@/types/api";
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
-import { gamesOnPlaylists, playlists } from "db/schema/playlists";
+import {  playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
-import { zx } from "zodix";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await auth(request);

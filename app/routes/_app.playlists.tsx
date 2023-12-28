@@ -1,5 +1,3 @@
-import { Container } from "@/features/layout/container";
-import { Separator } from "@radix-ui/react-separator";
 import { Outlet } from "@remix-run/react";
 import { uuidv4 } from "@/util/generate-uuid";
 import { ActionFunctionArgs, json } from "@remix-run/node";
@@ -7,6 +5,8 @@ import { db } from "db";
 import { playlists } from "db/schema/playlists";
 import { z } from "zod";
 import { zx } from "zodix";
+import { Container } from "@/features/layout";
+import { Separator } from "@/components/ui/separator";
 
 // This is the route handler for the "api/playlists" route.
 // It will be called with a POST request.

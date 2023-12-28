@@ -1,8 +1,4 @@
 import { auth } from "@/features/auth/helper";
-import { Container } from "@/features/layout/container";
-import { Navbar } from "@/features/layout/navigation";
-import { Sidebar } from "@/features/layout/sidebar";
-import { CreatePlaylistDialog } from "@/features/playlists/components/create-playlist-dialog";
 import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { Outlet } from "@remix-run/react";
@@ -11,6 +7,8 @@ import { playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
 import { SessionContext } from "@/features/auth/components/session-context";
+import { Container, Navbar, Sidebar } from "@/features/layout";
+import { CreatePlaylistDialog } from "@/features/playlists";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];

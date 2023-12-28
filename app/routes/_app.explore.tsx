@@ -2,17 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { IGDB_BASE_URL } from "@/constants";
 import { auth } from "@/features/auth/helper";
-import { getCollectionGameIds } from "@/features/collection/lib/get-collection-gameIds";
-import { GenreFilter } from "@/features/explore/components/filters/genre-filter";
-import { SearchEntryControls } from "@/features/explore/components/search-entry-controls";
-import { markResultsAsSaved } from "@/features/explore/lib/mark-results-as-saved";
-import { GameCover } from "@/features/library/game-cover";
-import { FetchOptions, fetchGamesFromIGDB, fetchGenresFromIGDB } from "@/lib/igdb";
-import { IGDBGame, IGDBGameSchemaArray, IGDBGenre, genreType } from "@/types/igdb";
+import { getCollectionGameIds } from "@/features/collection";
+import { SearchEntryControls, markResultsAsSaved } from "@/features/explore";
+import { GameCover, LibraryView } from "@/features/library";
+import { FetchOptions, fetchGamesFromIGDB } from "@/lib/igdb";
+import { IGDBGame, IGDBGameSchemaArray } from "@/types/igdb";
 import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
-import { useRef, useState } from "react";
-import { useTypedFetcher } from "remix-typedjson";
+import { Form, useLoaderData } from "@remix-run/react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   // Get the signed in user's collection, so we can display which games they already have
@@ -62,7 +58,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function ExploreRoute() {
   const { resultsMarkedAsSaved, session } = useLoaderData<typeof loader>();
-  const submit = useSubmit();
 
   return (
     <div>
@@ -73,7 +68,7 @@ export default function ExploreRoute() {
         </Form>
         <div>
         </div>
-        <div className="mx-auto grid w-4/5 grid-cols-1 gap-4 rounded-md p-4 md:w-full md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        <LibraryView>
           {resultsMarkedAsSaved.map((game) => (
             <GameCover key={game.id} gameId={game.id} playlists={[]} coverId={game.cover.image_id}>
               <SearchEntryControls
@@ -83,7 +78,7 @@ export default function ExploreRoute() {
               />
             </GameCover>
           ))}
-        </div>
+        </LibraryView>
       </div>
     </div>
   );

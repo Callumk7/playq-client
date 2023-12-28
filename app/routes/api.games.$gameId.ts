@@ -1,5 +1,4 @@
 import { WORKER_URL } from "@/constants";
-import { auth } from "@/features/auth/helper";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 
 export const action = ({ params }: ActionFunctionArgs) => {

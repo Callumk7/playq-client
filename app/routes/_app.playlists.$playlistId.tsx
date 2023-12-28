@@ -1,8 +1,6 @@
 import { auth } from "@/features/auth/helper";
-import { GameCover } from "@/features/library/game-cover";
-import { LibraryView } from "@/features/library/library-view";
-import { getPlaylistWithGames } from "@/features/playlists/queries/get-playlist-with-games";
-import { getUserPlaylists } from "@/features/playlists/queries/get-user-playlists";
+import { GameCover, LibraryView } from "@/features/library";
+import { getPlaylistWithGames, getUserPlaylists } from "@/features/playlists";
 import { insertGameToPlaylistSchema } from "@/types/api";
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
@@ -47,17 +45,17 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function PlaylistRoute() {
   const { playlistWithGames, allPlaylists } = useTypedLoaderData<typeof loader>();
   return (
-      <LibraryView>
-        {playlistWithGames?.games.map((game) => (
-          <GameCover
-            key={game.game.id}
-            coverId={game.game.cover.imageId}
-            gameId={game.gameId}
-            playlists={allPlaylists}
-          >
-            Controls
-          </GameCover>
-        ))}
-      </LibraryView>
+    <LibraryView>
+      {playlistWithGames?.games.map((game) => (
+        <GameCover
+          key={game.game.id}
+          coverId={game.game.cover.imageId}
+          gameId={game.gameId}
+          playlists={allPlaylists}
+        >
+          Controls
+        </GameCover>
+      ))}
+    </LibraryView>
   );
 }
