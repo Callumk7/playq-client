@@ -1,5 +1,5 @@
 import { auth } from "@/features/auth";
-import { insertGameToPlaylistSchema } from "@/types/api";
+import { gameToPlaylistSchema } from "@/types/api";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { gamesOnPlaylists } from "db/schema/playlists";
@@ -14,7 +14,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		return json("No playlist id provided", { status: 400 });
 	}
 
-	const result = await zx.parseFormSafe(request, insertGameToPlaylistSchema);
+	const result = await zx.parseFormSafe(request, gameToPlaylistSchema);
 
 	if (result.success) {
 		if (request.method === "POST") {
@@ -41,5 +41,5 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		}
 	}
 
-	return json({ session });
+	return json({ result });
 };

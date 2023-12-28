@@ -2,19 +2,18 @@ import {
   ContextMenu,
   ContextMenuCheckboxItem,
   ContextMenuContent,
-  ContextMenuItem,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { InsertGameToPlaylist } from "@/types/api";
+import { GameIntoPlaylist } from "@/types/api";
 import { Playlist } from "@/types/playlists";
 import { useFetcher } from "@remix-run/react";
-import { useState } from "react";
 
 interface CollectionContextMenuProps {
   gameId: number;
+  userId: string;
   playlists: Playlist[];
   gamePlaylists?: Playlist[];
   children: React.ReactNode;
@@ -22,11 +21,11 @@ interface CollectionContextMenuProps {
 
 export function CollectionContextMenu({
   gameId,
+  userId,
   playlists,
   gamePlaylists,
   children,
 }: CollectionContextMenuProps) {
-  const addToPlaylistFetcher = useFetcher();
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
@@ -39,6 +38,7 @@ export function CollectionContextMenu({
                 key={playlist.id}
                 playlist={playlist}
                 gameId={gameId}
+                userId={userId}
                 gamePlaylists={gamePlaylists}
               />
             ))}
@@ -52,40 +52,38 @@ export function CollectionContextMenu({
 interface PlaylistSubMenuItemProps {
   playlist: Playlist;
   gameId: number;
+  userId: string;
   gamePlaylists?: Playlist[];
 }
 
 function PlaylistSubMenuItem({
   playlist,
   gameId,
+  userId,
   gamePlaylists,
 }: PlaylistSubMenuItemProps) {
-  const session = useSession();
   const addToPlaylistFetcher = useFetcher();
-  const gameInsert: InsertGameToPlaylist = {
+
+  // This was just trying to validate the input, but it is kind of stupid
+  // because the submit method has no validation. 
+  const gameInsert: GameIntoPlaylist = {
     gameId,
-    addedBy: ,
-  }
+    addedBy: userId,
+  };
+
   return (
     <ContextMenuCheckboxItem
       key={playlist.id}
       checked={gamePlaylists?.some((p) => p.id === playlist.id)}
       onCheckedChange={(checked) => {
         if (checked) {
-          addToPlaylistFetcher.submit(
-            {
-              gameId,
-            },
-            {
-              method: "POST",
-              action: `/api/playlists/${playlist.id}/games`,
-            },
-          );
+          addToPlaylistFetcher.submit(gameInsert, {
+            method: "POST",
+            action: `/api/playlists/${playlist.id}/games`,
+          });
         } else {
           addToPlaylistFetcher.submit(
-            {
-              gameId,
-            },
+            { gameId },
             {
               method: "DELETE",
               action: `/api/playlists/${playlist.id}/games`,

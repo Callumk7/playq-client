@@ -19,7 +19,12 @@ export function CollectionGame({
   userId,
 }: CollectionGameProps) {
   return (
-    <CollectionContextMenu gameId={gameId} playlists={userPlaylists} gamePlaylists={gamePlaylists}>
+    <CollectionContextMenu
+      gameId={gameId}
+      userId={userId}
+      playlists={userPlaylists}
+      gamePlaylists={gamePlaylists}
+    >
       <GameCover coverId={coverId} gameId={gameId} playlists={userPlaylists}>
         <CollectionControls gameId={gameId} userId={userId} />
       </GameCover>

@@ -1,9 +1,17 @@
 import { z } from "zod";
+import { zx } from "zodix";
 
 // Action Requests
-export const insertGameToPlaylistSchema = z.object({
-	gameId: z.number(),
+
+export const gameToCollectionSchema = z.object({
+	gameId: zx.NumAsString,
+	userId: z.string(),
+})
+
+export const gameToPlaylistSchema = z.object({
+	gameId: zx.NumAsString,
 	addedBy: z.string(),
 })
 
-export type InsertGameToPlaylist = z.infer<typeof insertGameToPlaylistSchema>;
+export type GameIntoCollection = z.infer<typeof gameToCollectionSchema>;
+export type GameIntoPlaylist = z.infer<typeof gameToPlaylistSchema>;

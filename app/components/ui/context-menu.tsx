@@ -1,7 +1,6 @@
 import { cn } from "@/util/cn"
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu"
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "@radix-ui/react-icons"
-import { Check } from "drizzle-orm/mysql-core"
 import { forwardRef, ElementRef, ComponentPropsWithoutRef, HTMLAttributes } from "react"
 
 const ContextMenu = ContextMenuPrimitive.Root

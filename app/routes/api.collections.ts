@@ -1,4 +1,5 @@
 import { WORKER_URL } from "@/constants";
+import { gameToCollectionSchema } from "@/types/api";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/users";
@@ -12,13 +13,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 	// POST /api/collections
 	if (request.method === "POST") {
-		const formData = await zx.parseFormSafe(request, {
-			gameId: zx.NumAsString,
-			userId: z.string(),
-		});
+		const result = await zx.parseFormSafe(request, gameToCollectionSchema);
 
-		if (formData.success) {
-			const { gameId, userId } = formData.data;
+		if (result.success) {
+			const { gameId, userId } = result.data;
 			// save a game to the user's collection
 			const savedGame = await db
 				.insert(usersToGames)
@@ -45,26 +43,23 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			});
 		} else {
 			return json({
-				error: formData.error,
+				error: result.error,
 			});
 		}
 	}
 
 	// DELETE /api/collections
 	if (request.method === "DELETE") {
-		const formData = await zx.parseFormSafe(request, {
-			gameId: zx.NumAsString,
-			userId: z.string(),
-		});
+		const result = await zx.parseFormSafe(request, gameToCollectionSchema);
 
-		if (formData.success) {
+		if (result.success) {
 			// remove a game from the user's collection
 			const removedGame = await db
 				.delete(usersToGames)
 				.where(
 					and(
-						eq(usersToGames.userId, formData.data.userId),
-						eq(usersToGames.gameId, formData.data.gameId),
+						eq(usersToGames.userId, result.data.userId),
+						eq(usersToGames.gameId, result.data.gameId),
 					),
 				);
 
@@ -73,7 +68,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			});
 		} else {
 			return json({
-				error: formData.error,
+				error: result.error,
 			});
 		}
 	}
