@@ -5,10 +5,8 @@ import {
   getUserGameCollection,
 } from "@/features/collection";
 import { LibraryView, useSearch } from "@/features/library";
+import { getUserPlaylists } from "@/features/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { db } from "db";
-import { playlists } from "db/schema/playlists";
-import { eq } from "drizzle-orm";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 ///
@@ -17,12 +15,15 @@ import { typedjson, useTypedLoaderData } from "remix-typedjson";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await auth(request);
 
-  const userCollection = await getUserGameCollection(session.id);
-  const games = userCollection.map((c) => c.game);
+  const userCollectionPromise = getUserGameCollection(session.id);
+  const userPlaylistsPromise = getUserPlaylists(session.id);
 
-  const userPlaylists = await db.query.playlists.findMany({
-    where: eq(playlists.creatorId, session.id),
-  });
+  const [userCollection, userPlaylists] = await Promise.all([
+    userCollectionPromise,
+    userPlaylistsPromise,
+  ]);
+
+  const games = userCollection.map((c) => c.game);
 
   return typedjson({ userCollection, session, userPlaylists, games });
 };
