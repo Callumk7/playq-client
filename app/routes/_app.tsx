@@ -10,6 +10,7 @@ import { db } from "db";
 import { playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
+import { SessionContext } from "@/features/auth/components/session-context";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -38,7 +39,9 @@ export default function AppLayout() {
         <div className="col-span-8 h-full">
           <Navbar />
           <Container className="mt-10">
-            <Outlet />
+            <SessionContext.Provider value={session}>
+              <Outlet />
+            </SessionContext.Provider>
           </Container>
         </div>
       </div>

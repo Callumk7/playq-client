@@ -1,3 +1,4 @@
+import { useSession } from "@/features/auth/components/session-context";
 import { auth } from "@/features/auth/helper";
 import { GameCover } from "@/features/library/game-cover";
 import { LibraryView } from "@/features/library/library-view";
@@ -46,18 +47,22 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function PlaylistRoute() {
   const { playlistWithGames, allPlaylists } = useTypedLoaderData<typeof loader>();
+  const session = useSession();
   return (
-    <LibraryView>
-      {playlistWithGames?.games.map((game) => (
-        <GameCover
-          key={game.game.id}
-          coverId={game.game.cover.imageId}
-          gameId={game.gameId}
-          playlists={allPlaylists}
-        >
-          Controls
-        </GameCover>
-      ))}
-    </LibraryView>
+    <>
+      <div>Your session id: {session?.id}</div>
+      <LibraryView>
+        {playlistWithGames?.games.map((game) => (
+          <GameCover
+            key={game.game.id}
+            coverId={game.game.cover.imageId}
+            gameId={game.gameId}
+            playlists={allPlaylists}
+          >
+            Controls
+          </GameCover>
+        ))}
+      </LibraryView>
+    </>
   );
 }
