@@ -1,4 +1,4 @@
-import { auth } from "@/features/auth/helper";
+import { auth } from "@/features/auth";
 import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { Outlet } from "@remix-run/react";

@@ -14,6 +14,11 @@ export const getUserGameCollection = async (userId: string) => {
 							playlist: true,
 						},
 					},
+					genres: {
+						with: {
+							genre: true,
+						},
+					},
 				},
 			},
 		},

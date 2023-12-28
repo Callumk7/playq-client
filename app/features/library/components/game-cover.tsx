@@ -1,7 +1,6 @@
 import { IGDBImage } from "@/types/igdb";
 import { cn } from "@/util/cn";
 import { Playlist } from "@/types/playlists";
-import { CollectionContextMenu } from "../collection/components/collection-context-menu";
 
 interface GameCoverProps {
   gameId: number;

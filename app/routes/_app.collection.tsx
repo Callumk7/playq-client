@@ -1,7 +1,8 @@
-import { auth } from "@/features/auth/helper";
+import { auth } from "@/features/auth";
 import {
   CollectionGame,
   CollectionMenubar,
+  getCollectionGenres,
   getUserGameCollection,
 } from "@/features/collection";
 import { LibraryView, useSearch } from "@/features/library";
@@ -17,22 +18,24 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const userCollectionPromise = getUserGameCollection(session.id);
   const userPlaylistsPromise = getUserPlaylists(session.id);
+  const userGenresPromise = getCollectionGenres(session.id);
 
-  const [userCollection, userPlaylists] = await Promise.all([
+  const [userCollection, userPlaylists, genres] = await Promise.all([
     userCollectionPromise,
     userPlaylistsPromise,
+    userGenresPromise,
   ]);
 
-  const games = userCollection.map((c) => c.game);
+  const games = userCollection.map((g) => g.game);
 
-  return typedjson({ userCollection, session, userPlaylists, games });
+  return typedjson({ session, userPlaylists, games, genres });
 };
 
 ///
 /// ROUTE
 ///
 export default function CollectionRoute() {
-  const { session, userPlaylists, games } = useTypedLoaderData<typeof loader>();
+  const { session, userPlaylists, games, genres } = useTypedLoaderData<typeof loader>();
 
   const { searchTerm, searchedGames, handleSearchTermChanged } = useSearch(games);
 

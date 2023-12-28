@@ -1,7 +1,7 @@
-import { GameCover } from "@/features/library/game-cover";
 import { CollectionControls } from "./collection-controls";
 import { Playlist } from "@/types/playlists";
 import { CollectionContextMenu } from "./collection-context-menu";
+import { GameCover } from "@/features/library";
 
 interface CollectionGameProps {
   gamePlaylists: Playlist[];

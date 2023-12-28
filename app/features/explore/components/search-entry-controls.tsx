@@ -1,5 +1,5 @@
+import { RemoveFromCollectionButton } from "@/features/collection";
 import { SaveToCollectionButton } from "./save-to-collection-button";
-import { RemoveFromCollectionButton } from "@/features/collection/components/delete-from-collection-button";
 
 interface SearchEntryControlsProps {
   gameId: number;

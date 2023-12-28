@@ -1,5 +1,4 @@
-import { RemoveFromCollectionButton } from "./delete-from-collection-button";
-import { GameMenuButton } from "./game-menu-button";
+import { RemoveFromCollectionButton } from "./remove-from-collection-button";
 import { ReorderButtons } from "./reorder-buttons";
 
 interface CollectionControlsProps {

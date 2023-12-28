@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { IGDB_BASE_URL } from "@/constants";
-import { auth } from "@/features/auth/helper";
+import { auth } from "@/features/auth";
 import { getCollectionGameIds } from "@/features/collection";
 import { SearchEntryControls, markResultsAsSaved } from "@/features/explore";
 import { GameCover, LibraryView } from "@/features/library";

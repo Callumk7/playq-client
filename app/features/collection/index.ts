@@ -10,6 +10,7 @@ import { GameSearch } from "./components/game-search";
 // Lib
 import { getCollectionGameIds } from "./lib/get-collection-gameIds";
 import { getUserGameCollection } from "./lib/get-game-collection";
+import { getCollectionGenres } from "./lib/get-collection-genres";
 
 export {
 	CollectionGame,
@@ -21,4 +22,5 @@ export {
 	GameSearch,
 	getCollectionGameIds,
 	getUserGameCollection,
+	getCollectionGenres,
 };
