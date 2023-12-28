@@ -27,3 +27,4 @@ export type InsertScreenshot = z.infer<typeof screenshotsInsertSchema>;
 
 export type GameWithCover = Game & { cover: Cover };
 export type GameWithPlaylists = GameWithCover & { playlists }
+

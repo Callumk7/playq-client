@@ -9,6 +9,7 @@ interface CollectionGameProps {
   coverId: string;
   gameId: number;
   userId: string;
+  moveGame: (gameId: number, direction: 1 | -1) => void;
 }
 
 export function CollectionGame({
@@ -17,7 +18,9 @@ export function CollectionGame({
   coverId,
   gameId,
   userId,
+  moveGame,
 }: CollectionGameProps) {
+
   return (
     <CollectionContextMenu
       gameId={gameId}
@@ -26,7 +29,7 @@ export function CollectionGame({
       gamePlaylists={gamePlaylists}
     >
       <GameCover coverId={coverId} gameId={gameId} playlists={userPlaylists}>
-        <CollectionControls gameId={gameId} userId={userId} />
+        <CollectionControls gameId={gameId} userId={userId} moveGame={moveGame} />
       </GameCover>
     </CollectionContextMenu>
   );
