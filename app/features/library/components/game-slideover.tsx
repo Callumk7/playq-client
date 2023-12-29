@@ -7,6 +7,8 @@ import {
   SlideOverTrigger,
 } from "@/components/ui/custom/slide-over";
 import { GameWithCollection } from "@/types/games";
+import { DBImage } from "./game-cover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface GameSlideOverProps {
   game: GameWithCollection;
@@ -25,6 +27,13 @@ export function GameSlideOver({ game, children }: GameSlideOverProps) {
             </SlideOverDescription>
           )}
         </SlideOverHeader>
+        <ScrollArea className="w-full h-full">
+          <div className="grid grid-cols-2 gap-4">
+            {game.artworks?.map((artwork) => (
+              <DBImage key={artwork.id} imageId={artwork.imageId} size="1080p" />
+            ))}
+          </div>
+        </ScrollArea>
       </SlideOverContent>
     </SlideOver>
   );

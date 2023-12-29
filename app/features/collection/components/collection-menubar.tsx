@@ -1,10 +1,3 @@
-import {
-  Menubar,
-  MenubarMenu,
-  MenubarTrigger,
-  MenubarContent,
-  MenubarItem,
-} from "@/components/ui/menubar";
 import { GameSearch } from "./game-search";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";

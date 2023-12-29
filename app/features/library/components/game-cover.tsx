@@ -26,10 +26,17 @@ export function GameCover({
         "relative flex max-w-sm flex-col items-center justify-between overflow-hidden rounded-lg text-foreground",
       )}
     >
-      <img
-        src={`https://images.igdb.com/igdb/image/upload/t_${size}/${coverId}.jpg`}
-        alt="cover image"
-      />
+      <DBImage imageId={coverId} size={size} />
     </div>
   );
 }
+
+export function DBImage({ imageId, size }: { imageId: string, size: IGDBImage }) {
+  return (
+    <img
+      src={`https://images.igdb.com/igdb/image/upload/t_${size}/${imageId}.jpg`}
+      alt="cover image"
+    />
+  );
+}
+
