@@ -1,5 +1,5 @@
 import { db } from "db";
-import { usersToGames } from "db/schema/users";
+import { usersToGames } from "db/schema/games";
 import { eq } from "drizzle-orm";
 
 export const getCollectionGameIds = async (userId: string): Promise<number[]> => {

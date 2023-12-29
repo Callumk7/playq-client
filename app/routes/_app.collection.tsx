@@ -5,13 +5,10 @@ import {
   getCollectionGenres,
   getUserGameCollection,
 } from "@/features/collection";
+import { CollectionGameClass } from "@/features/collection/classes/collection-game";
 import { LibraryView, useSearch } from "@/features/library";
 import { getUserPlaylists } from "@/features/playlists";
-import { addPositionsToCollection } from "@/util/sort-array";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { db } from "db";
-import { usersToGames } from "db/schema/users";
-import { and, eq } from "drizzle-orm";
 import { useState } from "react";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
@@ -29,26 +26,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     userPlaylistsPromise,
   ]);
 
-  // NOTE: I used this little snippet here to update the database. I should
-  // probably remove the null possibility from the database, and instead have
-  // the database just increment the position when a new entry is created.
-  //
-  // const collectionWithPositions = addPositionsToCollection(userCollection);
-  // const promises: Promise<unknown>[] = [];
-  // collectionWithPositions.forEach((c) => {
-  //   promises.push(
-  //     db
-  //       .update(usersToGames)
-  //       .set({
-  //         position: c.position,
-  //       })
-  //       .where(and(eq(usersToGames.userId, c.userId), eq(usersToGames.gameId, c.gameId))),
-  //   );
-  // });
-  //
-  // await Promise.all(promises);
-
-  userCollection.sort((a, b) => a.position! - b.position!);
 
   return typedjson({ session, userPlaylists, userCollection });
 };

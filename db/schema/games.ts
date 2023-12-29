@@ -1,7 +1,14 @@
 import { relations } from "drizzle-orm";
-import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { usersToGames } from "./users";
+import {
+	boolean,
+	integer,
+	pgTable,
+	primaryKey,
+	text,
+	timestamp,
+} from "drizzle-orm/pg-core";
 import { gamesOnPlaylists } from "./playlists";
+import { users } from "./users";
 
 export const games = pgTable("games", {
 	id: text("id").primaryKey(),
@@ -99,6 +106,35 @@ export const genresToGamesRelations = relations(genresToGames, ({ one }) => ({
 	}),
 	game: one(games, {
 		fields: [genresToGames.gameId],
+		references: [games.gameId],
+	}),
+}));
+
+export const usersToGames = pgTable(
+	"users_to_games",
+	{
+		userId: text("user_id").notNull(),
+		gameId: integer("game_id").notNull(),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+		updatedAt: timestamp("updated_at").notNull().defaultNow(),
+		isUpdated: boolean("is_updated").default(false),
+		played: boolean("played").default(false).notNull(),
+		playerRating: integer("player_rating"),
+		completed: boolean("completed").default(false).notNull(),
+		position: integer("position"),
+	},
+	(t) => ({
+		pk: primaryKey(t.userId, t.gameId),
+	}),
+);
+
+export const usersToGamesRelations = relations(usersToGames, ({ one }) => ({
+	user: one(users, {
+		fields: [usersToGames.userId],
+		references: [users.id],
+	}),
+	game: one(games, {
+		fields: [usersToGames.gameId],
 		references: [games.gameId],
 	}),
 }));

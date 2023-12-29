@@ -2,9 +2,8 @@ import { WORKER_URL } from "@/constants";
 import { gameToCollectionSchema } from "@/types/api";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
-import { usersToGames } from "db/schema/users";
+import { usersToGames } from "db/schema/games";
 import { and, eq } from "drizzle-orm";
-import { z } from "zod";
 import { zx } from "zodix";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
