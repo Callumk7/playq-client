@@ -6,6 +6,7 @@ import {
 } from "@/features/collection";
 import { transformCollectionIntoGames } from "@/features/collection/lib/get-game-collection";
 import { LibraryView, useSearch } from "@/features/library";
+import { useSort } from "@/features/library/hooks/sort";
 import { getUserPlaylists } from "@/features/playlists";
 import { GameWithCollection } from "@/types/games";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -39,15 +40,23 @@ export default function CollectionRoute() {
   const { searchTerm, searchedGames, handleSearchTermChanged } =
     useSearch(games);
 
+  const {
+    sortOption,
+    setSortOption,
+    sortedGames
+  } = useSort(games);
+
   return (
     <div>
       <CollectionMenubar
         userId={session.id}
         searchTerm={searchTerm}
+        sortOption={sortOption}
+        setSortOption={setSortOption}
         handleSearchTermChanged={handleSearchTermChanged}
       />
       <LibraryView>
-        {searchedGames.map((game) => (
+        {sortedGames.map((game) => (
           <CollectionGame
             game={game}
             userId={session.id}
