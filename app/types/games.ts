@@ -44,13 +44,13 @@ export type CollectionWithGame = UsersToGames & { game: GameWithCover };
 export const gameWithCollectionSchema = gamesSelectSchema.extend({
 	cover: coversSelectSchema,
 	genres: z.array(genresSelectSchema),
-	screenshots: z.array(screenshotsSelectSchema).optional().nullable(),
-	artworks: z.array(artworksSelectSchema).optional().nullable(),
-	playlists: z.array(playlistsSelectSchema).optional().nullable(),
+	screenshots: z.array(screenshotsSelectSchema),
+	artworks: z.array(artworksSelectSchema),
+	playlists: z.array(playlistsSelectSchema),
 	played: z.boolean(),
-	playerRating: z.number().optional().nullable(),
+	playerRating: z.number().nullable(),
 	completed: z.boolean().nullable(),
-	position: z.number().optional().nullable(),
+	position: z.number().nullable(),
 })
 
 export type GameWithCollection = z.infer<typeof gameWithCollectionSchema>;

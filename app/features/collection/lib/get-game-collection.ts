@@ -20,6 +20,8 @@ export const getUserGameCollection = async (userId: string) => {
 							genre: true,
 						},
 					},
+					screenshots: true,
+					artworks: true,
 				},
 			},
 		},

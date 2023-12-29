@@ -7,8 +7,8 @@ import {
 import { transformCollectionIntoGames } from "@/features/collection/lib/get-game-collection";
 import { LibraryView, useSearch } from "@/features/library";
 import { getUserPlaylists } from "@/features/playlists";
+import { GameWithCollection } from "@/types/games";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useState } from "react";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 ///
@@ -25,8 +25,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     userPlaylistsPromise,
   ]);
 
-  const games = transformCollectionIntoGames(userCollection);
-
+  const games: GameWithCollection[] = transformCollectionIntoGames(userCollection);
 
   return typedjson({ session, userPlaylists, games });
 };
@@ -55,7 +54,7 @@ export default function CollectionRoute() {
             coverId={game.cover.imageId}
             key={game.gameId}
             userPlaylists={userPlaylists}
-            gamePlaylists={game.playlists!}
+            gamePlaylists={game.playlists}
           />
         ))}
       </LibraryView>
