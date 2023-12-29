@@ -2,7 +2,6 @@ import { z } from "zod";
 import { zx } from "zodix";
 
 // Action Requests
-
 export const gameToCollectionSchema = z.object({
 	gameId: zx.NumAsString,
 	userId: z.string(),

@@ -2,6 +2,10 @@ import { Artwork, Cover, Game, Genre, Screenshot } from "@/types/games";
 import { Playlist } from "@/types/playlists";
 import { UsersToGames } from "@/types/users";
 
+// NOTE: This was an experiment, but I don't think using a class 
+// is a great idea, compared to creating a schema with zod and validating
+// against that. 
+
 export class CollectionGameClass {
 	public id: string;
 	public gameId: number;
