@@ -49,6 +49,7 @@ export default function CollectionRoute() {
       <LibraryView>
         {searchedGames.map((game) => (
           <CollectionGame
+            game={game}
             userId={session.id}
             gameId={game.gameId}
             coverId={game.cover.imageId}
