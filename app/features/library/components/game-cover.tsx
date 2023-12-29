@@ -1,21 +1,14 @@
 import { IGDBImage } from "@/types/igdb";
 import { cn } from "@/util/cn";
-import { Playlist } from "@/types/playlists";
 
 interface GameCoverProps {
-  gameId: number;
   coverId: string;
   isSelected?: boolean;
-  playlists: Playlist[];
-  children?: React.ReactNode;
 }
 
 export function GameCover({
-  gameId,
   coverId,
   isSelected,
-  playlists,
-  children,
 }: GameCoverProps) {
   const size: IGDBImage = "720p";
 
@@ -27,19 +20,16 @@ export function GameCover({
   const borderStyle = getBorderStyle(isSelected || false);
 
   return (
-    <div>
-      <div
-        className={cn(
-          borderStyle,
-          "relative flex max-w-sm flex-col items-center justify-between overflow-hidden rounded-lg text-foreground",
-        )}
-      >
-        <img
-          src={`https://images.igdb.com/igdb/image/upload/t_${size}/${coverId}.jpg`}
-          alt="cover image"
-        />
-      </div>
-      <div className="pt-3">{children}</div>
+    <div
+      className={cn(
+        borderStyle,
+        "relative flex max-w-sm flex-col items-center justify-between overflow-hidden rounded-lg text-foreground",
+      )}
+    >
+      <img
+        src={`https://images.igdb.com/igdb/image/upload/t_${size}/${coverId}.jpg`}
+        alt="cover image"
+      />
     </div>
   );
 }

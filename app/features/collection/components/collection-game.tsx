@@ -22,19 +22,19 @@ export function CollectionGame({
   gameId,
   userId,
 }: CollectionGameProps) {
-
   return (
-    <GameSlideOver game={game}>
-      <CollectionContextMenu
-        gameId={gameId}
-        userId={userId}
-        playlists={userPlaylists}
-        gamePlaylists={gamePlaylists}
-      >
-        <GameCover coverId={coverId} gameId={gameId} playlists={userPlaylists}>
-          <CollectionControls gameId={gameId} userId={userId} />
-        </GameCover>
-      </CollectionContextMenu>
-    </GameSlideOver>
+    <div>
+      <GameSlideOver game={game}>
+        <CollectionContextMenu
+          gameId={gameId}
+          userId={userId}
+          playlists={userPlaylists}
+          gamePlaylists={gamePlaylists}
+        >
+          <GameCover coverId={coverId} />
+        </CollectionContextMenu>
+      </GameSlideOver>
+      <CollectionControls gameId={gameId} userId={userId} className="mt-3" />
+    </div>
   );
 }
