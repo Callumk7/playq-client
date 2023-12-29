@@ -25,7 +25,7 @@ export function CreatePlaylistDialog({
         <DialogDescription>
           Create a list that you can use to collect games that you think go together well
         </DialogDescription>
-        <CreatePlaylistForm userId={userId} />
+        <CreatePlaylistForm userId={userId} dialogOpen={dialogOpen} setDialogOpen={setDialogOpen} />
       </DialogContent>
     </Dialog>
   );

@@ -1,10 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
-import { Form, useFetcher } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
+import { useEffect } from "react";
 
-export function CreatePlaylistForm({ userId }: { userId: string }) {
+interface CreatePlaylistFormProps {
+  userId: string;
+  dialogOpen: boolean;
+  setDialogOpen: (open: boolean) => void;
+}
+
+export function CreatePlaylistForm({ userId, dialogOpen, setDialogOpen }: CreatePlaylistFormProps) {
   const fetcher = useFetcher();
   const isSubmitting = fetcher.state === "submitting";
+
+  // No need to wait.. just close the dialog.
+  useEffect(() => {
+    if (isSubmitting && dialogOpen) {
+      setDialogOpen(false);
+    }
+  }, [isSubmitting, dialogOpen, setDialogOpen]);
+
   return (
     <fetcher.Form
       method="post"
