@@ -1,3 +1,4 @@
+import { GameWithCollection, gameWithCollectionSchema } from "@/types/games";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { eq } from "drizzle-orm";
@@ -25,4 +26,27 @@ export const getUserGameCollection = async (userId: string) => {
 	});
 
 	return userCollection;
+};
+
+type PromiseType<T> = T extends Promise<infer U> ? U : T;
+
+export const transformCollectionIntoGames = (
+	collection: PromiseType<ReturnType<typeof getUserGameCollection>>,
+) => {
+	const games: GameWithCollection[] = collection.map((c) => ({
+		...c,
+		...c.game,
+		cover: c.game.cover,
+		playlists: c.game.playlists.map((p) => p.playlist),
+		genres: c.game.genres.map((g) => g.genre),
+	}));
+
+	// validate at runtime
+	try {
+		games.forEach((g) => gameWithCollectionSchema.parse(g));
+		return games;
+	} catch (e) {
+		console.error(e);
+		return [];
+	}
 };

@@ -2,10 +2,9 @@ import { auth } from "@/features/auth";
 import {
   CollectionGame,
   CollectionMenubar,
-  getCollectionGenres,
   getUserGameCollection,
 } from "@/features/collection";
-import { CollectionGameClass } from "@/features/collection/classes/collection-game";
+import { transformCollectionIntoGames } from "@/features/collection/lib/get-game-collection";
 import { LibraryView, useSearch } from "@/features/library";
 import { getUserPlaylists } from "@/features/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -26,41 +25,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     userPlaylistsPromise,
   ]);
 
+  const games = transformCollectionIntoGames(userCollection);
 
-  return typedjson({ session, userPlaylists, userCollection });
+
+  return typedjson({ session, userPlaylists, games });
 };
 
 ///
 /// ROUTE
 ///
 export default function CollectionRoute() {
-  const { session, userPlaylists, userCollection } = useTypedLoaderData<typeof loader>();
+  const { session, userPlaylists, games } = useTypedLoaderData<typeof loader>();
 
   const { searchTerm, searchedGames, handleSearchTermChanged } =
-    useSearch(userCollection);
-
-  const [games, setGames] = useState(searchedGames);
-
-  // I think this is not that good.
-  const moveGame = (gameId: number, direction: 1 | -1) => {
-    const newGames = [...games];
-    const index = newGames.findIndex((g) => g.game.gameId === gameId);
-
-    // return early if we try to move the first game up, or the last game down
-    if (index === 0 && direction === -1) return;
-    if (index === newGames.length - 1 && direction === 1) return;
-
-    const temp = newGames[index + direction].position!;
-    newGames[index + direction].position = newGames[index].position!;
-    newGames[index].position = temp;
-    newGames.sort((a, b) => a.position! - b.position!);
-    newGames.forEach((g, i) => {
-      g.position = i;
-    });
-
-    setGames(newGames);
-    // updateGamePositionToServer
-  };
+    useSearch(games);
 
   return (
     <div>
@@ -70,15 +48,14 @@ export default function CollectionRoute() {
         handleSearchTermChanged={handleSearchTermChanged}
       />
       <LibraryView>
-        {games.map((game) => (
+        {searchedGames.map((game) => (
           <CollectionGame
             userId={session.id}
-            gameId={game.game.gameId}
-            coverId={game.game.cover.imageId}
+            gameId={game.gameId}
+            coverId={game.cover.imageId}
             key={game.gameId}
             userPlaylists={userPlaylists}
-            gamePlaylists={game.game.playlists.map((p) => p.playlist)}
-            moveGame={moveGame}
+            gamePlaylists={game.playlists!}
           />
         ))}
       </LibraryView>
