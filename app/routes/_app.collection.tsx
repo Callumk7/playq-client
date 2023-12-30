@@ -44,7 +44,7 @@ export default function CollectionRoute() {
     sortOption,
     setSortOption,
     sortedGames
-  } = useSort(games);
+  } = useSort(searchedGames);
 
   return (
     <div>

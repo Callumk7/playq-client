@@ -4,11 +4,13 @@ import { IGDB_BASE_URL } from "@/constants";
 import { auth } from "@/features/auth";
 import { getCollectionGameIds } from "@/features/collection";
 import { SearchEntryControls, markResultsAsSaved } from "@/features/explore";
+import { ExploreGame } from "@/features/explore/components/SearchGame";
 import { GameCover, LibraryView } from "@/features/library";
 import { FetchOptions, fetchGamesFromIGDB } from "@/lib/igdb";
 import { IGDBGame, IGDBGameSchemaArray } from "@/types/igdb";
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   // Get the signed in user's collection, so we can display which games they already have
@@ -31,7 +33,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       "version_parent = null",
       "themes != (42)",
     ],
-  }
+  };
 
   if (search) {
     searchOptions.search = search;
@@ -53,11 +55,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const resultsMarkedAsSaved = markResultsAsSaved(searchResults, gameIds);
 
-  return json({ resultsMarkedAsSaved, session });
+  return typedjson({ resultsMarkedAsSaved, session });
 };
 
 export default function ExploreRoute() {
-  const { resultsMarkedAsSaved, session } = useLoaderData<typeof loader>();
+  const { resultsMarkedAsSaved, session } = useTypedLoaderData<typeof loader>();
 
   return (
     <div>
@@ -66,17 +68,16 @@ export default function ExploreRoute() {
           <Input name="search" type="search" placeholder="What are you looking for?" />
           <Button variant={"outline"}>Search</Button>
         </Form>
-        <div>
-        </div>
+        <div></div>
         <LibraryView>
           {resultsMarkedAsSaved.map((game) => (
-            <GameCover key={game.id} gameId={game.id} playlists={[]} coverId={game.cover.image_id}>
-              <SearchEntryControls
-                isSaved={game.saved}
-                gameId={game.id}
-                userId={session.id}
-              />
-            </GameCover>
+            <ExploreGame
+              key={game.id}
+              game={game}
+              coverId={game.cover.image_id}
+              gameId={game.id}
+              userId={session.id}
+            />
           ))}
         </LibraryView>
       </div>

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { NavLink } from "@remix-run/react";
+import { Link, NavLink } from "@remix-run/react";
 
 const links = [
   {
@@ -28,6 +28,9 @@ export function Navbar() {
           <NavigationLink key={link.name} link={link} />
         ))}
       </div>
+      <form action="/sign-out" method="POST">
+        <Button variant={"outline"}>Sign Out</Button>
+      </form>
     </nav>
   );
 }

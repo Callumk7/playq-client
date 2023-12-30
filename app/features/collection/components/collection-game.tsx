@@ -14,6 +14,8 @@ interface CollectionGameProps {
   userId: string;
 }
 
+// TODO: Improve the imports for this component
+
 export function CollectionGame({
   game,
   gamePlaylists,
