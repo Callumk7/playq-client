@@ -19,20 +19,11 @@ export function GameSlideOver({ game, children }: GameSlideOverProps) {
     <SlideOver>
       <SlideOverTrigger>{children}</SlideOverTrigger>
       <SlideOverContent>
-        <SlideOverHeader>
-          <SlideOverTitle>{game.title}</SlideOverTitle>
-          {game.storyline && (
-            <SlideOverDescription className="whitespace-pre-wrap">
-              {game.storyline}
-            </SlideOverDescription>
-          )}
-        </SlideOverHeader>
-        <ScrollArea className="w-full h-full">
-          <div className="grid grid-cols-2 gap-4">
-            {game.artworks?.map((artwork) => (
-              <DBImage key={artwork.id} imageId={artwork.imageId} size="1080p" />
-            ))}
-          </div>
+        {game.artworks[0] && (
+          <DBImage imageId={game.artworks[0].imageId} size="1080p" className="absolute left-0 right-0 aspect-auto"/>
+        )}
+        <ScrollArea className="h-full w-full">
+          <div className="grid grid-cols-2 gap-4"></div>
         </ScrollArea>
       </SlideOverContent>
     </SlideOver>

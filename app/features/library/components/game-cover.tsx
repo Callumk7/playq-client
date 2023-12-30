@@ -31,11 +31,12 @@ export function GameCover({
   );
 }
 
-export function DBImage({ imageId, size }: { imageId: string, size: IGDBImage }) {
+export function DBImage({ imageId, size, className }: { imageId: string, size: IGDBImage, className?: string }) {
   return (
     <img
       src={`https://images.igdb.com/igdb/image/upload/t_${size}/${imageId}.jpg`}
       alt="cover image"
+      className={cn(className, "w-full h-full")}
     />
   );
 }
