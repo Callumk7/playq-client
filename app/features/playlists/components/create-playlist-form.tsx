@@ -14,6 +14,9 @@ export function CreatePlaylistForm({ userId, dialogOpen, setDialogOpen }: Create
   const isSubmitting = fetcher.state === "submitting";
 
   // No need to wait.. just close the dialog.
+  // Although...
+  // This does not do anything relating to how remix will
+  // handle optimistically updating the ui..
   useEffect(() => {
     if (isSubmitting && dialogOpen) {
       setDialogOpen(false);

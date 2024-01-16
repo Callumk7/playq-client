@@ -2,6 +2,7 @@ import { GameWithCollection, gameWithCollectionSchema } from "@/types/games";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { eq } from "drizzle-orm";
+import { ZodError } from "zod";
 
 export const getUserGameCollection = async (userId: string) => {
 	const userCollection = await db.query.usersToGames.findMany({
@@ -32,6 +33,12 @@ export const getUserGameCollection = async (userId: string) => {
 
 type PromiseType<T> = T extends Promise<infer U> ? U : T;
 
+/**
+ * This function transforms data returned from the database into 
+ * a shape that we can use in our app, nice and flat. It does mean
+ * that I have to maintain this going forward, as I add new features
+ * that need different parts from the server.
+ * */
 export const transformCollectionIntoGames = (
 	collection: PromiseType<ReturnType<typeof getUserGameCollection>>,
 ) => {
@@ -48,7 +55,12 @@ export const transformCollectionIntoGames = (
 		games.forEach((g) => gameWithCollectionSchema.parse(g));
 		return games;
 	} catch (e) {
-		console.error(e);
+		console.error("THERE IS AN ERROR HERE")
+		if (e instanceof ZodError) {
+			console.error(e.flatten())
+		} else {
+			console.error(e);
+		}
 		return [];
 	}
 };

@@ -5,15 +5,15 @@ import {
   DropdownMenuItem,
   DropdownMenuSub,
   DropdownMenuSubContent,
-} from "@/components/ui/dropdown";
-import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown";
+import { Playlist } from "@/types/playlists";
 import {
   HamburgerMenuIcon,
   MixIcon,
   PlusIcon,
+  StarFilledIcon,
   StarIcon,
   TrashIcon,
 } from "@radix-ui/react-icons";
@@ -21,11 +21,19 @@ import { useFetcher } from "@remix-run/react";
 
 interface GameMenuButtonProps {
   gameId: number;
+  isPlayed: boolean;
   userId: string;
   playlists: Playlist[];
+  setIsRateGameDialogOpen: (isDialogOpen: boolean) => void;
 }
 
-export function GameMenuButton({ gameId, userId, playlists }: GameMenuButtonProps) {
+export function GameMenuButton({
+  gameId,
+  isPlayed,
+  userId,
+  playlists,
+  setIsRateGameDialogOpen,
+}: GameMenuButtonProps) {
   const fetcher = useFetcher();
   const handleRemove = () => {
     fetcher.submit(
@@ -36,6 +44,19 @@ export function GameMenuButton({ gameId, userId, playlists }: GameMenuButtonProp
       {
         method: "delete",
         action: "/api/collections",
+      },
+    );
+  };
+
+  const handleMarkAsPlayed = () => {
+    fetcher.submit(
+      {
+        gameId,
+        played: true,
+      },
+      {
+        method: "put",
+        action: `/api/collections/${userId}`,
       },
     );
   };
@@ -55,19 +76,21 @@ export function GameMenuButton({ gameId, userId, playlists }: GameMenuButtonProp
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             {playlists.map((pl) => (
-              <DropdownMenuItem key={pl.id}>
-                {pl.name}
-              </DropdownMenuItem>
+              <DropdownMenuItem key={pl.id}>{pl.name}</DropdownMenuItem>
             ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setIsRateGameDialogOpen(true)}>
           <MixIcon className="mr-2" />
           <span>Rate game</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <StarIcon className="mr-2" />
-          <span>Add to favourites</span>
+        <DropdownMenuItem onClick={handleMarkAsPlayed}>
+          {isPlayed ? (
+            <StarFilledIcon className="mr-2 text-primary" />
+          ) : (
+            <StarIcon className="mr-2" />
+          )}
+          <span>Mark as played</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleRemove}>
           <TrashIcon className="mr-2" />
