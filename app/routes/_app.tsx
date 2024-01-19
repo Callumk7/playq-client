@@ -10,6 +10,7 @@ import { CreatePlaylistDialog } from "@/features/playlists";
 import { createServerClient } from "@/features/auth/supabase/supabase.server";
 import { Playlist } from "@/types/playlists";
 import { createBrowserClient } from "@supabase/ssr";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -44,6 +45,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function AppLayout() {
   const { ENV, session, userPlaylists } = useTypedLoaderData<typeof loader>();
   const supaFetcher = useFetcher();
+  // fetcher for dragging games to a playlist
+  const playlistFetcher = useFetcher();
+
   // We create a single instance of Supabase to use across client components
   const [supabase] = useState(() =>
     createBrowserClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY),
@@ -72,19 +76,39 @@ export default function AppLayout() {
     return () => subscription.unsubscribe();
   }, [serverAccessToken, supabase, supaFetcher]);
 
+  // dnd kit, drop event. This controls specifically games being dragged into a playlist
+  const handleDrop = (e: DragEndEvent) => {
+    if (e.over) {
+      // once we end the drag.. we want to trigger a fetcher
+      playlistFetcher.submit(
+        { addedBy: session!.user.id },
+        {
+          method: "POST",
+          action: `/api/playlists/${e.over.id}/games/${e.active.id}`,
+        },
+      );
+    }
+  };
+
   return (
     <>
-      <div className="block h-full min-h-screen lg:grid lg:grid-cols-10">
-        <div className="col-span-2 hidden h-full min-h-screen lg:block">
-          <Sidebar playlists={userPlaylists} setDialogOpen={setDialogOpen} hasSession={session ? true : false} />
+      <DndContext onDragEnd={handleDrop}>
+        <div className="block h-full min-h-screen lg:grid lg:grid-cols-10">
+          <div className="col-span-2 hidden h-full min-h-screen lg:block">
+            <Sidebar
+              playlists={userPlaylists}
+              setDialogOpen={setDialogOpen}
+              hasSession={session ? true : false}
+            />
+          </div>
+          <div className="col-span-8 h-full">
+            <Navbar supabase={supabase} session={session} />
+            <Container className="mt-10">
+              <Outlet context={{ supabase, session }} />
+            </Container>
+          </div>
         </div>
-        <div className="col-span-8 h-full">
-          <Navbar supabase={supabase} session={session} />
-          <Container className="mt-10">
-            <Outlet context={{ supabase, session }} />
-          </Container>
-        </div>
-      </div>
+      </DndContext>
       {session && (
         <CreatePlaylistDialog
           userId={session.user.id}

@@ -8,6 +8,7 @@ interface CollectionControlsProps {
   userId: string;
   className?: string;
   playlists: Playlist[];
+  gamePlaylists?: Playlist[];
   setIsRateGameDialogOpen: (isDialogOpen: boolean) => void;
 }
 
@@ -17,6 +18,7 @@ export function CollectionControls({
   userId,
   className,
   playlists,
+  gamePlaylists,
   setIsRateGameDialogOpen,
 }: CollectionControlsProps) {
   return (
@@ -31,6 +33,7 @@ export function CollectionControls({
         isPlayed={isPlayed}
         userId={userId}
         playlists={playlists}
+        gamePlaylists={gamePlaylists}
         setIsRateGameDialogOpen={setIsRateGameDialogOpen}
       />
     </div>

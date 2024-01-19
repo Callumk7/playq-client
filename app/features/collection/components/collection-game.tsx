@@ -7,6 +7,7 @@ import { GameWithCollection } from "@/types/games";
 import { useState } from "react";
 import { RateGameDialog } from "./rate-game-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useDraggable } from "@dnd-kit/core";
 
 interface CollectionGameProps {
   game: GameWithCollection;
@@ -28,29 +29,43 @@ export function CollectionGame({
   userId,
 }: CollectionGameProps) {
   const [isRateGameDialogOpen, setIsRateGameDialogOpen] = useState<boolean>(false);
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: gameId,
+  });
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        opacity: 0.3
+      }
+    : undefined;
 
   return (
     <>
       <Tooltip>
         <TooltipTrigger>
-          <GameSlideOver game={game}>
-            <CollectionContextMenu
+          <div>
+            <GameSlideOver game={game}>
+              <CollectionContextMenu
+                gameId={gameId}
+                userId={userId}
+                playlists={userPlaylists}
+                gamePlaylists={gamePlaylists}
+              >
+                <div ref={setNodeRef} {...listeners} {...attributes} style={style}>
+                  <GameCover coverId={coverId} />
+                </div>
+              </CollectionContextMenu>
+            </GameSlideOver>
+            <CollectionControls
               gameId={gameId}
+              isPlayed={game.played}
               userId={userId}
               playlists={userPlaylists}
               gamePlaylists={gamePlaylists}
-            >
-              <GameCover coverId={coverId} />
-            </CollectionContextMenu>
-          </GameSlideOver>
-          <CollectionControls
-            gameId={gameId}
-            isPlayed={game.played}
-            userId={userId}
-            playlists={userPlaylists}
-            setIsRateGameDialogOpen={setIsRateGameDialogOpen}
-            className="mt-1"
-          />
+              setIsRateGameDialogOpen={setIsRateGameDialogOpen}
+              className="mt-1"
+            />
+          </div>
         </TooltipTrigger>
         <TooltipContent>{game.title}</TooltipContent>
       </Tooltip>

@@ -14,15 +14,15 @@ export function GenreFilter({
   handleToggleAllGenres,
 }: GenreFilterProps) {
   return (
-    <div className="self-start flex flex-wrap gap-2">
-      <button onClick={handleToggleAllGenres}>
+    <div className="flex flex-wrap gap-2 self-start">
+      <button type="button" onClick={handleToggleAllGenres}>
         <Tag variant={genreFilter.length === genres.length ? "primary" : "secondary"}>
           All
         </Tag>
       </button>
-      {genres.map((genre, index) => (
-        <button onClick={() => handleGenreToggled(genre)} key={index}>
-          <Tag variant={genreFilter.includes(genre) ? "primary" : "default"} key={index}>
+      {genres.map((genre) => (
+        <button type="button" onClick={() => handleGenreToggled(genre)} key={genre}>
+          <Tag variant={genreFilter.includes(genre) ? "primary" : "default"} key={genre}>
             {genre}
           </Tag>
         </button>

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSub,
@@ -24,6 +25,7 @@ interface GameMenuButtonProps {
   isPlayed: boolean;
   userId: string;
   playlists: Playlist[];
+  gamePlaylists?: Playlist[];
   setIsRateGameDialogOpen: (isDialogOpen: boolean) => void;
 }
 
@@ -32,6 +34,7 @@ export function GameMenuButton({
   isPlayed,
   userId,
   playlists,
+  gamePlaylists,
   setIsRateGameDialogOpen,
 }: GameMenuButtonProps) {
   const fetcher = useFetcher();
@@ -75,8 +78,14 @@ export function GameMenuButton({
             <span>Add to playlist</span>
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            {playlists.map((pl) => (
-              <DropdownMenuItem key={pl.id}>{pl.name}</DropdownMenuItem>
+            {playlists.map((playlist) => (
+              <PlaylistSubMenuItem
+                key={playlist.id}
+                playlist={playlist}
+                gameId={gameId}
+                userId={userId}
+                gamePlaylists={gamePlaylists}
+              />
             ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
@@ -100,3 +109,51 @@ export function GameMenuButton({
     </DropdownMenu>
   );
 }
+
+interface PlaylistSubMenuItemProps {
+  playlist: Playlist;
+  gameId: number;
+  userId: string;
+  gamePlaylists?: Playlist[];
+}
+
+function PlaylistSubMenuItem({
+  playlist,
+  gameId,
+  userId,
+  gamePlaylists,
+}: PlaylistSubMenuItemProps) {
+  const addToPlaylistFetcher = useFetcher();
+
+  // This was just trying to validate the input, but it is kind of stupid
+  // because the submit method has no validation. 
+  const gameInsert = {
+    addedBy: userId,
+  };
+
+  return (
+    <DropdownMenuCheckboxItem
+      key={playlist.id}
+      checked={gamePlaylists?.some((p) => p.id === playlist.id)}
+      onCheckedChange={(checked) => {
+        if (checked) {
+          addToPlaylistFetcher.submit(gameInsert, {
+            method: "POST",
+            action: `/api/playlists/${playlist.id}/games/${gameId}`,
+          });
+        } else {
+          addToPlaylistFetcher.submit(
+            { gameId },
+            {
+              method: "DELETE",
+              action: `/api/playlists/${playlist.id}/games/${gameId}`,
+            },
+          );
+        }
+      }}
+    >
+      {playlist.name}
+    </DropdownMenuCheckboxItem>
+  );
+}
+

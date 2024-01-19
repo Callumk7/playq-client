@@ -1,7 +1,8 @@
 import { IGDBImage } from "@/types/igdb";
 import { cn } from "@/util/cn";
+import { HTMLAttributes } from "react";
 
-interface GameCoverProps {
+interface GameCoverProps extends HTMLAttributes<HTMLDivElement> {
   coverId: string;
   isSelected?: boolean;
 }
@@ -9,6 +10,7 @@ interface GameCoverProps {
 export function GameCover({
   coverId,
   isSelected,
+  ...props
 }: GameCoverProps) {
   const size: IGDBImage = "720p";
 
@@ -25,6 +27,7 @@ export function GameCover({
         borderStyle,
         "relative flex max-w-sm flex-col items-center justify-between overflow-hidden rounded-lg text-foreground",
       )}
+      {...props}
     >
       <DBImage imageId={coverId} size={size} />
     </div>
