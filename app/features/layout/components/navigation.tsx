@@ -20,6 +20,10 @@ const links = [
     to: "/playlists",
     name: "Playlists",
   },
+  {
+    to: "/friends",
+    name: "Friends",
+  },
 ];
 
 interface NavbarProps {

@@ -27,22 +27,22 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         with: {
           user: true,
           friend: true,
-        }
+        },
       },
       friendsOf: {
         with: {
           friend: true,
-          user: true
-        }
-      }
-    }
-  })
+          user: true,
+        },
+      },
+    },
+  });
 
   const userFriends = await db.query.friends.findMany({
     where: eq(friends.userId, session.user.id),
     with: {
       friend: true,
-    }
+    },
   });
 
   return json({ userFriends, allUsers }, { headers });
@@ -64,8 +64,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const newConnection = await db.insert(friends).values({
     userId: friendId,
-    friendId: session!.user.id
-  })
+    friendId: session!.user.id,
+  });
 
   return { newFriend, newConnection };
 };
@@ -74,13 +74,16 @@ export default function FriendsRoute() {
   const { userFriends, allUsers } = useLoaderData<typeof loader>();
   return (
     <Container className="flex flex-col gap-5">
+      <div className="whitespace-pre-wrap">{JSON.stringify(userFriends, null, "\t")}</div>
       <div>
-        {allUsers.map(user => (
+        {allUsers.map((user) => (
           <div key={user.id}>
             <h1>{user.email}</h1>
             <Form method="post" className="flex flex-col gap-2 p-1">
               <input type="hidden" value={user.id} name="friendId" />
-              <Button variant={"outline"} size={"sm"}>Add</Button>
+              <Button variant={"outline"} size={"sm"}>
+                Add
+              </Button>
             </Form>
           </div>
         ))}

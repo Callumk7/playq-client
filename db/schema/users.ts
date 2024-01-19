@@ -41,14 +41,14 @@ export const friends = pgTable(
 );
 
 export const friendsRelations = relations(friends, ({ one }) => ({
-	friend: one(users, {
+	user: one(users, {
 		fields: [friends.userId],
 		references: [users.id],
-		relationName: "friend",
+		relationName: "user",
 	}),
-	user: one(users, {
+	friend: one(users, {
 		fields: [friends.friendId],
 		references: [users.id],
-		relationName: "user",
+		relationName: "friend",
 	}),
 }));

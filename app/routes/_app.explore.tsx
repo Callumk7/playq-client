@@ -33,6 +33,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       headers,
     });
   }
+
   const gameIds = await getCollectionGameIds(session.user.id);
 
   const url = new URL(request.url);

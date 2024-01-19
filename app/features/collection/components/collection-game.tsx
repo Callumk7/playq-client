@@ -35,40 +35,39 @@ export function CollectionGame({
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        opacity: 0.3
+        opacity: 0.3,
       }
     : undefined;
 
   return (
     <>
-      <Tooltip>
-        <TooltipTrigger>
-          <div>
-            <GameSlideOver game={game}>
-              <CollectionContextMenu
-                gameId={gameId}
-                userId={userId}
-                playlists={userPlaylists}
-                gamePlaylists={gamePlaylists}
-              >
-                <div ref={setNodeRef} {...listeners} {...attributes} style={style}>
-                  <GameCover coverId={coverId} />
-                </div>
-              </CollectionContextMenu>
-            </GameSlideOver>
-            <CollectionControls
-              gameId={gameId}
-              isPlayed={game.played}
-              userId={userId}
-              playlists={userPlaylists}
-              gamePlaylists={gamePlaylists}
-              setIsRateGameDialogOpen={setIsRateGameDialogOpen}
-              className="mt-1"
-            />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>{game.title}</TooltipContent>
-      </Tooltip>
+      <div>
+        <GameSlideOver game={game}>
+          <CollectionContextMenu
+            gameId={gameId}
+            userId={userId}
+            playlists={userPlaylists}
+            gamePlaylists={gamePlaylists}
+          >
+            <div ref={setNodeRef} {...listeners} {...attributes} style={style}>
+              <GameCover coverId={coverId} />
+            </div>
+          </CollectionContextMenu>
+        </GameSlideOver>
+
+        <CollectionControls
+          gameId={gameId}
+          isPlayed={game.played}
+          userId={userId}
+          playlists={userPlaylists}
+          gamePlaylists={gamePlaylists}
+          setIsRateGameDialogOpen={setIsRateGameDialogOpen}
+          className="mt-1"
+        />
+      </div>
+
+      {/* I am still not sure this is how you are supposed to work
+      with dialogs, but for now it works ok*/}
       <RateGameDialog
         userId={userId}
         gameId={gameId}

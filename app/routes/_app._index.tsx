@@ -1,11 +1,13 @@
 import { createServerClient, getSession } from "@/features/auth";
 import { Container } from "@/features/layout";
 import { LibraryView } from "@/features/library";
+import { DBImage, GameCover } from "@/features/library/components/game-cover";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
-import { usersToGames } from "db/schema/games";
-import { desc, eq, gt, sql } from "drizzle-orm";
+import { covers, games, usersToGames } from "db/schema/games";
+import { gamesOnPlaylists } from "db/schema/playlists";
+import { count, desc, eq, inArray } from "drizzle-orm";
 
 ///
 /// LOADER
@@ -14,55 +16,87 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabase, headers } = createServerClient(request);
   const session = await getSession(supabase);
 
-  const topRatedGames = await db.query.usersToGames.findMany({
-    with: {
-      game: {
-        with: {
-          cover: true,
-        },
-      },
-    },
-    where: gt(usersToGames.playerRating, 50),
-  });
+  // games that are in the most playlists
+  const popularGamesByPlaylist = db
+    .select({
+      gameId: gamesOnPlaylists.gameId,
+      count: count(gamesOnPlaylists.gameId),
+    })
+    .from(gamesOnPlaylists)
+    .groupBy(gamesOnPlaylists.gameId)
+    .orderBy(desc(count(gamesOnPlaylists.gameId)));
 
-  topRatedGames.sort((a, b) => {
-    const ratingA = a.playerRating ?? 0;
-    const ratingB = b.playerRating ?? 0;
-    return ratingB - ratingA;
-  });
-
-  const averageRatedGames = await db
+  // games that are in the most collections
+  const popularGamesByCollection = db
     .select({
       gameId: usersToGames.gameId,
-      averageRating: sql`avg(${usersToGames.playerRating})`.mapWith(Number),
-      averageRatingCount: sql`count(${usersToGames.playerRating})`,
+      count: count(usersToGames.gameId),
     })
     .from(usersToGames)
     .groupBy(usersToGames.gameId)
-    .orderBy(desc( sql`avg(${usersToGames.playerRating})`.mapWith(Number) ));
+    .orderBy(desc(count(usersToGames.gameId)));
 
-  const popularGames = await db
-    .select({
-      gameId: usersToGames.gameId,
-      count: sql<number>`cast(count( ${usersToGames.gameId} ) as int)`,
-    })
-    .from(usersToGames)
-    .groupBy(usersToGames.gameId);
+  // we should perform both of the above at the same time..
+  const [collectionGameData, playlistGameData] = await Promise.all([
+    popularGamesByCollection,
+    popularGamesByPlaylist,
+  ]);
 
-  popularGames.sort((a, b) => b.count - a.count);
+  // create maps for fast lookup
+  const collectionMap = new Map();
+  collectionGameData.forEach((entry) => {
+    collectionMap.set(entry.gameId, entry.count);
+  });
 
-  return json({ topRatedGames, averageRatedGames }, { headers });
+  const playlistMap = new Map();
+  playlistGameData.forEach((entry) => {
+    playlistMap.set(entry.gameId, entry.count);
+  });
+
+  // now we can get the rest of the game data based off that fetch..
+  // using a Set to ensure we have unique values
+  const gameIds = new Set<number>();
+  collectionGameData.forEach((data) => gameIds.add(data.gameId));
+  playlistGameData.forEach((data) => gameIds.add(data.gameId));
+
+  const gameIdArray = [...gameIds];
+  const gameData = await db.query.games.findMany({
+    where: inArray(games.gameId, gameIdArray),
+    with: {
+      cover: true,
+    },
+  });
+
+  const processedData = gameData.map((data) => {
+    const collectionCount = collectionMap.get(data.gameId) || 0;
+    const playlistCount = playlistMap.get(data.gameId) || 0;
+    return {
+      collectionCount: collectionCount,
+      playlistCount: playlistCount,
+      ...data,
+    };
+  });
+
+  // sort by collection count
+  processedData.sort(
+    (a, b) =>
+      (b.collectionCount ? b.collectionCount : 0) -
+      (a.collectionCount ? a.collectionCount : 0),
+  );
+
+  return json({ processedData }, { headers });
 };
 
 export default function AppIndex() {
-  const { topRatedGames } = useLoaderData<typeof loader>();
+  const { processedData } = useLoaderData<typeof loader>();
   return (
     <Container>
       <LibraryView>
-        {topRatedGames.map((entry) => (
-          <div key={entry.gameId}>
-            <h1>{entry.game.title}</h1>
-            <p>{entry.playerRating}</p>
+        {processedData.map((game) => (
+          <div key={game.id}>
+            <GameCover coverId={game.cover.imageId} />
+            <p>Collection count: {game.collectionCount}</p>
+            <p>playlist count: {game.playlistCount}</p>
           </div>
         ))}
       </LibraryView>

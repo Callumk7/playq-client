@@ -15,7 +15,6 @@ import { useSort } from "@/features/library/hooks/sort";
 import { getUserPlaylists } from "@/features/playlists";
 import { GameWithCollection } from "@/types/games";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 
 ///
@@ -37,7 +36,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const userCollectionPromise = getUserGameCollection(session.user.id);
   const userPlaylistsPromise = getUserPlaylists(session.user.id);
-  
+
   // TODO: this should be just the genres that the user actually has in their
   // collection, rather than all available genres
   const allGenresPromise = getAllGenres();
@@ -63,28 +62,27 @@ export default function CollectionRoute() {
     useTypedLoaderData<typeof loader>();
 
   const {
-		genreFilter,
-		setGenreFilter,
-		filteredGames,
-		handleGenreToggled,
-		handleToggleAllGenres,
-		filterOnPlayed,
-		filterOnCompleted,
-		filterOnStarred,
-		filterOnRated,
-		filterOnUnrated,
-		handleToggleFilterOnPlayed,
-		handleToggleFilterOnCompleted,
-		handleToggleFilterOnStarred,
-		handleToggleFilterOnRated,
-		handleToggleFilterOnUnrated,
+    genreFilter,
+    filteredGames,
+    handleGenreToggled,
+    handleToggleAllGenres,
+    filterOnPlayed,
+    filterOnCompleted,
+    filterOnStarred,
+    filterOnRated,
+    filterOnUnrated,
+    handleToggleFilterOnPlayed,
+    handleToggleFilterOnCompleted,
+    handleToggleFilterOnStarred,
+    handleToggleFilterOnRated,
+    handleToggleFilterOnUnrated,
   } = useFilter(games, genreNames);
   const { searchTerm, searchedGames, handleSearchTermChanged } = useSearch(filteredGames);
   const { sortOption, setSortOption, sortedGames } = useSort(searchedGames);
 
   return (
     <div>
-      <div className="my-3">
+      <div className="mb-8">
         <GenreFilter
           genres={genreNames}
           genreFilter={genreFilter}
@@ -116,7 +114,7 @@ export default function CollectionRoute() {
             userId={session.user.id}
             gameId={game.gameId}
             coverId={game.cover.imageId}
-            key={game.gameId}
+            key={game.id}
             userPlaylists={userPlaylists}
             gamePlaylists={game.playlists}
           />
