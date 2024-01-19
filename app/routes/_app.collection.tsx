@@ -37,6 +37,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const userCollectionPromise = getUserGameCollection(session.user.id);
   const userPlaylistsPromise = getUserPlaylists(session.user.id);
+  
+  // TODO: this should be just the genres that the user actually has in their
+  // collection, rather than all available genres
   const allGenresPromise = getAllGenres();
 
   const [userCollection, userPlaylists, allGenres] = await Promise.all([
