@@ -5,8 +5,8 @@ import { Container } from "@/features/layout";
 import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "db";
-import { friends, users } from "db/schema/users";
-import { eq, ne } from "drizzle-orm";
+import { friends } from "db/schema/users";
+import { eq } from "drizzle-orm";
 
 ///
 /// LOADER
@@ -71,10 +71,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function FriendsRoute() {
-  const { userFriends, allUsers } = useLoaderData<typeof loader>();
+  const { allUsers } = useLoaderData<typeof loader>();
   return (
     <Container className="flex flex-col gap-5">
-      <div className="whitespace-pre-wrap">{JSON.stringify(userFriends, null, "\t")}</div>
       <div>
         {allUsers.map((user) => (
           <div key={user.id}>

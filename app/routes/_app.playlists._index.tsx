@@ -1,7 +1,6 @@
 import { createServerClient, getSession } from "@/features/auth";
 import { Container } from "@/features/layout";
 import { PlaylistCard } from "@/features/playlists/components/playlist-card";
-import { getPlaylistsWithGames } from "@/features/playlists/lib/get-playlists-with-games";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "db";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
@@ -31,7 +30,7 @@ export default function PlaylistView() {
 
   return (
     <Container>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {allPlaylists.map((playlist) => (
           <PlaylistCard
             key={playlist.id}
@@ -46,6 +45,7 @@ export default function PlaylistView() {
   );
 }
 
+// this has column optimisations that might not be ready
 async function getPlaylistsWithCoversAndCreator(limit: number) {
   const playlists = await db.query.playlists.findMany({
     columns: {
@@ -56,13 +56,14 @@ async function getPlaylistsWithCoversAndCreator(limit: number) {
       creator: {
         columns: {
           id: true,
-          email: true,
+          username: true,
         },
       },
       games: {
         columns: {
           gameId: true,
         },
+        limit: 4,
         with: {
           game: {
             columns: {

@@ -11,6 +11,8 @@ import { createServerClient } from "@/features/auth/supabase/supabase.server";
 import { Playlist } from "@/types/playlists";
 import { createBrowserClient } from "@supabase/ssr";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { User } from "@/types/users";
+import { friends } from "db/schema/users";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -32,18 +34,30 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   } = await supabase.auth.getSession();
 
   let userPlaylists: Playlist[] = [];
+  let userFriends: User[] = [];
   if (session) {
     // We need to get the user's playlists, so we can pass it to the sidebar.
+    // In addition, we are also going to get the user's friends.
+    // TODO: We will use Promise.all to get this stuff in parallel.
     userPlaylists = await db.query.playlists.findMany({
       where: eq(playlists.creatorId, session.user.id),
     });
+
+    userFriends = await db.query.friends
+      .findMany({
+        where: eq(friends.userId, session.user.id),
+        with: {
+          friend: true,
+        },
+      })
+      .then((results) => results.map((result) => result.friend));
   }
 
-  return typedjson({ ENV, session, userPlaylists }, { headers });
+  return typedjson({ ENV, session, userPlaylists, userFriends }, { headers });
 };
 
 export default function AppLayout() {
-  const { ENV, session, userPlaylists } = useTypedLoaderData<typeof loader>();
+  const { ENV, session, userPlaylists, userFriends } = useTypedLoaderData<typeof loader>();
   const supaFetcher = useFetcher();
   // fetcher for dragging games to a playlist
   const playlistFetcher = useFetcher();
@@ -97,6 +111,7 @@ export default function AppLayout() {
           <div className="col-span-2 hidden h-full min-h-screen lg:block">
             <Sidebar
               playlists={userPlaylists}
+              friends={userFriends}
               setDialogOpen={setDialogOpen}
               hasSession={session ? true : false}
             />

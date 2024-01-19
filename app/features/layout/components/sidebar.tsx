@@ -4,17 +4,19 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlaylistContextMenu } from "@/features/playlists/components/playlist-context-menu";
 import { Playlist } from "@/types/playlists";
+import { User } from "@/types/users";
 import { useDroppable } from "@dnd-kit/core";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 
 interface SidebarProps {
   playlists: Playlist[];
+  friends: User[];
   setDialogOpen: (open: boolean) => void;
   hasSession: boolean;
 }
 
-export function Sidebar({ playlists, setDialogOpen, hasSession }: SidebarProps) {
+export function Sidebar({ playlists, friends, setDialogOpen, hasSession }: SidebarProps) {
   return (
     <div className="h-full w-full max-w-80 border py-3 pl-8 pr-3">
       <Tabs defaultValue="playlists">
@@ -42,7 +44,11 @@ export function Sidebar({ playlists, setDialogOpen, hasSession }: SidebarProps) 
           </div>
         </TabsContent>
         <TabsContent value="friends">
-          <div>Friends</div>
+          <div>
+            {friends.map(friend => (
+              <SidebarFriendEntry key={friend.id} friend={friend} />
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
     </div>
@@ -72,4 +78,12 @@ function SidebarPlaylistEntry({ playlist }: SidebarPlaylistEntryProps) {
       </Link>
     </PlaylistContextMenu>
   );
+}
+
+interface SidebarFriendEntryProps {
+  friend: User;
+}
+
+function SidebarFriendEntry({ friend }: SidebarFriendEntryProps) {
+  return <div>{friend.email}</div>;
 }
