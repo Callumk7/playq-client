@@ -7,7 +7,6 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { GameIntoPlaylist } from "@/types/api";
 import { Playlist } from "@/types/playlists";
 import { useFetcher } from "@remix-run/react";
 
