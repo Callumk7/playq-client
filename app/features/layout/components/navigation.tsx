@@ -45,7 +45,7 @@ export function Navbar({ supabase, session }: NavbarProps) {
 }
 
 const NavigationLink = ({ link }: { link: { to: string; name: string } }) => (
-  <NavLink key={link.name} to={link.to}>
+  <NavLink key={link.name} to={link.to} prefetch="intent">
     {({ isActive, isPending }) => (
       <Button variant={isActive ? "default" : isPending ? "secondary" : "ghost"}>
         {link.name}

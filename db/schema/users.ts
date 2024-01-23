@@ -36,7 +36,7 @@ export const friends = pgTable(
 	},
 
 	(t) => ({
-		pk: primaryKey(t.userId, t.friendId),
+		pk: primaryKey({ columns: [t.userId, t.friendId] }),
 	}),
 );
 

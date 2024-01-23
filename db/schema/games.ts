@@ -124,7 +124,7 @@ export const usersToGames = pgTable(
 		position: integer("position"),
 	},
 	(t) => ({
-		pk: primaryKey(t.userId, t.gameId),
+		pk: primaryKey({ columns: [t.userId, t.gameId] }),
 	}),
 );
 

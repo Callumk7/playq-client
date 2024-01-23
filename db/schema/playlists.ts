@@ -35,7 +35,7 @@ export const gamesOnPlaylists = pgTable(
 		addedBy: text("added_by").notNull(),
 	},
 	(t) => ({
-		pk: primaryKey(t.gameId, t.playlistId),
+		pk: primaryKey({ columns: [t.gameId, t.playlistId] }),
 	}),
 );
 
@@ -53,4 +53,3 @@ export const gamesOnPlaylistsRelations = relations(gamesOnPlaylists, ({ one }) =
 		references: [users.id],
 	}),
 }));
-
