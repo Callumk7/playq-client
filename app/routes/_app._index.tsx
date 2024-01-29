@@ -1,13 +1,13 @@
 import { createServerClient, getSession } from "@/features/auth";
 import { Container } from "@/features/layout";
 import { LibraryView } from "@/features/library";
-import { DBImage, GameCover } from "@/features/library/components/game-cover";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { GameCover } from "@/features/library/components/game-cover";
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "db";
-import { covers, games, usersToGames } from "db/schema/games";
+import { games, usersToGames } from "db/schema/games";
 import { gamesOnPlaylists } from "db/schema/playlists";
-import { count, desc, eq, inArray } from "drizzle-orm";
+import { count, desc, inArray } from "drizzle-orm";
 
 ///
 /// LOADER
@@ -15,6 +15,10 @@ import { count, desc, eq, inArray } from "drizzle-orm";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabase, headers } = createServerClient(request);
   const session = await getSession(supabase);
+
+  if (!session) {
+    return redirect("/login")
+  }
 
   // games that are in the most playlists
   const popularGamesByPlaylist = db
