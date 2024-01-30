@@ -1,18 +1,39 @@
-import { db } from "db"
-import { genres, genresToGames } from "db/schema/games"
-import { eq, inArray } from "drizzle-orm"
+import { db } from "db";
+import { genres, genresToGames, usersToGames } from "db/schema/games";
+import { eq, inArray } from "drizzle-orm";
 
 // Genre and Count
-export async function getGenresAndCount(userCollectionIds: number[]) {
+export const getGenresAndCount = async (userCollectionIds: number[]) => {
 	const getAllGenres = await db.query.genresToGames.findMany({
-		where: inArray(genresToGames.gameId, userCollectionIds)
-	})
+		where: inArray(genresToGames.gameId, userCollectionIds),
+	});
 
 	console.log(getAllGenres);
 	return getAllGenres;
-}
+};
 
-export async function getAllGenres() {
-	const allGenres = await db.select().from(genres);
+export const getAllGenres = async () => {
+	const allGenres = await db.selectDistinct().from(genres);
 	return allGenres;
-}
+};
+
+export const getUserGenres = async (userId: string) => {
+	const userGames = await db
+		.select()
+		.from(usersToGames)
+		.where(eq(usersToGames.userId, userId));
+
+	const gameIds = userGames.map((entry) => entry.gameId);
+
+	const userGenresQueryArray = await db
+		.selectDistinctOn([genresToGames.genreId])
+		.from(genresToGames)
+		.where(inArray(genresToGames.gameId, gameIds))
+		.rightJoin(genres, eq(genresToGames.genreId, genres.id));
+
+	const userGenres =  userGenresQueryArray
+		.filter((q) => q.genres !== null)
+		.map(q => q.genres)
+
+	return userGenres;
+};

@@ -6,8 +6,7 @@ import {
 } from "@/features/collection";
 import { transformCollectionIntoGames } from "@/features/collection/lib/get-game-collection";
 import {
-  getAllGenres,
-  getGenresAndCount,
+  getAllGenres, getUserGenres,
 } from "@/features/collection/lib/get-user-genres";
 import { LibraryView, useFilter, useSearch } from "@/features/library";
 import { GenreFilter } from "@/features/library/components/genre-filter";
@@ -37,14 +36,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userCollectionPromise = getUserGameCollection(session.user.id);
   const userPlaylistsPromise = getUserPlaylists(session.user.id);
 
-  // TODO: this should be just the genres that the user actually has in their
-  // collection, rather than all available genres
-  const allGenresPromise = getAllGenres();
+  const allUserGenresPromise = getUserGenres(session.user.id);
 
   const [userCollection, userPlaylists, allGenres] = await Promise.all([
     userCollectionPromise,
     userPlaylistsPromise,
-    allGenresPromise,
+    allUserGenresPromise,
   ]);
 
   const games: GameWithCollection[] = transformCollectionIntoGames(userCollection);
