@@ -31,10 +31,23 @@ export const getUserGameCollection = async (userId: string) => {
 	return userCollection;
 };
 
+export const getUserCollectionGameIds = async (userId: string) => {
+	const gameIds = await db.query.usersToGames
+		.findMany({
+			where: eq(usersToGames.userId, userId),
+			columns: {
+				gameId: true,
+			},
+		})
+		.then((game) => game.map((g) => g.gameId));
+
+	return gameIds;
+};
+
 type PromiseType<T> = T extends Promise<infer U> ? U : T;
 
 /**
- * This function transforms data returned from the database into 
+ * This function transforms data returned from the database into
  * a shape that we can use in our app, nice and flat. It does mean
  * that I have to maintain this going forward, as I add new features
  * that need different parts from the server.
@@ -55,9 +68,9 @@ export const transformCollectionIntoGames = (
 		games.forEach((g) => gameWithCollectionSchema.parse(g));
 		return games;
 	} catch (e) {
-		console.error("THERE IS AN ERROR HERE")
+		console.error("THERE IS AN ERROR HERE");
 		if (e instanceof ZodError) {
-			console.error(e.flatten())
+			console.error(e.flatten());
 		} else {
 			console.error(e);
 		}

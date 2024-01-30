@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
-
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlaylistContextMenu } from "@/features/playlists/components/playlist-context-menu";
 import { Playlist } from "@/types/playlists";
 import { User } from "@/types/users";
 import { useDroppable } from "@dnd-kit/core";
-import { PlusIcon } from "@radix-ui/react-icons";
+import { HamburgerMenuIcon, PlusIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 
 interface SidebarProps {
@@ -29,14 +27,20 @@ export function Sidebar({ playlists, friends, setDialogOpen, hasSession }: Sideb
           </TabsTrigger>
         </TabsList>
         <TabsContent value="playlists">
-          <Button
-            onClick={() => setDialogOpen(true)}
-            variant={"outline"}
-            disabled={!hasSession}
-          >
-            <span className="mr-3">Create new</span>
-            <PlusIcon />
-          </Button>
+          <div className="flex gap-5 mt-5">
+            <Button
+              onClick={() => setDialogOpen(true)}
+              variant={"outline"}
+              size={"sm"}
+              disabled={!hasSession}
+            >
+              <span className="mr-3">Create new</span>
+              <PlusIcon />
+            </Button>
+            <Button size={"sm"} variant={"outline"}>
+              <HamburgerMenuIcon />
+            </Button>
+          </div>
           <div className="flex flex-col gap-2 py-4">
             {playlists.map((playlist) => (
               <SidebarPlaylistEntry key={playlist.id} playlist={playlist} />
