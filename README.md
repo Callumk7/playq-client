@@ -1,21 +1,23 @@
-# Modular Remix Template
+# playQ: Video Game Playlist Manager and Tracker
 
-I start a lot of projects, and Remix is in my mind a perfect platform for new React projects thanks to its great SSR, routing, and loader / action design. I made this template to speed up the initial development step by setting up the aspects of a new project that should always stay the same:
+## Introduction to playQ
 
--   styling (right now that is Tailwind)
--   database connection and ORM (TBD)
--   authentication (simple email and password, can be adapted)
+PlayQ is a game management application that allows users to create and track lists of video games, known as playlists. It provides a comprehensive platform for users to keep track of games they've played, want to play, or are currently playing.
 
-## Setup
+Moreover, you can rate the games on a personal scale, adding another layer of information to your lists. This functionality also allows for a comparative analysis between different games based on user ratings.
 
-1. Start by creating a new project from this template
-2. Choose your own database setup, and setup a .env file etc.
-3. Hook up the database....
+This app promotes social interaction by allowing users to share their game playlists with friends or publicly. This makes it easier for users to discover new games and understand their friends' gaming preferences. PlayQ aims to facilitate easier decision-making when it comes to choosing the next game to play.
 
-## Working Notes
+## playQ - A Learning Project
 
-Might setup a SQLite database to start things off for really quick prototyping. I am not sure how this might impact various hosting options that I might use (Vercel, fly.io, Railway, etc.)
+PlayQ is not just a game playlist management app, it's also a comprehensive learning project that incorporates a variety of advanced technologies:
 
-## Storage Setup
+**Supabase** - PlayQ uses Supabase for authentication and database management. Supabase is an open-source Firebase alternative that replicates some of its features like real-time subscriptions and auto-generated APIs, while offering the versatility of PostgreSQL.
 
-I am going to try BetterSqlite3 to start things off with drizzle, and see how this works when hooking it up to the simple authentication that we setup earlier.
+**Remix and React** - The user interface (UI), routing, and data loading are built with Remix and React. Remix is a powerful web framework for React that prioritizes user experience, while React facilitates building reusable UI components efficiently. 
+
+**DrizzleORM** - The app's Object-Relational Mapping (ORM) is handled by DrizzleORM. With DrizzleORM, JavaScript objects are mapped to database tables, simplifying data operations like inserting, updating, or querying data.
+
+**Radix-UI and Shad/cn Inspired Components** - To further refine the user interface, the app uses Radix-UI, a library of low-level, accessible and unstyled UI components for building high-quality web interfaces. The UI design is also influenced by ShaD/CN styled-components, favoring a modern and minimalist aesthetic.
+
+By using these technologies, PlayQ showcases how sophisticated tech stacks can be combined for efficient coding practices and superior user experience.
