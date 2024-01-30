@@ -21,6 +21,10 @@ interface CollectionMenubarProps {
   handleToggleFilterOnStarred: () => void;
   handleToggleFilterOnRated: () => void;
   handleToggleFilterOnUnrated: () => void;
+  isSelecting: boolean;
+  setIsSelecting: (isSelecting: boolean) => void;
+  selectedGames: number[];
+  setSelectedGames: (selectedGames: number[]) => void;
 }
 
 export function CollectionMenubar({
@@ -39,6 +43,10 @@ export function CollectionMenubar({
   handleToggleFilterOnRated,
   handleToggleFilterOnUnrated,
   handleToggleFilterOnStarred,
+  isSelecting,
+  setIsSelecting,
+  selectedGames,
+  setSelectedGames,
 }: CollectionMenubarProps) {
   return (
     <div className="flex justify-between">
@@ -58,7 +66,13 @@ export function CollectionMenubar({
           handleToggleFilterOnUnrated={handleToggleFilterOnUnrated}
           handleToggleFilterOnStarred={handleToggleFilterOnStarred}
         />
-        <Button variant={"outline"}>Select..</Button>
+        <Button
+          variant={isSelecting ? "default" : "outline"}
+          onClick={() => setIsSelecting(!isSelecting)}
+          className="w-40"
+        >
+          {isSelecting ? "Done" : "Select Games.."}
+        </Button>
       </div>
       <Input
         name="search"

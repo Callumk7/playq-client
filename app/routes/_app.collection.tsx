@@ -5,15 +5,14 @@ import {
   getUserGameCollection,
 } from "@/features/collection";
 import { transformCollectionIntoGames } from "@/features/collection/lib/get-game-collection";
-import {
-  getAllGenres, getUserGenres,
-} from "@/features/collection/lib/get-user-genres";
+import { getAllGenres, getUserGenres } from "@/features/collection/lib/get-user-genres";
 import { LibraryView, useFilter, useSearch } from "@/features/library";
 import { GenreFilter } from "@/features/library/components/genre-filter";
 import { useSort } from "@/features/library/hooks/sort";
 import { getUserPlaylists } from "@/features/playlists";
 import { GameWithCollection } from "@/types/games";
 import { LoaderFunctionArgs } from "@remix-run/node";
+import { useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 
 ///
@@ -77,6 +76,10 @@ export default function CollectionRoute() {
   const { searchTerm, searchedGames, handleSearchTermChanged } = useSearch(filteredGames);
   const { sortOption, setSortOption, sortedGames } = useSort(searchedGames);
 
+  // Selected game functionality
+  const [selectedGames, setSelectedGames] = useState<number[]>([]);
+  const [isSelecting, setIsSelecting] = useState<boolean>(false);
+
   return (
     <div>
       <div className="mb-8">
@@ -103,6 +106,10 @@ export default function CollectionRoute() {
         handleToggleFilterOnRated={handleToggleFilterOnRated}
         handleToggleFilterOnUnrated={handleToggleFilterOnUnrated}
         handleToggleFilterOnStarred={handleToggleFilterOnStarred}
+        isSelecting={isSelecting}
+        setIsSelecting={setIsSelecting}
+        selectedGames={selectedGames}
+        setSelectedGames={setSelectedGames}
       />
       <LibraryView>
         {sortedGames.map((game) => (
@@ -114,6 +121,10 @@ export default function CollectionRoute() {
             key={game.id}
             userPlaylists={userPlaylists}
             gamePlaylists={game.playlists}
+            isSelected={selectedGames.includes(game.gameId)}
+            isSelecting={isSelecting}
+            selectedGames={selectedGames}
+            setSelectedGames={setSelectedGames}
           />
         ))}
       </LibraryView>

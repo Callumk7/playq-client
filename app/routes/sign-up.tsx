@@ -107,9 +107,7 @@ export default function SignUpPage() {
           register={register}
           error={errors.lastName?.message}
         />
-        <Button>
-          {fetcher.state === "idle" ? "Sign Up" : <UpdateIcon className="animate-spin" />}
-        </Button>
+        <Button>{fetcher.state === "idle" ? "Sign Up" : <UpdateIcon className="animate-spin" />}</Button>
       </form>
     </Container>
   );

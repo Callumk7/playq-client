@@ -8,6 +8,7 @@ import { useState } from "react";
 import { RateGameDialog } from "./rate-game-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDraggable } from "@dnd-kit/core";
+import { Button } from "@/components/ui/button";
 
 interface CollectionGameProps {
   game: GameWithCollection;
@@ -16,9 +17,11 @@ interface CollectionGameProps {
   coverId: string;
   gameId: number;
   userId: string;
+  isSelected: boolean;
+  isSelecting: boolean;
+  selectedGames: number[];
+  setSelectedGames: (selectedGames: number[]) => void;
 }
-
-// TODO: Improve the imports for this component
 
 export function CollectionGame({
   game,
@@ -27,14 +30,20 @@ export function CollectionGame({
   coverId,
   gameId,
   userId,
+  isSelected,
+  isSelecting,
+  selectedGames,
+  setSelectedGames,
 }: CollectionGameProps) {
   const [isRateGameDialogOpen, setIsRateGameDialogOpen] = useState<boolean>(false);
+
+  // Dragging stuff
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: gameId,
   });
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(0.5)`,
         opacity: 0.3,
       }
     : undefined;
@@ -42,28 +51,28 @@ export function CollectionGame({
   return (
     <>
       <div>
-        <GameSlideOver game={game}>
-          <CollectionContextMenu
+        <div ref={setNodeRef} {...listeners} {...attributes} style={style}>
+          <GameCover coverId={coverId} isSelected={isSelected} />
+        </div>
+
+        <div className="mt-1 flex w-full justify-between">
+          <CollectionControls
             gameId={gameId}
+            isPlayed={game.played}
             userId={userId}
             playlists={userPlaylists}
             gamePlaylists={gamePlaylists}
-          >
-            <div ref={setNodeRef} {...listeners} {...attributes} style={style}>
-              <GameCover coverId={coverId} />
-            </div>
-          </CollectionContextMenu>
-        </GameSlideOver>
-
-        <CollectionControls
-          gameId={gameId}
-          isPlayed={game.played}
-          userId={userId}
-          playlists={userPlaylists}
-          gamePlaylists={gamePlaylists}
-          setIsRateGameDialogOpen={setIsRateGameDialogOpen}
-          className="mt-1"
-        />
+            setIsRateGameDialogOpen={setIsRateGameDialogOpen}
+          />
+          {isSelecting && (
+            <Button
+              variant={"outline"}
+              onClick={() => setSelectedGames([...selectedGames, game.gameId])}
+            >
+              Select
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* I am still not sure this is how you are supposed to work
