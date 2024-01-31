@@ -1,3 +1,4 @@
+import useFilterStore from "@/store/filters";
 import { useState } from "react";
 
 export type SortOption =
@@ -17,15 +18,11 @@ interface SortableGame {
 
 export const useSort = <G extends SortableGame>(
 	games: G[],
-	DEFAULT_SORT_OPTION: SortOption = "rating",
 ) => {
-	const [sortOption, setSortOption] = useState<SortOption>(DEFAULT_SORT_OPTION);
-
+	const sortOption = useFilterStore(state => state.sortOption);
 	const sortedGames = applySorting(games, sortOption);
 
 	return {
-		sortOption,
-		setSortOption,
 		sortedGames,
 	};
 };

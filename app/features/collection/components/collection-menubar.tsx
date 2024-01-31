@@ -7,16 +7,12 @@ import useFilterStore from "@/store/filters";
 
 interface CollectionMenubarProps {
   userId: string;
-  sortOption: SortOption;
-  setSortOption: (option: SortOption) => void;
   isSelecting: boolean;
   setIsSelecting: (isSelecting: boolean) => void;
 }
 
 export function CollectionMenubar({
   userId,
-  sortOption,
-  setSortOption,
   isSelecting,
   setIsSelecting,
 }: CollectionMenubarProps) {
@@ -29,8 +25,6 @@ export function CollectionMenubar({
       <div className="flex w-full justify-start gap-4">
         <GameSearchDialog userId={userId} />
         <GameSortAndFilterMenu
-          sortOption={sortOption}
-          setSortOption={setSortOption}
         />
         <Button
           variant={isSelecting ? "default" : "outline"}
