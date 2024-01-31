@@ -5,7 +5,7 @@ import {
   getUserGameCollection,
 } from "@/features/collection";
 import { transformCollectionIntoGames } from "@/features/collection/lib/get-game-collection";
-import { getAllGenres, getUserGenres } from "@/features/collection/lib/get-user-genres";
+import { getUserGenres } from "@/features/collection/lib/get-user-genres";
 import { LibraryView, useFilter, useSearch } from "@/features/library";
 import { GenreFilter } from "@/features/library/components/genre-filter";
 import { useSort } from "@/features/library/hooks/sort";
@@ -58,20 +58,9 @@ export default function CollectionRoute() {
     useTypedLoaderData<typeof loader>();
 
   const {
-    genreFilter,
     filteredGames,
     handleGenreToggled,
     handleToggleAllGenres,
-    filterOnPlayed,
-    filterOnCompleted,
-    filterOnStarred,
-    filterOnRated,
-    filterOnUnrated,
-    handleToggleFilterOnPlayed,
-    handleToggleFilterOnCompleted,
-    handleToggleFilterOnStarred,
-    handleToggleFilterOnRated,
-    handleToggleFilterOnUnrated,
   } = useFilter(games, genreNames);
   const { searchTerm, searchedGames, handleSearchTermChanged } = useSearch(filteredGames);
   const { sortOption, setSortOption, sortedGames } = useSort(searchedGames);
@@ -85,7 +74,6 @@ export default function CollectionRoute() {
       <div className="mb-8">
         <GenreFilter
           genres={genreNames}
-          genreFilter={genreFilter}
           handleGenreToggled={handleGenreToggled}
           handleToggleAllGenres={handleToggleAllGenres}
         />
@@ -96,20 +84,8 @@ export default function CollectionRoute() {
         sortOption={sortOption}
         setSortOption={setSortOption}
         handleSearchTermChanged={handleSearchTermChanged}
-        filterOnPlayed={filterOnPlayed}
-        filterOnCompleted={filterOnCompleted}
-        filterOnRated={filterOnRated}
-        filterOnUnrated={filterOnUnrated}
-        filterOnStarred={filterOnStarred}
-        handleToggleFilterOnPlayed={handleToggleFilterOnPlayed}
-        handleToggleFilterOnCompleted={handleToggleFilterOnCompleted}
-        handleToggleFilterOnRated={handleToggleFilterOnRated}
-        handleToggleFilterOnUnrated={handleToggleFilterOnUnrated}
-        handleToggleFilterOnStarred={handleToggleFilterOnStarred}
         isSelecting={isSelecting}
         setIsSelecting={setIsSelecting}
-        selectedGames={selectedGames}
-        setSelectedGames={setSelectedGames}
       />
       <LibraryView>
         {sortedGames.map((game) => (

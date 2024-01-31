@@ -1,18 +1,18 @@
 import { Tag } from "@/components/ui/tag";
+import useFilterStore from "@/store/filters";
 
 interface GenreFilterProps {
   genres: string[];
-  genreFilter: string[];
   handleGenreToggled: (genre: string) => void;
   handleToggleAllGenres: () => void;
 }
 
 export function GenreFilter({
   genres,
-  genreFilter,
   handleGenreToggled,
   handleToggleAllGenres,
 }: GenreFilterProps) {
+  const genreFilter = useFilterStore((state) => state.genreFilter);
   return (
     <div className="flex flex-wrap gap-2 self-start">
       <button type="button" onClick={handleToggleAllGenres}>

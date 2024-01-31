@@ -11,20 +11,8 @@ interface CollectionMenubarProps {
   sortOption: SortOption;
   setSortOption: (option: SortOption) => void;
   handleSearchTermChanged: (e: ChangeEvent<HTMLInputElement>) => void;
-  filterOnPlayed: boolean;
-  filterOnCompleted: boolean;
-  filterOnStarred: boolean;
-  filterOnRated: boolean;
-  filterOnUnrated: boolean;
-  handleToggleFilterOnPlayed: () => void;
-  handleToggleFilterOnCompleted: () => void;
-  handleToggleFilterOnStarred: () => void;
-  handleToggleFilterOnRated: () => void;
-  handleToggleFilterOnUnrated: () => void;
   isSelecting: boolean;
   setIsSelecting: (isSelecting: boolean) => void;
-  selectedGames: number[];
-  setSelectedGames: (selectedGames: number[]) => void;
 }
 
 export function CollectionMenubar({
@@ -33,20 +21,8 @@ export function CollectionMenubar({
   sortOption,
   setSortOption,
   handleSearchTermChanged,
-  filterOnPlayed,
-  filterOnCompleted,
-  filterOnRated,
-  filterOnUnrated,
-  filterOnStarred,
-  handleToggleFilterOnPlayed,
-  handleToggleFilterOnCompleted,
-  handleToggleFilterOnRated,
-  handleToggleFilterOnUnrated,
-  handleToggleFilterOnStarred,
   isSelecting,
   setIsSelecting,
-  selectedGames,
-  setSelectedGames,
 }: CollectionMenubarProps) {
   return (
     <div className="flex justify-between">
@@ -55,16 +31,6 @@ export function CollectionMenubar({
         <GameSortAndFilterMenu
           sortOption={sortOption}
           setSortOption={setSortOption}
-          filterOnPlayed={filterOnPlayed}
-          filterOnCompleted={filterOnCompleted}
-          filterOnRated={filterOnRated}
-          filterOnUnrated={filterOnUnrated}
-          filterOnStarred={filterOnStarred}
-          handleToggleFilterOnPlayed={handleToggleFilterOnPlayed}
-          handleToggleFilterOnCompleted={handleToggleFilterOnCompleted}
-          handleToggleFilterOnRated={handleToggleFilterOnRated}
-          handleToggleFilterOnUnrated={handleToggleFilterOnUnrated}
-          handleToggleFilterOnStarred={handleToggleFilterOnStarred}
         />
         <Button
           variant={isSelecting ? "default" : "outline"}

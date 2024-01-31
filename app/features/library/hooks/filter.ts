@@ -1,5 +1,5 @@
+import useFilterStore from "@/store/filters";
 import { Genre } from "@/types/games";
-import { useState } from "react";
 
 interface WithGenres {
 	genres: Genre[];
@@ -17,12 +17,7 @@ export const useFilter = <G extends WithGenres & WithUserData>(
 ) => {
 	let output = [...games];
 
-	const [genreFilter, setGenreFilter] = useState<string[]>([]);
-	const [filterOnPlayed, setFilterOnPlayed] = useState<boolean>(false);
-	const [filterOnCompleted, setFilterOnCompleted] = useState<boolean>(false);
-	const [filterOnStarred, setFilterOnStarred] = useState<boolean>(false);
-	const [filterOnRated, setFilterOnRated] = useState<boolean>(false);
-	const [filterOnUnrated, setFilterOnUnrated] = useState<boolean>(false);
+	const store = useFilterStore();
 
 	output = output.filter((game) => {
 		if (game.genres.length === 0) {
@@ -30,7 +25,7 @@ export const useFilter = <G extends WithGenres & WithUserData>(
 		}
 
 		if (
-			genreFilter.every((filterGenre) =>
+			store.genreFilter.every((filterGenre) =>
 				game.genres.some((gameGenre) => gameGenre.name === filterGenre),
 			)
 		) {
@@ -38,16 +33,16 @@ export const useFilter = <G extends WithGenres & WithUserData>(
 		}
 	});
 
-	if (filterOnPlayed) {
+	if (store.filterOnPlayed) {
 		output = output.filter((game) => game.played);
 	}
-	if (filterOnCompleted) {
+	if (store.filterOnCompleted) {
 		output = output.filter((game) => game.completed);
 	}
-	if (filterOnRated) {
+	if (store.filterOnRated) {
 		output = output.filter((game) => game.playerRating !== null);
 	}
-	if (filterOnUnrated) {
+	if (store.filterOnUnrated) {
 		output = output.filter((game) => game.playerRating === null);
 	}
 
@@ -55,52 +50,24 @@ export const useFilter = <G extends WithGenres & WithUserData>(
 
 	const handleGenreToggled = (genre: string) => {
 		// handle genre toggled
-		setGenreFilter((prevGenreFilter) =>
-			prevGenreFilter.includes(genre)
-				? prevGenreFilter.filter((g) => g !== genre)
-				: [...prevGenreFilter, genre],
+		store.setGenreFilter(
+			store.genreFilter.includes(genre)
+				? store.genreFilter.filter((g) => g !== genre)
+				: [...store.genreFilter, genre],
 		);
 	};
 
 	const handleToggleAllGenres = () => {
-		if (genres.length > genreFilter.length) {
-			setGenreFilter(genres);
+		if (genres.length > store.genreFilter.length) {
+			store.setGenreFilter(genres);
 		} else {
-			setGenreFilter([]);
+			store.setGenreFilter([]);
 		}
 	};
 
-	const handleToggleFilterOnPlayed = () => {
-		setFilterOnPlayed(!filterOnPlayed);
-	};
-	const handleToggleFilterOnCompleted = () => {
-		setFilterOnCompleted(!filterOnCompleted);
-	};
-	const handleToggleFilterOnStarred = () => {
-		setFilterOnStarred(!filterOnStarred);
-	};
-	const handleToggleFilterOnRated = () => {
-		setFilterOnRated(!filterOnRated);
-	};
-	const handleToggleFilterOnUnrated = () => {
-		setFilterOnUnrated(!filterOnUnrated);
-	};
-
 	return {
-		genreFilter,
-		setGenreFilter,
 		filteredGames,
 		handleGenreToggled,
 		handleToggleAllGenres,
-		filterOnPlayed,
-		filterOnCompleted,
-		filterOnStarred,
-		filterOnRated,
-		filterOnUnrated,
-		handleToggleFilterOnPlayed,
-		handleToggleFilterOnCompleted,
-		handleToggleFilterOnStarred,
-		handleToggleFilterOnRated,
-		handleToggleFilterOnUnrated,
 	};
 };
