@@ -62,7 +62,7 @@ export default function CollectionRoute() {
     handleGenreToggled,
     handleToggleAllGenres,
   } = useFilter(games, genreNames);
-  const { searchTerm, searchedGames, handleSearchTermChanged } = useSearch(filteredGames);
+  const { searchedGames } = useSearch(filteredGames);
   const { sortOption, setSortOption, sortedGames } = useSort(searchedGames);
 
   // Selected game functionality
@@ -80,10 +80,8 @@ export default function CollectionRoute() {
       </div>
       <CollectionMenubar
         userId={session.user.id}
-        searchTerm={searchTerm}
         sortOption={sortOption}
         setSortOption={setSortOption}
-        handleSearchTermChanged={handleSearchTermChanged}
         isSelecting={isSelecting}
         setIsSelecting={setIsSelecting}
       />

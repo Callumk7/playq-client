@@ -1,11 +1,11 @@
-import { useState } from "react";
+import useFilterStore from "@/store/filters";
 
 interface GameHasTitle {
 	title: string;
 }
 
 export const useSearch = <G extends GameHasTitle>(games: G[]) => {
-	const [searchTerm, setSearchTerm] = useState<string>("");
+	const searchTerm = useFilterStore(state => state.searchTerm);
 
 	let output: G[] = [...games];
 	if (searchTerm !== "") {
@@ -16,14 +16,7 @@ export const useSearch = <G extends GameHasTitle>(games: G[]) => {
 
 	const searchedGames = output;
 
-	const handleSearchTermChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setSearchTerm(e.target.value);
-	};
-
 	return {
-		searchTerm,
-		setSearchTerm,
 		searchedGames,
-		handleSearchTermChanged,
 	};
 };

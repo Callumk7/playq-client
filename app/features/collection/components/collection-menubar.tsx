@@ -1,29 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
-import { ChangeEvent } from "react";
 import { SortOption } from "@/features/library/hooks/sort";
 import { GameSortAndFilterMenu } from "@/features/library";
 import { GameSearchDialog } from "./game-search-dialog";
+import useFilterStore from "@/store/filters";
 
 interface CollectionMenubarProps {
   userId: string;
-  searchTerm: string;
   sortOption: SortOption;
   setSortOption: (option: SortOption) => void;
-  handleSearchTermChanged: (e: ChangeEvent<HTMLInputElement>) => void;
   isSelecting: boolean;
   setIsSelecting: (isSelecting: boolean) => void;
 }
 
 export function CollectionMenubar({
   userId,
-  searchTerm,
   sortOption,
   setSortOption,
-  handleSearchTermChanged,
   isSelecting,
   setIsSelecting,
 }: CollectionMenubarProps) {
+
+  const searchTerm = useFilterStore(state => state.searchTerm);
+  const setSearchTerm = useFilterStore(state => state.setSearchTerm);
+
   return (
     <div className="flex justify-between">
       <div className="flex w-full justify-start gap-4">
@@ -44,7 +44,7 @@ export function CollectionMenubar({
         name="search"
         type="search"
         value={searchTerm}
-        onChange={handleSearchTermChanged}
+        onChange={(e) => setSearchTerm(e.currentTarget.value)}
         placeholder="Search your collection"
       />
     </div>
