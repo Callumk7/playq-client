@@ -1,12 +1,10 @@
 import { CollectionControls } from "./collection-controls";
 import { Playlist } from "@/types/playlists";
-import { CollectionContextMenu } from "./collection-context-menu";
 import { GameCover } from "@/features/library";
 import { GameSlideOver } from "@/features/library/components/game-slideover";
 import { GameWithCollection } from "@/types/games";
 import { useState } from "react";
 import { RateGameDialog } from "./rate-game-dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDraggable } from "@dnd-kit/core";
 import { Button } from "@/components/ui/button";
 
