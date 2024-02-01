@@ -25,7 +25,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				playlistId: playlistId,
 				gameId: Number(gameId),
 				addedBy: result.data.addedBy,
-			});
+			}).onConflictDoNothing();
 
 			return json({ addedGame });
 		}
