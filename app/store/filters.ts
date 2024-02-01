@@ -19,6 +19,10 @@ interface FilterStore {
 	handleToggleFilterOnRated: () => void;
 	handleToggleFilterOnUnrated: () => void;
 	handleToggleFilterOnStarred: () => void;
+	setFilterOnStarred: (filter: boolean) => void;
+	setFilterOnPlayed: (filter: boolean) => void;
+	setFilterOnCompleted: (filter: boolean) => void;
+	setFilterOnRated: (filter: boolean) => void;
 	handleGenreToggled: (genre: string) => void;
 	handleToggleAllGenres: (genres: string[]) => void;
 }
@@ -48,6 +52,10 @@ const useFilterStore = create<FilterStore>()(
 			set((state) => ({ filterOnUnrated: !state.filterOnUnrated })),
 		handleToggleFilterOnStarred: () =>
 			set((state) => ({ filterOnStarred: !state.filterOnStarred })),
+		setFilterOnStarred: (filter) => set({ filterOnStarred: filter }),
+		setFilterOnRated: (filter) => set({ filterOnRated: filter }),
+		setFilterOnCompleted: (filter) => set({ filterOnCompleted: filter }),
+		setFilterOnPlayed: (filter) => set({ filterOnPlayed: filter }),
 		handleGenreToggled: (genre) =>
 			set((state) => ({
 				genreFilter: state.genreFilter.includes(genre)

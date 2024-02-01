@@ -1,5 +1,4 @@
 import useFilterStore from "@/store/filters";
-import { useState } from "react";
 
 export type SortOption =
 	| "nameAsc"
@@ -7,13 +6,18 @@ export type SortOption =
 	| "releaseDateAsc"
 	| "releaseDateDesc"
 	| "rating"
-	| "dateAdded";
+	| "playerRatingAsc"
+	| "playerRatingDesc"
+	| "dateAddedAsc"
+	| "dateAddedDesc";
 
 
 interface SortableGame {
 	title: string;
 	aggregatedRating: number | null;
 	firstReleaseDate: Date | null;
+	playerRating: number | null;
+	createdAt: Date;
 }
 
 export const useSort = <G extends SortableGame>(
@@ -99,6 +103,52 @@ const applySorting = <G extends SortableGame>(
 				}
 				return bReleaseDate - aReleaseDate;
 			});
+			break;
+		}
+		case "playerRatingAsc": {
+			let bRating = 0;
+			let aRating = 0;
+			sortedGames.sort((a, b) => {
+				if (b.playerRating === null) {
+					bRating = 0;
+				} else {
+					bRating = b.playerRating;
+				}
+
+				if (a.playerRating === null) {
+					aRating = 0;
+				} else {
+					aRating = a.playerRating;
+				}
+				return bRating - aRating;
+			});
+			break;
+		}
+		case "playerRatingDesc": {
+			let bRating = 0;
+			let aRating = 0;
+			sortedGames.sort((a, b) => {
+				if (b.playerRating === null) {
+					bRating = 0;
+				} else {
+					bRating = b.playerRating;
+				}
+
+				if (a.playerRating === null) {
+					aRating = 0;
+				} else {
+					aRating = a.playerRating;
+				}
+				return aRating - bRating;
+			});
+			break;
+		}
+		case "dateAddedAsc": {
+			sortedGames.sort((a, b) => b.createdAt.getDate() - a.createdAt.getDate())
+			break;
+		}
+		case "dateAddedDesc": {
+			sortedGames.sort((a, b) => a.createdAt.getDate() - b.createdAt.getDate())
 			break;
 		}
 		default:

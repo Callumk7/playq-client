@@ -3,7 +3,6 @@ import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { and, eq } from "drizzle-orm";
-import { z } from "zod";
 import { zx } from "zodix";
 
 // api.collections.userId

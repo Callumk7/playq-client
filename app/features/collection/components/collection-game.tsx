@@ -1,12 +1,10 @@
 import { CollectionControls } from "./collection-controls";
 import { Playlist } from "@/types/playlists";
 import { GameCover } from "@/features/library";
-import { GameSlideOver } from "@/features/library/components/game-slideover";
 import { GameWithCollection } from "@/types/games";
 import { useState } from "react";
 import { RateGameDialog } from "./rate-game-dialog";
 import { useDraggable } from "@dnd-kit/core";
-import { Button } from "@/components/ui/button";
 
 interface CollectionGameProps {
   game: GameWithCollection;
@@ -15,10 +13,6 @@ interface CollectionGameProps {
   coverId: string;
   gameId: number;
   userId: string;
-  isSelected: boolean;
-  isSelecting: boolean;
-  selectedGames: number[];
-  setSelectedGames: (selectedGames: number[]) => void;
 }
 
 export function CollectionGame({
@@ -28,10 +22,6 @@ export function CollectionGame({
   coverId,
   gameId,
   userId,
-  isSelected,
-  isSelecting,
-  selectedGames,
-  setSelectedGames,
 }: CollectionGameProps) {
   const [isRateGameDialogOpen, setIsRateGameDialogOpen] = useState<boolean>(false);
 
@@ -50,26 +40,19 @@ export function CollectionGame({
     <>
       <div>
         <div ref={setNodeRef} {...listeners} {...attributes} style={style}>
-          <GameCover coverId={coverId} isSelected={isSelected} />
+          <GameCover coverId={coverId} gameId={gameId} />
         </div>
 
         <div className="mt-1 flex w-full justify-between">
           <CollectionControls
             gameId={gameId}
             isPlayed={game.played}
+            isCompleted={game.completed ?? false}
             userId={userId}
             playlists={userPlaylists}
             gamePlaylists={gamePlaylists}
             setIsRateGameDialogOpen={setIsRateGameDialogOpen}
           />
-          {isSelecting && (
-            <Button
-              variant={"outline"}
-              onClick={() => setSelectedGames([...selectedGames, game.gameId])}
-            >
-              Select
-            </Button>
-          )}
         </div>
       </div>
 

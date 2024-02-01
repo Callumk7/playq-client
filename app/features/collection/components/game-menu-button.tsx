@@ -23,6 +23,7 @@ import { useFetcher } from "@remix-run/react";
 interface GameMenuButtonProps {
   gameId: number;
   isPlayed: boolean;
+  isCompleted: boolean;
   userId: string;
   playlists: Playlist[];
   gamePlaylists?: Playlist[];
@@ -32,6 +33,7 @@ interface GameMenuButtonProps {
 export function GameMenuButton({
   gameId,
   isPlayed,
+  isCompleted,
   userId,
   playlists,
   gamePlaylists,
@@ -56,6 +58,19 @@ export function GameMenuButton({
       {
         gameId,
         played: true,
+      },
+      {
+        method: "put",
+        action: `/api/collections/${userId}`,
+      },
+    );
+  };
+
+  const handleMarkAsCompleted = () => {
+    fetcher.submit(
+      {
+        gameId,
+        completed: true,
       },
       {
         method: "put",
@@ -100,6 +115,14 @@ export function GameMenuButton({
             <StarIcon className="mr-2" />
           )}
           <span>Mark as played</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleMarkAsCompleted}>
+          {isCompleted ? (
+            <StarFilledIcon className="mr-2 text-primary" />
+          ) : (
+            <StarIcon className="mr-2" />
+          )}
+          <span>Mark as completed</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleRemove}>
           <TrashIcon className="mr-2" />

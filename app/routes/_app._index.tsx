@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { createServerClient, getSession } from "@/features/auth";
@@ -69,7 +68,7 @@ export default function AppIndex() {
                 <SaveToCollectionButton variant="outline" gameId={game.gameId} userId={session.user.id} />
               </div>
             )}
-            <GameCover coverId={game.cover.imageId} />
+            <GameCover coverId={game.cover.imageId} gameId={game.gameId} />
             <ExploreGameDataRow
               collectionCount={game.collectionCount}
               maxCollectionCount={maxCollectionCount}

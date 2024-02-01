@@ -1,16 +1,18 @@
 import { IGDBImage } from "@/types/igdb";
 import { cn } from "@/util/cn";
+import { Link } from "@remix-run/react";
 import { HTMLAttributes } from "react";
 
 interface GameCoverProps extends HTMLAttributes<HTMLDivElement> {
   coverId: string;
+  gameId: number;
   isSelected?: boolean;
 }
 
 export function GameCover({
   coverId,
+  gameId,
   isSelected,
-  ...props
 }: GameCoverProps) {
   const size: IGDBImage = "720p";
 
@@ -22,15 +24,15 @@ export function GameCover({
   const borderStyle = getBorderStyle(isSelected || false);
 
   return (
-    <div
+    <Link
+      to={`/collection/${gameId}`}
       className={cn(
         borderStyle,
         "relative flex max-w-sm flex-col items-center justify-between overflow-hidden rounded-lg text-foreground",
       )}
-      {...props}
     >
       <DBImage imageId={coverId} size={size} />
-    </div>
+    </Link>
   );
 }
 

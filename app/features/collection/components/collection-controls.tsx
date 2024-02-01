@@ -5,6 +5,7 @@ import { Playlist } from "@/types/playlists";
 interface CollectionControlsProps {
   gameId: number;
   isPlayed: boolean;
+  isCompleted: boolean;
   userId: string;
   className?: string;
   playlists: Playlist[];
@@ -15,6 +16,7 @@ interface CollectionControlsProps {
 export function CollectionControls({
   gameId,
   isPlayed,
+  isCompleted,
   userId,
   className,
   playlists,
@@ -31,6 +33,7 @@ export function CollectionControls({
       <GameMenuButton
         gameId={gameId}
         isPlayed={isPlayed}
+        isCompleted={isCompleted}
         userId={userId}
         playlists={playlists}
         gamePlaylists={gamePlaylists}
