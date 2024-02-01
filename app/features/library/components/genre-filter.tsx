@@ -3,19 +3,15 @@ import useFilterStore from "@/store/filters";
 
 interface GenreFilterProps {
   genres: string[];
-  handleGenreToggled: (genre: string) => void;
-  handleToggleAllGenres: () => void;
 }
 
-export function GenreFilter({
-  genres,
-  handleGenreToggled,
-  handleToggleAllGenres,
-}: GenreFilterProps) {
+export function GenreFilter({ genres }: GenreFilterProps) {
   const genreFilter = useFilterStore((state) => state.genreFilter);
+  const handleToggleAllGenres = useFilterStore((state) => state.handleToggleAllGenres);
+  const handleGenreToggled = useFilterStore((state) => state.handleGenreToggled);
   return (
     <div className="flex flex-wrap gap-2 self-start">
-      <button type="button" onClick={handleToggleAllGenres}>
+      <button type="button" onClick={() => handleToggleAllGenres(genres)}>
         <Tag variant={genreFilter.length === genres.length ? "primary" : "secondary"}>
           All
         </Tag>

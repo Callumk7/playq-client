@@ -48,26 +48,7 @@ export const useFilter = <G extends WithGenres & WithUserData>(
 
 	const filteredGames = output;
 
-	const handleGenreToggled = (genre: string) => {
-		// handle genre toggled
-		store.setGenreFilter(
-			store.genreFilter.includes(genre)
-				? store.genreFilter.filter((g) => g !== genre)
-				: [...store.genreFilter, genre],
-		);
-	};
-
-	const handleToggleAllGenres = () => {
-		if (genres.length > store.genreFilter.length) {
-			store.setGenreFilter(genres);
-		} else {
-			store.setGenreFilter([]);
-		}
-	};
-
 	return {
 		filteredGames,
-		handleGenreToggled,
-		handleToggleAllGenres,
 	};
 };

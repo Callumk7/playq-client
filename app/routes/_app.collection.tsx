@@ -57,11 +57,7 @@ export default function CollectionRoute() {
   const { userPlaylists, games, session, genreNames } =
     useTypedLoaderData<typeof loader>();
 
-  const {
-    filteredGames,
-    handleGenreToggled,
-    handleToggleAllGenres,
-  } = useFilter(games, genreNames);
+  const { filteredGames } = useFilter(games, genreNames);
   const { searchedGames } = useSearch(filteredGames);
   const { sortedGames } = useSort(searchedGames);
 
@@ -72,11 +68,7 @@ export default function CollectionRoute() {
   return (
     <div>
       <div className="mb-8">
-        <GenreFilter
-          genres={genreNames}
-          handleGenreToggled={handleGenreToggled}
-          handleToggleAllGenres={handleToggleAllGenres}
-        />
+        <GenreFilter genres={genreNames} />
       </div>
       <CollectionMenubar
         userId={session.user.id}
