@@ -20,7 +20,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   // This is down the bottom
-  const allPlaylists = await getPlaylistsWithCoversAndCreator(50);
+  const allPlaylists = await getPlaylistsWithCoversAndCreator(25);
+  console.log(allPlaylists)
 
   return typedjson({ allPlaylists });
 };

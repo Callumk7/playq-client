@@ -44,6 +44,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     allUserGenresPromise,
   ]);
 
+  // Not sure about this transform function. At this point, it might be too
+  // arbitrary. Consider the data needs and review at a later date.
   const games: GameWithCollection[] = transformCollectionIntoGames(userCollection);
   const genreNames = allGenres.map((genre) => genre.name);
 
@@ -104,11 +106,11 @@ function CollectionProgress({
 }) {
   return (
     <div className="flex w-full flex-col gap-4">
-      <div className="flex gap-1 flex-col">
+      <div className="flex flex-col gap-1">
         <Label>Played</Label>
         <Progress value={playedGames} max={gameCount} />
       </div>
-      <div className="flex gap-1 flex-col">
+      <div className="flex flex-col gap-1">
         <Label>Completed</Label>
         <Progress value={completedGames} max={gameCount} />
       </div>

@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/menubar";
 import { Game } from "@/types/games";
 import { useFetcher } from "@remix-run/react";
-import { useState } from "react";
 
 interface PlaylistMenubarProps {
+  isPrivate: boolean;
   games: Game[];
   playlistId: string;
   userId: string;
@@ -17,16 +17,36 @@ interface PlaylistMenubarProps {
   setDeletePlaylistDialogOpen: (deletePlaylistDialogOpen: boolean) => void;
 }
 
-export function PlaylistMenubar({ games, playlistId, userId, setRenameDialogOpen, setDeletePlaylistDialogOpen }: PlaylistMenubarProps) {
+export function PlaylistMenubar({
+  isPrivate,
+  games,
+  playlistId,
+  userId,
+  setRenameDialogOpen,
+  setDeletePlaylistDialogOpen,
+}: PlaylistMenubarProps) {
   const addGameFetcher = useFetcher();
+  const markAsPrivateFetcher = useFetcher();
+
+  const handleTogglePrivate = () => {
+    markAsPrivateFetcher.submit(
+      { isPrivate: !isPrivate },
+      { action: `/api/playlists/${playlistId}`, method: "PATCH" },
+    );
+  };
   return (
     <div className="flex justify-between">
       <Menubar>
         <MenubarMenu>
           <MenubarTrigger>Playlist</MenubarTrigger>
           <MenubarContent>
-            <MenubarItem onClick={() => setDeletePlaylistDialogOpen(true)}>Delete</MenubarItem>
+            <MenubarItem onClick={() => setDeletePlaylistDialogOpen(true)}>
+              Delete
+            </MenubarItem>
             <MenubarItem onClick={() => setRenameDialogOpen(true)}>Rename</MenubarItem>
+            <MenubarItem onClick={handleTogglePrivate}>
+              {isPrivate ? "Make Public" : "Set as Private"}
+            </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>

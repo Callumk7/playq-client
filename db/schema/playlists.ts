@@ -17,6 +17,7 @@ export const playlists = pgTable("playlists", {
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	isUpdated: boolean("is_updated").default(false),
+	isPrivate: boolean("is_private").default(false).notNull(),
 });
 
 export const playlistsRelations = relations(playlists, ({ one, many }) => ({
@@ -25,6 +26,29 @@ export const playlistsRelations = relations(playlists, ({ one, many }) => ({
 		references: [users.id],
 	}),
 	games: many(gamesOnPlaylists),
+	followers: many(followers),
+}));
+
+export const followers = pgTable(
+	"followers",
+	{
+		userId: text("user_id").notNull(),
+		playlistId: text("playlist_id").notNull(),
+	},
+	(t) => ({
+		pk: primaryKey({ columns: [t.userId, t.playlistId] }),
+	}),
+);
+
+export const followersRelations = relations(followers, ({ one }) => ({
+	playlist: one(playlists, {
+		fields: [followers.playlistId],
+		references: [playlists.id],
+	}),
+	follower: one(users, {
+		fields: [followers.userId],
+		references: [users.id],
+	}),
 }));
 
 export const gamesOnPlaylists = pgTable(

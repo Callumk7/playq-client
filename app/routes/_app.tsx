@@ -108,7 +108,8 @@ export default function AppLayout() {
     <>
       <DndContext onDragEnd={handleDrop}>
         <div className="block h-full min-h-screen lg:grid lg:grid-cols-10">
-          <div className="col-span-2 hidden h-full min-h-screen lg:block">
+          <div className="col-span-2 min-h-screen w-full max-w-80 hidden lg:block"></div>
+          <div className="fixed col-span-2 hidden h-full min-h-screen lg:block">
             <Sidebar
               playlists={userPlaylists}
               friends={userFriends}

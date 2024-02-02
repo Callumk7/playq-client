@@ -14,7 +14,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		return json("No playlist id provided", { status: 400 });
 	}
 
-	if (request.method !== "DELETE" && request.method !== "PUT") {
+	if (request.method !== "DELETE" && request.method !== "PATCH") {
 		return json("Method not allowed", { status: 405 });
 	}
 
@@ -29,22 +29,39 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		return redirect("/playlists");
 	}
 
-	if (request.method === "PUT") {
+	if (request.method === "PATCH") {
 		const result = await zx.parseFormSafe(request, {
-			playlistName: z.string(),
+			playlistName: z.string().optional(),
+			isPrivate: zx.BoolAsString.optional(),
 		});
 
 		if (!result.success) {
 			return json({ error: result.error });
 		}
 
-		const updatedPlaylist = await db
-			.update(playlists)
-			.set({
-				name: result.data.playlistName,
-			})
-			.where(eq(playlists.id, playlistId));
+		if (result.data.playlistName) {
+			const updatedPlaylist = await db
+				.update(playlists)
+				.set({
+					name: result.data.playlistName,
+				})
+				.where(eq(playlists.id, playlistId));
 
-		return json({ updatedPlaylist });
+			return json({ updatedPlaylist });
+		}
+
+		if ('isPrivate' in result.data) {
+			const updatedPlaylist = await db
+				.update(playlists)
+				.set({
+					isPrivate: result.data.isPrivate,
+				})
+				.where(eq(playlists.id, playlistId));
+
+			return json({ updatedPlaylist });
+		}
+
+		return json({ fail: "You made a patch request, but nothing changed" });
 	}
+	return json({ fail: "You failed" });
 };

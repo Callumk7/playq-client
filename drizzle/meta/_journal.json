@@ -78,6 +78,13 @@
       "when": 1705686379561,
       "tag": "0010_strange_lyja",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1706873639433,
+      "tag": "0011_thin_ulik",
+      "breakpoints": true
     }
   ]
 }

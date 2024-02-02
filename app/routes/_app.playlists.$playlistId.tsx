@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
@@ -28,104 +28,124 @@ import { zx } from "zodix";
 /// LOADER
 ///
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-	const { supabase, headers } = createServerClient(request);
-	const session = await getSession(supabase);
+  const { supabase, headers } = createServerClient(request);
+  const session = await getSession(supabase);
 
-	if (!session) {
-		// there is no session, therefore, we are redirecting
-		// to the landing page. The `/?index` is required here
-		// for Remix to correctly call our loaders
-		return redirect("/?index", {
-			// we still need to return response.headers to attach the set-cookie header
-			headers,
-		});
-	}
+  if (!session) {
+    // there is no session, therefore, we are redirecting
+    // to the landing page. The `/?index` is required here
+    // for Remix to correctly call our loaders
+    return redirect("/?index", {
+      // we still need to return response.headers to attach the set-cookie header
+      headers,
+    });
+  }
 
-	const { playlistId } = zx.parseParams(params, {
-		playlistId: z.string(),
-	});
+  const { playlistId } = zx.parseParams(params, {
+    playlistId: z.string(),
+  });
 
-	const playlistWithGamesPromise = getPlaylistWithGames(playlistId);
-	const allPlaylistsPromise = getUserPlaylists(session.user.id);
-	const userCollectionPromise = db.query.usersToGames.findMany({
-		where: eq(usersToGames.userId, session.user.id),
-		with: {
-			game: true,
-		},
-	});
+  const playlistWithGamesPromise = getPlaylistWithGames(playlistId);
+  const allPlaylistsPromise = getUserPlaylists(session.user.id);
+  const userCollectionPromise = db.query.usersToGames.findMany({
+    where: eq(usersToGames.userId, session.user.id),
+    with: {
+      game: true,
+    },
+  });
 
-	const [playlistWithGames, allPlaylists, userCollection] = await Promise.all([
-		playlistWithGamesPromise,
-		allPlaylistsPromise,
-		userCollectionPromise,
-	]);
+  const [playlistWithGames, allPlaylists, userCollection] = await Promise.all([
+    playlistWithGamesPromise,
+    allPlaylistsPromise,
+    userCollectionPromise,
+  ]);
 
-	const gamesArray = userCollection.map((collection) => collection.game);
+  const gamesArray = userCollection.map((collection) => collection.game);
 
-	return typedjson({ playlistId, playlistWithGames, gamesArray });
+  return typedjson({ playlistId, playlistWithGames, gamesArray });
 };
 
 ///
 /// ROUTE
 ///
 export default function PlaylistRoute() {
-	const { playlistWithGames, gamesArray, playlistId } = useTypedLoaderData<typeof loader>();
+  const { playlistWithGames, gamesArray, playlistId } =
+    useTypedLoaderData<typeof loader>();
 
-	const rename = useFetcher();
-	const isSubmitting = rename.state === "submitting";
+  const rename = useFetcher();
+  const isSubmitting = rename.state === "submitting";
 
-	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>();
-	const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] = useState<boolean>();
+  const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>();
+  const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] = useState<boolean>();
 
-	useEffect(() => {
-		if (isSubmitting && renameDialogOpen) {
-			setRenameDialogOpen(false);
-		}
-	}, [isSubmitting, renameDialogOpen, setRenameDialogOpen]);
+  useEffect(() => {
+    if (isSubmitting && renameDialogOpen) {
+      setRenameDialogOpen(false);
+    }
+  }, [isSubmitting, renameDialogOpen, setRenameDialogOpen]);
 
-	return (
-		<>
-			<div>
-				<PlaylistMenubar
-					games={gamesArray}
-					playlistId={playlistWithGames!.id}
-					userId={playlistWithGames!.creatorId}
-					setRenameDialogOpen={setRenameDialogOpen}
-					setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
-				/>
-				<h1 className="mt-5 py-2 text-3xl font-semibold">{playlistWithGames?.name}</h1>
-				<Separator />
-				<LibraryView>
-					{playlistWithGames?.games.map((game) => (
-						<GameCover key={game.game.id} coverId={game.game.cover.imageId} />
-					))}
-				</LibraryView>
-			</div>
-			<Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>Choose a new name</DialogTitle>
-					</DialogHeader>
-					<rename.Form method="PUT" action={`/api/playlists/${playlistWithGames!.id}`}>
-						<Input name="playlistName" type="text" />
-					</rename.Form>
-				</DialogContent>
-			</Dialog>
-			<Dialog open={deletePlaylistDialogOpen} onOpenChange={setDeletePlaylistDialogOpen} modal={true}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>Are you sure that you really want to delete this playlist?</DialogTitle>
-						<DialogDescription>
-							Once you delete a playlist it is impossible to recover. All saved games will be lost to the void forever.
-						</DialogDescription>
-					</DialogHeader>
-					<Form method="delete" action={`/api/playlists/${playlistId}`}>
-						<DialogFooter>
-							<Button variant={"destructive"}>Delete</Button>
-						</DialogFooter>
-					</Form>
-				</DialogContent>
-			</Dialog>
-		</>
-	);
+  return (
+    <>
+      <div>
+        <div className="flex gap-7">
+          <PlaylistMenubar
+            isPrivate={playlistWithGames!.isPrivate}
+            games={gamesArray}
+            playlistId={playlistWithGames!.id}
+            userId={playlistWithGames!.creatorId}
+            setRenameDialogOpen={setRenameDialogOpen}
+            setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
+          />
+          {playlistWithGames?.isPrivate && (
+            <Button disabled variant={"outline"} size={"sm"}>
+              is private
+            </Button>
+          )}
+        </div>
+        <h1 className="mt-5 py-2 text-3xl font-semibold">{playlistWithGames?.name}</h1>
+        <Separator />
+        <LibraryView>
+          {playlistWithGames?.games.map((game) => (
+            <GameCover
+              key={game.game.id}
+              coverId={game.game.cover.imageId}
+              gameId={game.gameId}
+            />
+          ))}
+        </LibraryView>
+      </div>
+      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Choose a new name</DialogTitle>
+          </DialogHeader>
+          <rename.Form method="PATCH" action={`/api/playlists/${playlistWithGames!.id}`}>
+            <Input name="playlistName" type="text" />
+          </rename.Form>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={deletePlaylistDialogOpen}
+        onOpenChange={setDeletePlaylistDialogOpen}
+        modal={true}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Are you sure that you really want to delete this playlist?
+            </DialogTitle>
+            <DialogDescription>
+              Once you delete a playlist it is impossible to recover. All saved games will
+              be lost to the void forever.
+            </DialogDescription>
+          </DialogHeader>
+          <Form method="delete" action={`/api/playlists/${playlistId}`}>
+            <DialogFooter>
+              <Button variant={"destructive"}>Delete</Button>
+            </DialogFooter>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }

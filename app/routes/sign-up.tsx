@@ -6,7 +6,7 @@ import { Container } from "@/features/layout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateIcon } from "@radix-ui/react-icons";
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
-import { useFetcher, useSubmit } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import { db } from "db";
 import { users } from "db/schema/users";
 import { UseFormRegister, useForm } from "react-hook-form";
@@ -39,7 +39,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return json({ failure: res.error });
     }
 
-    await db.insert(users).values({
+    // I need to ensure that this happens!!
+    const dbResult = await db.insert(users).values({
       username: result.data.username,
       email: result.data.email,
       password: result.data.password,
@@ -47,6 +48,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       lastName: result.data.lastName,
       id: res.data.user!.id, // this is from supabase
     });
+
+    console.log(dbResult)
 
     return redirect("/sign-up-confirmation", { headers });
   } else return json({ failure: result.error });
