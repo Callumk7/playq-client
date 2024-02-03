@@ -1,8 +1,20 @@
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { createServerClient, getSession } from "@/features/auth";
 import { Container } from "@/features/layout";
 import { PlaylistCard } from "@/features/playlists/components/playlist-card";
+import { getDiscoverablePlaylists } from "@/features/playlists/lib/get-discoverable-playlists";
+import { TableIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "db";
+import { useState } from "react";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -20,69 +32,55 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   // This is down the bottom
-  const allPlaylists = await getPlaylistsWithCoversAndCreator(25);
-  console.log(allPlaylists)
+  const allPlaylists = await getDiscoverablePlaylists(session.user.id);
+  console.log(allPlaylists);
 
   return typedjson({ allPlaylists });
 };
 
 export default function PlaylistView() {
   const { allPlaylists } = useTypedLoaderData<typeof loader>();
+  const [isTableView, setIsTableView] = useState(false);
 
   return (
     <Container>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        {allPlaylists.map((playlist) => (
-          <PlaylistCard
-            key={playlist.id}
-            playlistId={playlist.id}
-            playlistName={playlist.name}
-            games={playlist.games.map((p) => p.game)}
-            creator={playlist.creator}
-          />
-        ))}
-      </div>
+      <Button size={"icon"} onClick={() => setIsTableView(!isTableView)}>
+        <TableIcon />
+      </Button>
+      {isTableView ? (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+          {allPlaylists.map((playlist) => (
+            <PlaylistCard
+              key={playlist.id}
+              playlistId={playlist.id}
+              playlistName={playlist.name}
+              games={playlist.games.map((p) => p.game)}
+              creator={playlist.creator}
+            />
+          ))}
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Creator</TableHead>
+              <TableHead>Games</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {allPlaylists.map((playlist) => (
+              <TableRow key={playlist.id}>
+                <TableCell>{playlist.name}</TableCell>
+                <TableCell>{playlist.creator.username}</TableCell>
+                <TableCell>{playlist.games.length}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </Container>
   );
 }
 
 // this has column optimisations that might not be ready
-async function getPlaylistsWithCoversAndCreator(limit: number) {
-  const playlists = await db.query.playlists.findMany({
-    columns: {
-      id: true,
-      name: true,
-    },
-    with: {
-      creator: {
-        columns: {
-          id: true,
-          username: true,
-        },
-      },
-      games: {
-        columns: {
-          gameId: true,
-        },
-        limit: 4,
-        with: {
-          game: {
-            columns: {
-              id: true,
-            },
-            with: {
-              cover: {
-                columns: {
-                  imageId: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    limit: limit,
-  });
-
-  return playlists;
-}

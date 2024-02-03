@@ -10,19 +10,32 @@ import {
 import { Input } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { createServerClient, getSession } from "@/features/auth";
+import { getUserGameCollection } from "@/features/collection";
 import { GameCover, LibraryView } from "@/features/library";
-import { getPlaylistWithGames, getUserPlaylists } from "@/features/playlists";
+import { getPlaylistWithGames } from "@/features/playlists";
 import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
-import { UpdateIcon } from "@radix-ui/react-icons";
+import { Game } from "@/types/games";
+import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useFetcher } from "@remix-run/react";
 import { db } from "db";
-import { games, usersToGames } from "db/schema/games";
+import { playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { z } from "zod";
 import { zx } from "zodix";
+
+// Type guard types
+interface Blocked {
+  blocked: true;
+}
+
+interface Result {
+  blocked: false;
+  playlistWithGames: PlaylistWithGames;
+  usersGames: Game[];
+}
 
 ///
 /// LOADER
@@ -45,33 +58,39 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     playlistId: z.string(),
   });
 
-  const playlistWithGamesPromise = getPlaylistWithGames(playlistId);
-  const allPlaylistsPromise = getUserPlaylists(session.user.id);
-  const userCollectionPromise = db.query.usersToGames.findMany({
-    where: eq(usersToGames.userId, session.user.id),
-    with: {
-      game: true,
-    },
-  });
+  // We need to do some checks to see what permissions the user has for this
+  // specific playlist.
+  const minPlaylistData = await db
+    .select({
+      creator: playlists.creatorId,
+      isPrivate: playlists.isPrivate,
+    })
+    .from(playlists)
+    .where(eq(playlists.id, playlistId));
 
-  const [playlistWithGames, allPlaylists, userCollection] = await Promise.all([
+  // if creator != user & isPrivate
+  if (minPlaylistData[0].creator !== session.user.id && minPlaylistData[0].isPrivate) {
+    return typedjson({ blocked: true });
+  }
+
+  const playlistWithGamesPromise = getPlaylistWithGames(playlistId);
+  const userCollectionPromise = getUserGameCollection(session.user.id);
+
+  const [playlistWithGames, userCollection] = await Promise.all([
     playlistWithGamesPromise,
-    allPlaylistsPromise,
     userCollectionPromise,
   ]);
 
-  const gamesArray = userCollection.map((collection) => collection.game);
+  const usersGames = userCollection.map(c => c.game)
 
-  return typedjson({ playlistId, playlistWithGames, gamesArray });
+  return typedjson({ playlistWithGames, usersGames, blocked: false });
 };
 
 ///
 /// ROUTE
 ///
 export default function PlaylistRoute() {
-  const { playlistWithGames, gamesArray, playlistId } =
-    useTypedLoaderData<typeof loader>();
-
+  const result = useTypedLoaderData<Blocked | Result>();
   const rename = useFetcher();
   const isSubmitting = rename.state === "submitting";
 
@@ -84,15 +103,21 @@ export default function PlaylistRoute() {
     }
   }, [isSubmitting, renameDialogOpen, setRenameDialogOpen]);
 
+  if (result.blocked) {
+    return <div>This Playlist is Private</div>;
+  }
+
+  const { playlistWithGames, usersGames } = result;
+
   return (
     <>
       <div>
         <div className="flex gap-7">
           <PlaylistMenubar
-            isPrivate={playlistWithGames!.isPrivate}
-            games={gamesArray}
-            playlistId={playlistWithGames!.id}
-            userId={playlistWithGames!.creatorId}
+            isPrivate={playlistWithGames.isPrivate}
+            games={usersGames}
+            playlistId={playlistWithGames.id}
+            userId={playlistWithGames.creatorId}
             setRenameDialogOpen={setRenameDialogOpen}
             setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
           />
@@ -119,7 +144,7 @@ export default function PlaylistRoute() {
           <DialogHeader>
             <DialogTitle>Choose a new name</DialogTitle>
           </DialogHeader>
-          <rename.Form method="PATCH" action={`/api/playlists/${playlistWithGames!.id}`}>
+          <rename.Form method="PATCH" action={`/api/playlists/${playlistWithGames.id}`}>
             <Input name="playlistName" type="text" />
           </rename.Form>
         </DialogContent>
@@ -139,7 +164,7 @@ export default function PlaylistRoute() {
               be lost to the void forever.
             </DialogDescription>
           </DialogHeader>
-          <Form method="delete" action={`/api/playlists/${playlistId}`}>
+          <Form method="delete" action={`/api/playlists/${playlistWithGames.id}`}>
             <DialogFooter>
               <Button variant={"destructive"}>Delete</Button>
             </DialogFooter>

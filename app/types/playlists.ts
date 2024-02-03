@@ -1,6 +1,7 @@
 import { gamesOnPlaylists, playlists } from "db/schema/playlists";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { GameWithCover } from "./games";
 
 export const playlistsSelectSchema = createSelectSchema(playlists);
 export const playlistsInsertSchema = createInsertSchema(playlists);
@@ -13,3 +14,11 @@ export type InsertPlaylist = z.infer<typeof playlistsInsertSchema>;
 
 export type GamesOnPlaylist = z.infer<typeof gamesOnPlaylistsSelectSchema>;
 export type InsertGamesOnPlaylist = z.infer<typeof gamesOnPlaylistsInsertSchema>;
+
+export type GamesOnPlaylistWithGameData = GamesOnPlaylist & {
+	game: GameWithCover
+}
+
+export type PlaylistWithGames = Playlist & {
+	games: GamesOnPlaylistWithGameData[]
+}
