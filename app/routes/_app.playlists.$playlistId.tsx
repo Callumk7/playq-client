@@ -35,6 +35,7 @@ interface Result {
   blocked: false;
   playlistWithGames: PlaylistWithGames;
   usersGames: Game[];
+  isCreator: boolean;
 }
 
 ///
@@ -81,9 +82,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     userCollectionPromise,
   ]);
 
-  const usersGames = userCollection.map(c => c.game)
+  const usersGames = userCollection.map((c) => c.game);
 
-  return typedjson({ playlistWithGames, usersGames, blocked: false });
+  const isCreator = playlistWithGames!.creatorId === session.user.id;
+
+  return typedjson({ playlistWithGames, usersGames, blocked: false, isCreator });
 };
 
 ///
@@ -107,20 +110,22 @@ export default function PlaylistRoute() {
     return <div>This Playlist is Private</div>;
   }
 
-  const { playlistWithGames, usersGames } = result;
+  const { playlistWithGames, usersGames, isCreator } = result;
 
   return (
     <>
       <div>
         <div className="flex gap-7">
-          <PlaylistMenubar
-            isPrivate={playlistWithGames.isPrivate}
-            games={usersGames}
-            playlistId={playlistWithGames.id}
-            userId={playlistWithGames.creatorId}
-            setRenameDialogOpen={setRenameDialogOpen}
-            setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
-          />
+          {isCreator && (
+            <PlaylistMenubar
+              isPrivate={playlistWithGames.isPrivate}
+              games={usersGames}
+              playlistId={playlistWithGames.id}
+              userId={playlistWithGames.creatorId}
+              setRenameDialogOpen={setRenameDialogOpen}
+              setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
+            />
+          )}
           {playlistWithGames?.isPrivate && (
             <Button disabled variant={"outline"} size={"sm"}>
               is private

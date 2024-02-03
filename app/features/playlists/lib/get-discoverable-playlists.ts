@@ -1,7 +1,7 @@
 import { db } from "db";
 import { playlists } from "db/schema/playlists";
 import { friends } from "db/schema/users";
-import { eq, inArray, or } from "drizzle-orm";
+import { and, eq, inArray, ne, or } from "drizzle-orm";
 
 // Discoverable =
 // 1. The user is the creator of the playlist
@@ -26,7 +26,7 @@ export async function getDiscoverablePlaylists(userId: string) {
 			: eq(playlists.creatorId, userId);
 
 	const discoverablePlaylists = await db.query.playlists.findMany({
-		where: where,
+		where: and(ne(playlists.isPrivate, true), where),
 		columns: {
 			id: true,
 			name: true,

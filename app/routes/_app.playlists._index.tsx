@@ -31,7 +31,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   }
 
-  // This is down the bottom
   const allPlaylists = await getDiscoverablePlaylists(session.user.id);
   console.log(allPlaylists);
 
