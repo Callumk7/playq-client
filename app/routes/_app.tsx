@@ -133,8 +133,8 @@ export default function AppLayout() {
           </div>
           <div className="col-span-8 h-full">
             <Navbar supabase={supabase} session={session} />
-            <Container className="mt-10">
-              <Outlet context={{ supabase, session }} />
+            <Container>
+              <Outlet />
             </Container>
           </div>
         </div>

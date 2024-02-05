@@ -44,6 +44,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     allUserGenresPromise,
   ]);
 
+  userCollection.forEach(c => {
+    if (!c.game) {
+      console.log(c.gameId)
+    }
+  })
+
   // Not sure about this transform function. At this point, it might be too
   // arbitrary. Consider the data needs and review at a later date.
   const games: GameWithCollection[] = transformCollectionIntoGames(userCollection);
