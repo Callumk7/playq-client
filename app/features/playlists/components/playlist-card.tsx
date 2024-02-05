@@ -8,7 +8,7 @@ interface PlaylistCardProps {
     id: string;
     cover: {
       imageId: string;
-    }
+    };
   }[];
   creator: {
     id: string;
@@ -16,14 +16,22 @@ interface PlaylistCardProps {
   };
 }
 
-export function PlaylistCard({ playlistId, playlistName, games, creator }: PlaylistCardProps) {
+export function PlaylistCard({
+  playlistId,
+  playlistName,
+  games,
+  creator,
+}: PlaylistCardProps) {
   return (
-    <div className="w-full rounded-lg bg-background-3 p-5 overflow-hidden flex flex-col gap-3">
-      <Link className="font-bold hover:underline text-xl" to={`/playlists/${playlistId}`}>
+    <div className="flex w-full flex-col gap-3 overflow-hidden rounded-lg bg-background-3 p-5">
+      <Link
+        className="text-xl font-bold hover:underline"
+        to={`/playlists/view/${playlistId}`}
+      >
         {playlistName}
       </Link>
       <p className="overflow-clip text-sm">{creator.username}</p>
-      <div className="grid grid-cols-2 rounded-lg overflow-hidden h-fit">
+      <div className="grid h-fit grid-cols-2 overflow-hidden rounded-lg">
         {games.map((game) => (
           <div key={game.id}>
             <DBImage imageId={game.cover.imageId} size="cover_big" />

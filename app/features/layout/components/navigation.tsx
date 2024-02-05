@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Login } from "@/features/auth";
-import { Link, NavLink } from "@remix-run/react";
+import { NavLink } from "@remix-run/react";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 
 const links = [
@@ -44,10 +44,13 @@ export function Navbar({ supabase, session }: NavbarProps) {
   );
 }
 
-const NavigationLink = ({ link }: { link: { to: string; name: string } }) => (
+export const NavigationLink = ({ link }: { link: { to: string; name: string } }) => (
   <NavLink key={link.name} to={link.to} prefetch="intent">
     {({ isActive, isPending }) => (
-      <Button variant={isActive ? "default" : isPending ? "secondary" : "ghost"}>
+      <Button
+        variant={isActive ? "navigation" : isPending ? "navigation" : "ghost"}
+        size={"navigation"}
+      >
         {link.name}
       </Button>
     )}

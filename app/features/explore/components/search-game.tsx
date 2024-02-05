@@ -12,7 +12,7 @@ interface ExploreGameProps {
 export function ExploreGame({ game, coverId, gameId, userId }: ExploreGameProps) {
   return (
     <div>
-      <GameCover coverId={coverId} />
+      <GameCover coverId={coverId} gameId={gameId} />
       <SearchEntryControls
         gameId={gameId}
         userId={userId}
