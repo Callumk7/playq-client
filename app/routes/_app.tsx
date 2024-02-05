@@ -13,6 +13,8 @@ import { createBrowserClient } from "@supabase/ssr";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { User } from "@/types/users";
 import { friends } from "db/schema/users";
+import { getUserCollectionGameIds } from "@/features/collection/queries/get-game-collection";
+import { useCollectionStore } from "@/store/collection";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -35,6 +37,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   let userPlaylists: Playlist[] = [];
   let userFriends: User[] = [];
+  let userCollection: number[] = [];
   if (session) {
     // We need to get the user's playlists, so we can pass it to the sidebar.
     // In addition, we are also going to get the user's friends.
@@ -51,13 +54,24 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         },
       })
       .then((results) => results.map((result) => result.friend));
+
+    // Set the store for user gameIds as a cache on the app route.
+    userCollection = await getUserCollectionGameIds(session.user.id);
   }
 
-  return typedjson({ ENV, session, userPlaylists, userFriends }, { headers });
+  return typedjson(
+    { ENV, session, userPlaylists, userFriends, userCollection },
+    { headers },
+  );
 };
 
 export default function AppLayout() {
-  const { ENV, session, userPlaylists, userFriends } = useTypedLoaderData<typeof loader>();
+  const { ENV, session, userPlaylists, userFriends, userCollection } =
+    useTypedLoaderData<typeof loader>();
+  // set the store for use around the app
+  const setUserCollection = useCollectionStore((state) => state.setUserCollection);
+  setUserCollection(userCollection);
+
   const supaFetcher = useFetcher();
   // fetcher for dragging games to a playlist
   const playlistFetcher = useFetcher();
@@ -108,7 +122,7 @@ export default function AppLayout() {
     <>
       <DndContext onDragEnd={handleDrop}>
         <div className="block h-full min-h-screen lg:grid lg:grid-cols-10">
-          <div className="col-span-2 min-h-screen w-full max-w-80 hidden lg:block"></div>
+          <div className="col-span-2 hidden min-h-screen w-full max-w-80 lg:block"></div>
           <div className="fixed col-span-2 hidden h-full min-h-screen lg:block">
             <Sidebar
               playlists={userPlaylists}

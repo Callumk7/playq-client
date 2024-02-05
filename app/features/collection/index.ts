@@ -7,10 +7,10 @@ import { RemoveFromCollectionButton } from "./components/remove-from-collection-
 import { GameMenuButton } from "./components/game-menu-button";
 import { GameSearch } from "./components/game-search";
 
-// Lib
-import { getCollectionGameIds } from "./lib/get-collection-gameIds";
-import { getUserGameCollection } from "./lib/get-game-collection";
-import { getCollectionGenres } from "./lib/get-collection-genres";
+// Queries
+import { getCollectionGameIds } from "./queries/get-collection-gameIds";
+import { getUserGameCollection } from "./queries/get-game-collection";
+import { getCollectionGenres } from "./queries/get-collection-genres";
 
 export {
 	CollectionGame,

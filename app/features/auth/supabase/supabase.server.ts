@@ -1,3 +1,4 @@
+import { redirect } from "@remix-run/node";
 import {
 	createServerClient as _createServerClient,
 	parse,
@@ -34,5 +35,6 @@ export async function getSession(supabase: SupabaseClient) {
 	const {
 		data: { session },
 	} = await supabase.auth.getSession();
-	return session
+	return session;
 }
+

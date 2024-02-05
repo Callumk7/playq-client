@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { createServerClient, getSession } from "@/features/auth";
-import { getUserCollectionGameIds } from "@/features/collection/lib/get-game-collection";
+import { getUserCollectionGameIds } from "@/features/collection/queries/get-game-collection";
 import { SaveToCollectionButton } from "@/features/explore";
 import {
   combinePopularGameData,
@@ -30,11 +30,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userCollectionGameidsPromise = getUserCollectionGameIds(session.user.id);
 
   // fetch gameIds in parallel
-  const [popularGamesByCollection, popularGamesByPlaylist, userCollectionGameIds] = await Promise.all([
-    popularGamesByCollectionPromise,
-    popularGamesByPlaylistPromise,
-    userCollectionGameidsPromise
-  ]);
+  const [popularGamesByCollection, popularGamesByPlaylist, userCollectionGameIds] =
+    await Promise.all([
+      popularGamesByCollectionPromise,
+      popularGamesByPlaylistPromise,
+      userCollectionGameidsPromise,
+    ]);
 
   // I should create an explcit type for the return type of this function
   const processedData = await combinePopularGameData({
@@ -46,26 +47,31 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function AppIndex() {
-  const { processedData, userCollectionGameIds, session } = useLoaderData<typeof loader>();
+  const { processedData, userCollectionGameIds, session } =
+    useLoaderData<typeof loader>();
   // This could be done on the server..
   const maxCollectionCount = processedData.reduce(
     (max, game) => Math.max(max, game.collectionCount),
     0,
   );
-  console.log(maxCollectionCount)
+  console.log(maxCollectionCount);
   const maxPlaylistCount = processedData.reduce(
     (max, game) => Math.max(max, game.playlistCount),
     0,
   );
-  console.log(maxPlaylistCount)
+  console.log(maxPlaylistCount);
   return (
     <Container>
       <LibraryView>
         {processedData.map((game) => (
           <div key={game.id} className="relative flex flex-col gap-3">
             {!userCollectionGameIds.includes(game.gameId) && (
-              <div className="absolute top-3 right-3 z-20">
-                <SaveToCollectionButton variant="outline" gameId={game.gameId} userId={session.user.id} />
+              <div className="absolute right-3 top-3 z-20">
+                <SaveToCollectionButton
+                  variant="outline"
+                  gameId={game.gameId}
+                  userId={session.user.id}
+                />
               </div>
             )}
             <GameCover coverId={game.cover.imageId} gameId={game.gameId} />
@@ -96,14 +102,14 @@ function ExploreGameDataRow({
   maxPlaylistCount,
 }: ExploreGameDataRowProps) {
   return (
-    <div className="rounded-md border p-3 flex flex-col gap-2">
-      <div className="flex flex-col gap-1 w-full">
+    <div className="flex flex-col gap-2 rounded-md border p-3">
+      <div className="flex w-full flex-col gap-1">
         <Label>Collection Popularity</Label>
         <Progress value={collectionCount} max={maxCollectionCount} className="h-2" />
       </div>
-      <div className="flex flex-col gap-1 w-full">
+      <div className="flex w-full flex-col gap-1">
         <Label>Playlist Popularity</Label>
-        <Progress value={playlistCount} max={maxPlaylistCount} className="h-2"/>
+        <Progress value={playlistCount} max={maxPlaylistCount} className="h-2" />
       </div>
     </div>
   );

@@ -10,14 +10,17 @@ import {
 import { Input } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { createServerClient, getSession } from "@/features/auth";
-import { getUserGameCollection } from "@/features/collection";
+import { RemoveFromCollectionButton, getUserGameCollection } from "@/features/collection";
+import { SaveToCollectionButton } from "@/features/explore";
 import { GameCover, LibraryView } from "@/features/library";
 import { getPlaylistWithGames } from "@/features/playlists";
 import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
+import { useCollectionStore } from "@/store/collection";
 import { Game } from "@/types/games";
 import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useFetcher } from "@remix-run/react";
+import { Session } from "@supabase/supabase-js";
 import { db } from "db";
 import { playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
@@ -36,6 +39,7 @@ interface Result {
   playlistWithGames: PlaylistWithGames;
   usersGames: Game[];
   isCreator: boolean;
+  session: Session;
 }
 
 ///
@@ -86,7 +90,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const isCreator = playlistWithGames!.creatorId === session.user.id;
 
-  return typedjson({ playlistWithGames, usersGames, blocked: false, isCreator });
+  return typedjson({ playlistWithGames, usersGames, blocked: false, isCreator, session });
 };
 
 ///
@@ -100,6 +104,10 @@ export default function PlaylistRoute() {
   const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>();
   const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] = useState<boolean>();
 
+  // zustand store. We use these Ids to check to see if the game already
+  // exists in the user's collection.
+  const userCollection = useCollectionStore((state) => state.userCollection);
+
   useEffect(() => {
     if (isSubmitting && renameDialogOpen) {
       setRenameDialogOpen(false);
@@ -110,7 +118,7 @@ export default function PlaylistRoute() {
     return <div>This Playlist is Private</div>;
   }
 
-  const { playlistWithGames, usersGames, isCreator } = result;
+  const { playlistWithGames, usersGames, isCreator, session } = result;
 
   return (
     <>
@@ -136,11 +144,17 @@ export default function PlaylistRoute() {
         <Separator />
         <LibraryView>
           {playlistWithGames?.games.map((game) => (
-            <GameCover
-              key={game.game.id}
-              coverId={game.game.cover.imageId}
-              gameId={game.gameId}
-            />
+            <div key={game.game.id} className="flex flex-col gap-2">
+              <GameCover coverId={game.game.cover.imageId} gameId={game.gameId} />
+              {userCollection.includes(game.gameId) ? (
+                <RemoveFromCollectionButton
+                  gameId={game.gameId}
+                  userId={session.user.id}
+                />
+              ) : (
+                <SaveToCollectionButton gameId={game.gameId} userId={session.user.id} />
+              )}
+            </div>
           ))}
         </LibraryView>
       </div>

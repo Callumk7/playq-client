@@ -53,7 +53,7 @@ export default function PlaylistView() {
               key={playlist.id}
               playlistId={playlist.id}
               playlistName={playlist.name}
-              games={playlist.games.map((p) => p.game)}
+              games={playlist.games.slice(0, 3).map((p) => p.game)}
               creator={playlist.creator}
             />
           ))}

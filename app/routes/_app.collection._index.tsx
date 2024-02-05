@@ -5,8 +5,8 @@ import {
   CollectionMenubar,
   getUserGameCollection,
 } from "@/features/collection";
-import { transformCollectionIntoGames } from "@/features/collection/lib/get-game-collection";
-import { getUserGenres } from "@/features/collection/lib/get-user-genres";
+import { transformCollectionIntoGames } from "@/features/collection/queries/get-game-collection";
+import { getUserGenres } from "@/features/collection/queries/get-user-genres";
 import { LibraryView, useFilter, useSearch } from "@/features/library";
 import { GenreFilter } from "@/features/library/components/genre-filter";
 import { useSort } from "@/features/library/hooks/sort";

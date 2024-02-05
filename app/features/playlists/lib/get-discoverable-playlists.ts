@@ -42,7 +42,6 @@ export async function getDiscoverablePlaylists(userId: string) {
 				columns: {
 					gameId: true,
 				},
-				limit: 4,
 				with: {
 					game: {
 						columns: {
