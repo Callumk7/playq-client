@@ -11,6 +11,7 @@ import { LibraryView, useFilter, useSearch } from "@/features/library";
 import { GenreFilter } from "@/features/library/components/genre-filter";
 import { useSort } from "@/features/library/hooks/sort";
 import { getUserPlaylists } from "@/features/playlists";
+import useFilterStore from "@/store/filters";
 import { GameWithCollection } from "@/types/games";
 import { Label } from "@radix-ui/react-context-menu";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -44,11 +45,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     allUserGenresPromise,
   ]);
 
-  userCollection.forEach(c => {
+  userCollection.forEach((c) => {
     if (!c.game) {
-      console.log(c.gameId)
+      console.log(c.gameId);
     }
-  })
+  });
 
   // Not sure about this transform function. At this point, it might be too
   // arbitrary. Consider the data needs and review at a later date.
@@ -71,10 +72,21 @@ export default function CollectionIndex() {
   const playedGames = games.filter((game) => game.played).length;
   const completedGames = games.filter((game) => game.completed).length;
 
+  // We pass state from the filter store here, so the genre-filter component
+  // can be reused in other routes
+  const genreFilter = useFilterStore((state) => state.genreFilter);
+  const handleGenreToggled = useFilterStore((state) => state.handleGenreToggled);
+  const handleToggleAllGenres = useFilterStore((state) => state.handleToggleAllGenres);
+
   return (
     <>
       <div className="mb-8">
-        <GenreFilter genres={genreNames} />
+        <GenreFilter
+          genres={genreNames}
+          genreFilter={genreFilter}
+          handleGenreToggled={handleGenreToggled}
+          handleToggleAllGenres={handleToggleAllGenres}
+        />
       </div>
       <CollectionMenubar userId={session.user.id} />
       <div className="my-6">

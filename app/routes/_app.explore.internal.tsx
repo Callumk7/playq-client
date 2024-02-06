@@ -5,10 +5,15 @@ import { createServerClient, getSession } from "@/features/auth";
 import { getCollectionGameIds } from "@/features/collection";
 import { ExploreGameInternal } from "@/features/explore/components/search-game";
 import { useRouteData } from "@/features/explore/hooks/use-initial-data";
-import { markInternalResultsAsSaved } from "@/features/explore/lib/mark-results-as-saved";
+import {
+  markInternalResultsAsSaved,
+  markResultsAsSaved,
+} from "@/features/explore/lib/mark-results-as-saved";
 import { GameCover, LibraryView } from "@/features/library";
 import { GameListItemInternal } from "@/features/library/components/game-list-item";
+import { GenreFilter } from "@/features/library/components/genre-filter";
 import { ListView } from "@/features/library/components/list-view";
+import { useExploreStore } from "@/store/explore";
 import { ArrowLeftIcon, ArrowRightIcon, ViewGridIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "db";
@@ -44,6 +49,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     limit: 50,
     with: {
       cover: true,
+      genres: {
+        with: {
+          genre: true,
+        },
+      },
     },
     orderBy: [desc(games.aggregatedRating)],
     where: where,
@@ -53,8 +63,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // this mutates the shape of the result
   const gameIds = await getCollectionGameIds(session.user.id);
   const resultsMarkedAsSaved = markInternalResultsAsSaved(searchResults, gameIds);
+  const genreSet = new Set(
+    searchResults.map((r) => r.genres.map((g) => g.genre.name)).flat(),
+  );
+  const genres = [...genreSet];
 
-  return typedjson({ resultsMarkedAsSaved, session });
+  return typedjson({ resultsMarkedAsSaved, session, genres });
 };
 
 export default function ExploreRoute() {
@@ -93,6 +107,25 @@ export default function ExploreRoute() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset]); // This effect runs whenever 'offset' changes
 
+  // We are filtering on the results, and the filter state is kept in the store
+  const store = useExploreStore();
+
+  // Now we need to filter the search results based on the state of the filter store
+  console.time("filtering");
+  const filteredResults = data.resultsMarkedAsSaved.filter((r) => {
+    if (r.genres.length === 0) {
+      return true;
+    }
+    if (
+      store.genreFilter.every((filterGenre) =>
+        r.genres.some((gameGenre) => gameGenre.genre.name === filterGenre),
+      )
+    ) {
+      return true;
+    }
+  });
+  console.timeEnd("filtering");
+
   return (
     <div className="mb-12">
       <div className="flex flex-col gap-y-6">
@@ -114,8 +147,18 @@ export default function ExploreRoute() {
             <input type="hidden" value={offset} name="offset" />
             <Button variant={"outline"}>Search</Button>
           </fetcher.Form>
-          <Button variant={"outline"}>Advanced Filters</Button>
+          <Button variant={"outline"} onClick={store.toggleShowFilters}>
+            Advanced Filters
+          </Button>
         </div>
+        {store.showFilters && (
+          <GenreFilter
+            genres={data.genres}
+            genreFilter={store.genreFilter}
+            handleGenreToggled={store.handleGenreToggled}
+            handleToggleAllGenres={store.handleToggleAllGenres}
+          />
+        )}
         <OffsetAndViewControls
           setView={setView}
           handleDecreaseOffset={handleDecreaseOffset}
@@ -123,7 +166,7 @@ export default function ExploreRoute() {
         />
         {view === "card" ? (
           <LibraryView>
-            {data.resultsMarkedAsSaved.map((game) => (
+            {filteredResults.map((game) => (
               <ExploreGameInternal
                 key={game.id}
                 game={game}
@@ -133,7 +176,7 @@ export default function ExploreRoute() {
           </LibraryView>
         ) : (
           <ListView>
-            {data.resultsMarkedAsSaved.map((game) => (
+            {filteredResults.map((game) => (
               <GameListItemInternal
                 key={game.id}
                 game={game}

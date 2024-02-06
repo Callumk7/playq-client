@@ -11,10 +11,7 @@ interface WithUserData {
 	playerRating: number | null;
 }
 
-export const useFilter = <G extends WithGenres & WithUserData>(
-	games: G[],
-	genres: string[],
-) => {
+export const useFilter = <G extends WithGenres & WithUserData>(games: G[]) => {
 	let output = [...games];
 
 	const store = useFilterStore();

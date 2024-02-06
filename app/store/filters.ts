@@ -7,7 +7,9 @@ interface FilterStore {
 	searchTerm: string;
 	sortOption: SortOption;
 	filterOnPlayed: boolean;
+	filterOnUnPlayed: boolean;
 	filterOnCompleted: boolean;
+	filterOnUnCompleted: boolean;
 	filterOnRated: boolean;
 	filterOnUnrated: boolean;
 	filterOnStarred: boolean;
@@ -15,7 +17,9 @@ interface FilterStore {
 	setSearchTerm: (searchTerm: string) => void;
 	setSortOption: (sortOption: SortOption) => void;
 	handleToggleFilterOnPlayed: () => void;
+	handleToggleFilterOnUnPlayed: () => void;
 	handleToggleFilterOnCompleted: () => void;
+	handleToggleFilterOnUnCompleted: () => void;
 	handleToggleFilterOnRated: () => void;
 	handleToggleFilterOnUnrated: () => void;
 	handleToggleFilterOnStarred: () => void;
@@ -33,7 +37,9 @@ const useFilterStore = create<FilterStore>()(
 		searchTerm: "",
 		sortOption: "rating",
 		filterOnPlayed: false,
+		filterOnUnPlayed: false,
 		filterOnCompleted: false,
+		filterOnUnCompleted: false,
 		filterOnRated: false,
 		filterOnUnrated: false,
 		filterOnStarred: false,
@@ -44,8 +50,14 @@ const useFilterStore = create<FilterStore>()(
 			set((state) => ({
 				filterOnPlayed: !state.filterOnPlayed,
 			})),
+		handleToggleFilterOnUnPlayed: () =>
+			set((state) => ({
+				filterOnUnPlayed: !state.filterOnUnPlayed,
+			})),
 		handleToggleFilterOnCompleted: () =>
 			set((state) => ({ filterOnCompleted: !state.filterOnCompleted })),
+		handleToggleFilterOnUnCompleted: () =>
+			set((state) => ({ filterOnUnCompleted: !state.filterOnUnCompleted })),
 		handleToggleFilterOnRated: () =>
 			set((state) => ({ filterOnRated: !state.filterOnRated })),
 		handleToggleFilterOnUnrated: () =>

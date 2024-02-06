@@ -20,7 +20,10 @@ export const markResultsAsSaved = (
 	});
 };
 
-export const markInternalResultsAsSaved = (searchResults: GameWithCover[], userCollection: number[]) => {
+export const markInternalResultsAsSaved = <G extends { gameId: number }>(
+	searchResults: G[],
+	userCollection: number[],
+) => {
 	return searchResults.map((game) => {
 		if (userCollection.includes(game.gameId)) {
 			return {
@@ -34,4 +37,4 @@ export const markInternalResultsAsSaved = (searchResults: GameWithCover[], userC
 			};
 		}
 	});
-}
+};
