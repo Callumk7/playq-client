@@ -13,7 +13,6 @@ import { PlaylistCard } from "@/features/playlists/components/playlist-card";
 import { getDiscoverablePlaylists } from "@/features/playlists/lib/get-discoverable-playlists";
 import { TableIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { db } from "db";
 import { useState } from "react";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
 

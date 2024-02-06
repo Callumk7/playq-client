@@ -17,7 +17,7 @@ interface SortableGame {
 	aggregatedRating: number | null;
 	firstReleaseDate: Date | null;
 	playerRating: number | null;
-	createdAt: Date;
+	dateAdded: Date;
 }
 
 export const useSort = <G extends SortableGame>(
@@ -143,12 +143,14 @@ const applySorting = <G extends SortableGame>(
 			});
 			break;
 		}
+		// TODO: date added is not working correctly.
+		// BUG: date added is not working correctly.
 		case "dateAddedAsc": {
-			sortedGames.sort((a, b) => b.createdAt.getDate() - a.createdAt.getDate())
+			sortedGames.sort((a, b) => b.dateAdded.getDate() - a.dateAdded.getDate())
 			break;
 		}
 		case "dateAddedDesc": {
-			sortedGames.sort((a, b) => a.createdAt.getDate() - b.createdAt.getDate())
+			sortedGames.sort((a, b) => a.dateAdded.getDate() - b.dateAdded.getDate())
 			break;
 		}
 		default:

@@ -121,9 +121,8 @@ export default function AppLayout() {
   return (
     <>
       <DndContext onDragEnd={handleDrop}>
-        <div className="block h-full min-h-screen lg:grid lg:grid-cols-10">
-          <div className="col-span-2 hidden min-h-screen w-full max-w-80 lg:block"></div>
-          <div className="fixed col-span-2 hidden h-full min-h-screen lg:block">
+        <div className="h-full min-h-screen lg:flex-grow">
+          <div className="fixed hidden w-64 h-full min-h-screen lg:block">
             <Sidebar
               playlists={userPlaylists}
               friends={userFriends}
@@ -131,7 +130,7 @@ export default function AppLayout() {
               hasSession={session ? true : false}
             />
           </div>
-          <div className="col-span-8 h-full">
+          <div className="h-full lg:pl-64">
             <Navbar supabase={supabase} session={session} />
             <Container>
               <Outlet />

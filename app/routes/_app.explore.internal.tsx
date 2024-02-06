@@ -3,9 +3,11 @@ import { Input } from "@/components/ui/form";
 import { Toggle } from "@/components/ui/toggle";
 import { createServerClient, getSession } from "@/features/auth";
 import { getCollectionGameIds } from "@/features/collection";
+import { ExploreGameInternal } from "@/features/explore/components/search-game";
 import { useRouteData } from "@/features/explore/hooks/use-initial-data";
 import { markInternalResultsAsSaved } from "@/features/explore/lib/mark-results-as-saved";
 import { GameCover, LibraryView } from "@/features/library";
+import { GameListItemInternal } from "@/features/library/components/game-list-item";
 import { ListView } from "@/features/library/components/list-view";
 import { ArrowLeftIcon, ArrowRightIcon, ViewGridIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -60,7 +62,7 @@ export default function ExploreRoute() {
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [offset, setOffset] = useState<number>(0);
-  const [view, setView] = useState<"card" | "list">("card");
+  const [view, setView] = useState<"card" | "list">("list");
 
   const handleIncreaseOffset = () => {
     const newOffset = offset + 51;
@@ -122,22 +124,21 @@ export default function ExploreRoute() {
         {view === "card" ? (
           <LibraryView>
             {data.resultsMarkedAsSaved.map((game) => (
-              <div key={game.id}>
-                <GameCover gameId={game.gameId} coverId={game.cover.imageId} />
-              </div>
+              <ExploreGameInternal
+                key={game.id}
+                game={game}
+                userId={data.session.user.id}
+              />
             ))}
           </LibraryView>
         ) : (
           <ListView>
             {data.resultsMarkedAsSaved.map((game) => (
-              <div
-                key={game.gameId}
-                className="relative flex w-full flex-row items-center justify-between rounded-md p-3 hover:bg-accent/60"
-              >
-                <div className="flex flex-row space-x-2">
-                  <p className="cursor-pointer font-bold text-foreground">{game.title}</p>
-                </div>
-              </div>
+              <GameListItemInternal
+                key={game.id}
+                game={game}
+                userId={data.session.user.id}
+              />
             ))}
           </ListView>
         )}
@@ -186,7 +187,7 @@ function OffsetAndViewControls({
       <Toggle
         variant={"outline"}
         size={"icon"}
-        onPressedChange={(p) => (p ? setView("list") : setView("card"))}
+        onPressedChange={(p) => (p ? setView("card") : setView("list"))}
       >
         <ViewGridIcon />
       </Toggle>

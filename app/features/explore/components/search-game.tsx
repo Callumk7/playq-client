@@ -1,6 +1,7 @@
 import { GameCover } from "@/features/library";
 import { SearchEntryControls } from "..";
 import { IGDBGame } from "@/types/igdb";
+import { GameWithCover } from "@/types/games";
 
 interface ExploreGameProps {
   game: IGDBGame;
@@ -19,6 +20,23 @@ export function ExploreGame({ game, coverId, gameId, userId }: ExploreGameProps)
         isSaved={game.saved}
         className="mt-3"
       />
+    </div>
+  );
+}
+
+interface GameIsSaved extends GameWithCover {
+  saved: boolean;
+}
+
+interface ExploreGameInternalProps {
+  game: GameIsSaved;
+  userId: string;
+}
+export function ExploreGameInternal({ game, userId }: ExploreGameInternalProps) {
+  return (
+    <div className="flex flex-col gap-3">
+      <GameCover coverId={game.cover.imageId} gameId={game.gameId} />
+      <SearchEntryControls gameId={game.gameId} userId={userId} isSaved={game.saved} />
     </div>
   );
 }

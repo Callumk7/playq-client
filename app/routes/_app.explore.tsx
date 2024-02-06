@@ -1,5 +1,5 @@
 import { NavigationLink } from "@/features/layout/components/navigation";
-import { Link, Outlet } from "@remix-run/react";
+import { Outlet } from "@remix-run/react";
 
 export default function ExploreRoute() {
   return (
@@ -16,6 +16,10 @@ const exploreLinks = [
   {
     name: "Games",
     to: "/explore/games"
+  },
+  {
+    name: "Popular",
+    to: "/explore/popular"
   },
   {
     name: "Playlists",

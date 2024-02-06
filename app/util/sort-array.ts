@@ -1,4 +1,4 @@
-import { UsersToGames } from "@/types/users";
+import { UsersToGames } from "@/types/games";
 import { splitArray } from "./split-array";
 
 

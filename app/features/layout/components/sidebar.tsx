@@ -16,7 +16,7 @@ interface SidebarProps {
 
 export function Sidebar({ playlists, friends, setDialogOpen, hasSession }: SidebarProps) {
   return (
-    <div className="h-full w-full max-w-80 border py-3 pl-8 pr-3">
+    <div className="h-full w-full border py-3 px-5">
       <Tabs defaultValue="playlists">
         <TabsList className="w-full">
           <TabsTrigger value="playlists" className="w-full">
@@ -73,7 +73,7 @@ function SidebarPlaylistEntry({ playlist }: SidebarPlaylistEntryProps) {
   return (
     <PlaylistContextMenu asChild>
       <Link
-        to={`playlists/${playlist.id}`}
+        to={`playlists/view/${playlist.id}`}
         className="rounded-md p-4 hover:bg-background-hover"
         ref={setNodeRef}
         style={style}
