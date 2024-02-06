@@ -2,7 +2,6 @@ import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { Outlet, useFetcher } from "@remix-run/react";
 import { db } from "db";
-import { playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { Container, Navbar, Sidebar } from "@/features/layout";
@@ -15,6 +14,7 @@ import { User } from "@/types/users";
 import { friends } from "db/schema/users";
 import { getUserCollectionGameIds } from "@/features/collection/queries/get-game-collection";
 import { useCollectionStore } from "@/store/collection";
+import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -39,13 +39,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userFriends: User[] = [];
   let userCollection: number[] = [];
   if (session) {
-    // We need to get the user's playlists, so we can pass it to the sidebar.
-    // In addition, we are also going to get the user's friends.
-    // TODO: We will use Promise.all to get this stuff in parallel.
-    userPlaylists = await db.query.playlists.findMany({
-      where: eq(playlists.creatorId, session.user.id),
-    });
-
+    userPlaylists = await getCreatedAndFollowedPlaylists(session.user.id)
     userFriends = await db.query.friends
       .findMany({
         where: eq(friends.userId, session.user.id),
@@ -124,6 +118,7 @@ export default function AppLayout() {
         <div className="h-full min-h-screen lg:flex-grow">
           <div className="fixed hidden w-64 h-full min-h-screen lg:block">
             <Sidebar
+              userId={session!.user.id}
               playlists={userPlaylists}
               friends={userFriends}
               setDialogOpen={setDialogOpen}

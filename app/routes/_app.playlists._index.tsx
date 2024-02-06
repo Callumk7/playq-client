@@ -8,40 +8,36 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createServerClient, getSession } from "@/features/auth";
-import { Container } from "@/features/layout";
 import { PlaylistCard } from "@/features/playlists/components/playlist-card";
-import { getDiscoverablePlaylists } from "@/features/playlists/lib/get-discoverable-playlists";
+import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
 import { TableIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useState } from "react";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
 
+// This route is for personal playlists: followed (public) and
+// owned only. Use the explore route for more discovery features
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabase, headers } = createServerClient(request);
   const session = await getSession(supabase);
 
   if (!session) {
-    // there is no session, therefore, we are redirecting
-    // to the landing page. The `/?index` is required here
-    // for Remix to correctly call our loaders
     return redirect("/?index", {
-      // we still need to return response.headers to attach the set-cookie header
       headers,
     });
   }
 
-  const allPlaylists = await getDiscoverablePlaylists(session.user.id);
-  console.log(allPlaylists);
+  const allPlaylists = await getCreatedAndFollowedPlaylists(session.user.id)
 
-  return typedjson({ allPlaylists });
+  return typedjson({ allPlaylists, session });
 };
 
 export default function PlaylistView() {
-  const { allPlaylists } = useTypedLoaderData<typeof loader>();
+  const { allPlaylists, session } = useTypedLoaderData<typeof loader>();
   const [isTableView, setIsTableView] = useState(false);
 
   return (
-    <Container>
+    <div>
       <Button size={"icon"} onClick={() => setIsTableView(!isTableView)}>
         <TableIcon />
       </Button>
@@ -49,6 +45,7 @@ export default function PlaylistView() {
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
           {allPlaylists.map((playlist) => (
             <PlaylistCard
+              userId={session.user.id}
               key={playlist.id}
               playlistId={playlist.id}
               playlistName={playlist.name}
@@ -77,7 +74,7 @@ export default function PlaylistView() {
           </TableBody>
         </Table>
       )}
-    </Container>
+    </div>
   );
 }
 

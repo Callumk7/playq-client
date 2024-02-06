@@ -28,11 +28,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const discoverablePlaylists = await getDiscoverablePlaylists(session.user.id);
 
-  return typedjson({ discoverablePlaylists });
+  return typedjson({ discoverablePlaylists, session });
 };
 
 export default function ExplorePlaylists() {
-  const { discoverablePlaylists } = useTypedLoaderData<typeof loader>();
+  const { discoverablePlaylists, session } = useTypedLoaderData<typeof loader>();
   const [isTableView, setIsTableView] = useState(false);
 
   return (
@@ -44,10 +44,11 @@ export default function ExplorePlaylists() {
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
           {discoverablePlaylists.map((playlist) => (
             <PlaylistCard
+              userId={session.user.id}
               key={playlist.id}
               playlistId={playlist.id}
               playlistName={playlist.name}
-              games={playlist.games.slice(0, 3).map((p) => p.game)}
+              games={playlist.games.slice(0, 4).map(g => g.game)}
               creator={playlist.creator}
             />
           ))}

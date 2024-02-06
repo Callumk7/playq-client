@@ -1,5 +1,7 @@
+import { Button } from "@/components/ui/button";
 import { DBImage } from "@/features/library/components/game-cover";
-import { Link } from "@remix-run/react";
+import { UpdateIcon } from "@radix-ui/react-icons";
+import { Link, useFetcher } from "@remix-run/react";
 
 interface PlaylistCardProps {
   playlistId: string;
@@ -14,14 +16,17 @@ interface PlaylistCardProps {
     id: string;
     username: string;
   };
+  userId: string;
 }
 
 export function PlaylistCard({
+  userId,
   playlistId,
   playlistName,
   games,
   creator,
 }: PlaylistCardProps) {
+  const followFetcher = useFetcher();
   return (
     <div className="flex w-full flex-col gap-3 overflow-hidden rounded-lg bg-background-3 p-5">
       <Link
@@ -38,6 +43,16 @@ export function PlaylistCard({
           </div>
         ))}
       </div>
+      <Button
+        onClick={() =>
+          followFetcher.submit(
+            { userId: userId, playlistId: playlistId },
+            { method: "POST", action: "/api/followers" },
+          )
+        }
+      >
+        {followFetcher.state === "submitting" ? <UpdateIcon className="animate-spin" /> : "Follow"}
+      </Button>
     </div>
   );
 }
