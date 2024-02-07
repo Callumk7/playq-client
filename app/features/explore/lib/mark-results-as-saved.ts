@@ -20,12 +20,12 @@ export const markResultsAsSaved = (
 	});
 };
 
-export const markInternalResultsAsSaved = <G extends { gameId: number }>(
+export const markInternalResultsAsSaved = <G extends { games: {gameId: number}  }>(
 	searchResults: G[],
 	userCollection: number[],
 ) => {
 	return searchResults.map((game) => {
-		if (userCollection.includes(game.gameId)) {
+		if (userCollection.includes(game.games.gameId)) {
 			return {
 				...game,
 				saved: true,
