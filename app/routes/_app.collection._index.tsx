@@ -63,7 +63,7 @@ export default function CollectionIndex() {
   const { userPlaylists, games, session, genreNames } =
     useTypedLoaderData<typeof loader>();
 
-  const { filteredGames } = useFilter(games, genreNames);
+  const { filteredGames } = useFilter(games);
   const { searchedGames } = useSearch(filteredGames);
   const { sortedGames } = useSort(searchedGames);
 
@@ -77,6 +77,7 @@ export default function CollectionIndex() {
   const genreFilter = useFilterStore((state) => state.genreFilter);
   const handleGenreToggled = useFilterStore((state) => state.handleGenreToggled);
   const handleToggleAllGenres = useFilterStore((state) => state.handleToggleAllGenres);
+  // back to the top
 
   return (
     <>
@@ -123,6 +124,7 @@ function CollectionProgress({
   completedGames: number;
 }) {
   return (
+    // make a change here if you want 
     <div className="flex w-full flex-col gap-4">
       <div className="flex flex-col gap-1">
         <Label>Played</Label>

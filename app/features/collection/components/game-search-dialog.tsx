@@ -28,6 +28,7 @@ export function GameSearchDialog({ userId }: GameSearchDialogProps) {
   // recommended from discord: you can import the type from the route,
   // and then use it as a type arg.
   const fetcher = useFetcher<typeof loader>();
+  // good stuff
   return (
     <Dialog>
       <DialogTrigger asChild>

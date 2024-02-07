@@ -29,14 +29,14 @@ interface GameIsSaved extends GameWithCover {
 }
 
 interface ExploreGameInternalProps {
-  game: GameIsSaved;
+  game: GameWithCover;
   userId: string;
 }
 export function ExploreGameInternal({ game, userId }: ExploreGameInternalProps) {
   return (
     <div className="flex flex-col gap-3">
       <GameCover coverId={game.cover.imageId} gameId={game.gameId} />
-      <SearchEntryControls gameId={game.gameId} userId={userId} isSaved={game.saved} />
+      <SearchEntryControls gameId={game.gameId} userId={userId} isSaved={true} />
     </div>
   );
 }

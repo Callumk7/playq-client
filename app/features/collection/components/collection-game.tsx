@@ -30,6 +30,7 @@ export function CollectionGame({
     id: gameId,
   });
   const style = transform
+    // make a change
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(0.5)`,
         opacity: 0.3,

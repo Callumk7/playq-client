@@ -3,12 +3,10 @@ import { Input } from "@/components/ui/form";
 import { Toggle } from "@/components/ui/toggle";
 import { createServerClient, getSession } from "@/features/auth";
 import { getCollectionGameIds } from "@/features/collection";
+import { getAllGenres } from "@/features/collection/queries/get-user-genres";
 import { ExploreGameInternal } from "@/features/explore/components/search-game";
 import { useRouteData } from "@/features/explore/hooks/use-initial-data";
-import {
-  markInternalResultsAsSaved,
-  markResultsAsSaved,
-} from "@/features/explore/lib/mark-results-as-saved";
+import { markInternalResultsAsSaved } from "@/features/explore/lib/mark-results-as-saved";
 import { GameCover, LibraryView } from "@/features/library";
 import { GameListItemInternal } from "@/features/library/components/game-list-item";
 import { GenreFilter } from "@/features/library/components/genre-filter";
@@ -49,24 +47,18 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     limit: 50,
     with: {
       cover: true,
-      genres: {
-        with: {
-          genre: true,
-        },
-      },
     },
     orderBy: [desc(games.aggregatedRating)],
     where: where,
     offset: Number(offset) ?? 0,
   });
 
+  const allGenres = await getAllGenres();
+  const genres = allGenres.map((g) => g.name);
+
   // this mutates the shape of the result
   const gameIds = await getCollectionGameIds(session.user.id);
   const resultsMarkedAsSaved = markInternalResultsAsSaved(searchResults, gameIds);
-  const genreSet = new Set(
-    searchResults.map((r) => r.genres.map((g) => g.genre.name)).flat(),
-  );
-  const genres = [...genreSet];
 
   return typedjson({ resultsMarkedAsSaved, session, genres });
 };
@@ -110,22 +102,6 @@ export default function ExploreRoute() {
   // We are filtering on the results, and the filter state is kept in the store
   const store = useExploreStore();
 
-  // Now we need to filter the search results based on the state of the filter store
-  console.time("filtering");
-  const filteredResults = data.resultsMarkedAsSaved.filter((r) => {
-    if (r.genres.length === 0) {
-      return true;
-    }
-    if (
-      store.genreFilter.every((filterGenre) =>
-        r.genres.some((gameGenre) => gameGenre.genre.name === filterGenre),
-      )
-    ) {
-      return true;
-    }
-  });
-  console.timeEnd("filtering");
-
   return (
     <div className="mb-12">
       <div className="flex flex-col gap-y-6">
@@ -166,7 +142,7 @@ export default function ExploreRoute() {
         />
         {view === "card" ? (
           <LibraryView>
-            {filteredResults.map((game) => (
+            {data.resultsMarkedAsSaved.map((game) => (
               <ExploreGameInternal
                 key={game.id}
                 game={game}
@@ -176,7 +152,7 @@ export default function ExploreRoute() {
           </LibraryView>
         ) : (
           <ListView>
-            {filteredResults.map((game) => (
+            {data.resultsMarkedAsSaved.map((game) => (
               <GameListItemInternal
                 key={game.id}
                 game={game}

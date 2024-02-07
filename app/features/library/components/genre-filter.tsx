@@ -1,5 +1,4 @@
 import { Tag } from "@/components/ui/tag";
-import useFilterStore from "@/store/filters";
 
 interface GenreFilterProps {
   genres: string[];
