@@ -27,6 +27,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   const discoverablePlaylists = await getDiscoverablePlaylists(session.user.id);
+  console.log(discoverablePlaylists);
 
   return typedjson({ discoverablePlaylists, session });
 };

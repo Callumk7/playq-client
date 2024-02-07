@@ -32,8 +32,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const search = url.searchParams.get("search");
   const genreSearch = url.searchParams.getAll("genres");
-  const rating = Number(url.searchParams.get("rating"));
-  const follows = Number(url.searchParams.get("follows"));
+  const rating = Number(url.searchParams.get("rating") ?? 80);
+  const follows = Number(url.searchParams.get("follows") ?? 50);
 
   const conditions = [gt(games.externalFollows, follows), gt(games.rating, rating)];
 
@@ -86,9 +86,9 @@ export default function ExploreRoute() {
               <input key={g} type="hidden" name="genres" value={g} />
             ))}
             <Label>Rating</Label>
-            <Slider name="rating" />
+            <Slider name="rating" defaultValue={[80]} />
             <Label>Follows</Label>
-            <Slider name="follows" />
+            <Slider name="follows" defaultValue={[50]} />
             <Button variant={"outline"} type="submit">
               Search
             </Button>

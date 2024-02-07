@@ -39,6 +39,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return json({ failure: res.error });
     }
 
+    if (!res.data.user) {
+      throw new Error("NO USER DATA RETURNED FROM SUPABASE")
+    }
+
     // I need to ensure that this happens!!
     const dbResult = await db.insert(users).values({
       username: result.data.username,
@@ -46,7 +50,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       password: result.data.password,
       firstName: result.data.firstName,
       lastName: result.data.lastName,
-      id: res.data.user!.id, // this is from supabase
+      id: res.data.user.id, // this is from supabase
     });
 
     console.log(dbResult)
