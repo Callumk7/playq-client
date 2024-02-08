@@ -1,6 +1,4 @@
-import { Container } from "@/components";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
+import { Container, GameCover, Label, LibraryView, Progress } from "@/components";
 import { createServerClient, getSession } from "@/features/auth";
 import { SaveToCollectionButton } from "@/features/explore";
 import {
@@ -8,8 +6,6 @@ import {
   getPopularGamesByCollection,
   getPopularGamesByPlaylist,
 } from "@/features/home/queries/popular-games";
-import { LibraryView } from "@/features/library";
-import { GameCover } from "@/features/library/components/game-cover";
 import { getUserCollectionGameIds } from "@/model";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";

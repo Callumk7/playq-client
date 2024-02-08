@@ -1,7 +1,4 @@
 import { createServerClient, getSession } from "@/features/auth";
-import { useFilter, useSearch } from "@/features/library";
-import { GenreFilter } from "@/features/library/components/genre-filter";
-import { useSort } from "@/features/library/hooks/sort";
 import { useFilterStore } from "@/store/filters";
 import { GameWithCollection } from "@/types/games";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -15,9 +12,13 @@ import {
   Label,
   LibraryView,
   Progress,
+  RateGameDialog,
+  GenreFilter,
+  useFilter,
+  useSearch,
+  useSort,
 } from "@/components";
 import { useState } from "react";
-import { RateGameDialog } from "@/features/collection/components/rate-game-dialog";
 
 ///
 /// LOADER FUNCTION

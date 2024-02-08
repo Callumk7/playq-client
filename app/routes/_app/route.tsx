@@ -6,15 +6,13 @@ import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { CreatePlaylistDialog } from "@/features/playlists";
 import { createServerClient } from "@/features/auth/supabase/supabase.server";
-import { Playlist } from "@/types/playlists";
 import { createBrowserClient } from "@supabase/ssr";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { User } from "@/types/users";
 import { friends } from "db/schema/users";
 import { useCollectionStore } from "@/store/collection";
 import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
 import { getUserCollectionGameIds } from "@/model";
 import { Container, Navbar, Sidebar } from "@/components";
+import { Playlist, User } from "@/types";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -39,7 +37,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userFriends: User[] = [];
   let userCollection: number[] = [];
   if (session) {
-    userPlaylists = await getCreatedAndFollowedPlaylists(session.user.id)
+    userPlaylists = await getCreatedAndFollowedPlaylists(session.user.id);
     userFriends = await db.query.friends
       .findMany({
         where: eq(friends.userId, session.user.id),
@@ -100,41 +98,25 @@ export default function AppLayout() {
     return () => subscription.unsubscribe();
   }, [serverAccessToken, supabase, supaFetcher]);
 
-  // dnd kit, drop event. This controls specifically games being dragged into a playlist
-  const handleDrop = (e: DragEndEvent) => {
-    if (e.over) {
-      // once we end the drag.. we want to trigger a fetcher
-      playlistFetcher.submit(
-        { addedBy: session!.user.id },
-        {
-          method: "POST",
-          action: `/api/playlists/${e.over.id}/games/${e.active.id}`,
-        },
-      );
-    }
-  };
-
   return (
     <>
-      <DndContext onDragEnd={handleDrop}>
-        <div className="h-full min-h-screen lg:flex-grow">
-          <div className="fixed hidden w-64 h-full min-h-screen lg:block">
-            <Sidebar
-              userId={session!.user.id}
-              playlists={userPlaylists}
-              friends={userFriends}
-              setDialogOpen={setDialogOpen}
-              hasSession={session ? true : false}
-            />
-          </div>
-          <div className="h-full lg:pl-64">
-            <Navbar supabase={supabase} session={session} />
-            <Container>
-              <Outlet />
-            </Container>
-          </div>
+      <div className="h-full min-h-screen lg:flex-grow">
+        <div className="fixed hidden h-full min-h-screen w-64 lg:block">
+          <Sidebar
+            userId={session!.user.id}
+            playlists={userPlaylists}
+            friends={userFriends}
+            setDialogOpen={setDialogOpen}
+            hasSession={session ? true : false}
+          />
         </div>
-      </DndContext>
+        <div className="h-full lg:pl-64">
+          <Navbar supabase={supabase} session={session} />
+          <Container>
+            <Outlet />
+          </Container>
+        </div>
+      </div>
       {session && (
         <CreatePlaylistDialog
           userId={session.user.id}

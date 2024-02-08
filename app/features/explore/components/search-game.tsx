@@ -1,7 +1,7 @@
-import { GameCover } from "@/features/library";
 import { SearchEntryControls } from "..";
 import { IGDBGame } from "@/types/igdb";
 import { GameWithCover } from "@/types/games";
+import { GameCover } from "@/components";
 
 interface ExploreGameProps {
   game: IGDBGame;

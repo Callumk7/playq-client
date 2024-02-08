@@ -1,7 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { DBImage } from "@/features/library/components/game-cover";
-import { GenreTags } from "@/features/library/components/genre-filter";
+import { Card, CardContent, CardHeader, CardTitle, DBImage, GenreTags, Separator } from "@/components";
 import { getCompleteGame } from "@/model/games";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";

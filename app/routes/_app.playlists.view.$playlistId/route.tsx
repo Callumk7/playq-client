@@ -10,9 +10,10 @@ import {
   Separator,
   RemoveFromCollectionButton,
   SaveToCollectionButton,
+  GameCover,
+  LibraryView,
 } from "@/components";
 import { createServerClient, getSession } from "@/features/auth";
-import { GameCover, LibraryView } from "@/features/library";
 import { getPlaylistWithGames } from "@/features/playlists";
 import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
 import { getUserGameCollection } from "@/model";

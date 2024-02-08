@@ -1,11 +1,9 @@
-import { Button, Input, Label, Slider } from "@/components";
+import { Button, Input, Label, LibraryView, Slider, GenreFilter, } from "@/components";
 import { createServerClient, getSession } from "@/features/auth";
 import { getAllGenres } from "@/features/collection/queries/get-user-genres";
 import { ExploreGameInternal } from "@/features/explore/components/search-game";
 import { useRouteData } from "@/features/explore/hooks/use-initial-data";
 import { markInternalResultsAsSaved } from "@/features/explore/lib/mark-results-as-saved";
-import { LibraryView } from "@/features/library";
-import { GenreFilter } from "@/features/library/components/genre-filter";
 import { getUserCollectionGameIds } from "@/model";
 import { useExploreStore } from "@/store/explore";
 import { LoaderFunctionArgs } from "@remix-run/node";

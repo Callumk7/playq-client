@@ -1,9 +1,8 @@
-import { Button, Input } from "@/components";
+import { Button, Input, LibraryView } from "@/components";
 import { IGDB_BASE_URL } from "@/constants";
 import { createServerClient, getSession } from "@/features/auth";
 import { markResultsAsSaved } from "@/features/explore";
 import { ExploreGame } from "@/features/explore/components/search-game";
-import { LibraryView } from "@/features/library";
 import { GameListItem } from "@/features/library/components/game-list-item";
 import { ListView } from "@/features/library/components/list-view";
 import { FetchOptions, fetchGamesFromIGDB } from "@/lib/igdb";
