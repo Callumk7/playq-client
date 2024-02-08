@@ -1,9 +1,4 @@
 import { createServerClient, getSession } from "@/features/auth";
-import {
-  CollectionControls,
-  CollectionGame,
-  CollectionMenubar,
-} from "@/features/collection";
 import { useFilter, useSearch } from "@/features/library";
 import { GenreFilter } from "@/features/library/components/genre-filter";
 import { useSort } from "@/features/library/hooks/sort";
@@ -13,7 +8,16 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, redirect, useTypedLoaderData } from "remix-typedjson";
 import { handleDataFetching } from "./loader";
 import { transformCollectionIntoGames } from "@/model/collection";
-import { GameWithControls, Label, LibraryView, Progress } from "@/components";
+import {
+  CollectionGameMenu,
+  CollectionMenubar,
+  GameWithControls,
+  Label,
+  LibraryView,
+  Progress,
+} from "@/components";
+import { useState } from "react";
+import { RateGameDialog } from "@/features/collection/components/rate-game-dialog";
 
 ///
 /// LOADER FUNCTION
@@ -60,7 +64,15 @@ export default function CollectionIndex() {
   const genreFilter = useFilterStore((state) => state.genreFilter);
   const handleGenreToggled = useFilterStore((state) => state.handleGenreToggled);
   const handleToggleAllGenres = useFilterStore((state) => state.handleToggleAllGenres);
-  // back to the top
+
+  // State for handling the rate game dialog
+  const [isRateGameDialogOpen, setIsRateGameDialogOpen] = useState<boolean>(false);
+  const [dialogGameId, setDialogGameId] = useState<number>(0);
+
+  const handleOpenRateGameDialog = (gameId: number) => {
+    setDialogGameId(gameId);
+    setIsRateGameDialogOpen(true);
+  };
 
   return (
     <>
@@ -87,21 +99,21 @@ export default function CollectionIndex() {
             coverId={game.cover.imageId}
             gameId={game.gameId}
           >
-            <CollectionControls
+            <CollectionGameMenu
               gameId={game.gameId}
               isPlayed={game.played}
               isCompleted={game.completed ?? false}
               userId={session.user.id}
               playlists={userPlaylists}
               gamePlaylists={game.playlists}
-              setIsRateGameDialogOpen={setIsRateGameDialogOpen}
+              handleOpenRateGameDialog={handleOpenRateGameDialog}
             />
           </GameWithControls>
         ))}
       </LibraryView>
       <RateGameDialog
-        userId={userId}
-        gameId={gameId}
+        userId={session.user.id}
+        gameId={dialogGameId}
         isRateGameDialogOpen={isRateGameDialogOpen}
         setIsRateDialogOpen={setIsRateGameDialogOpen}
       />

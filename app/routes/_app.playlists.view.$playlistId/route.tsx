@@ -8,10 +8,10 @@ import {
   DialogTitle,
   DialogDescription,
   Separator,
+  RemoveFromCollectionButton,
+  SaveToCollectionButton,
 } from "@/components";
 import { createServerClient, getSession } from "@/features/auth";
-import { RemoveFromCollectionButton } from "@/features/collection";
-import { SaveToCollectionButton } from "@/features/explore";
 import { GameCover, LibraryView } from "@/features/library";
 import { getPlaylistWithGames } from "@/features/playlists";
 import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
