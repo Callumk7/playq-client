@@ -1,7 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { createServerClient, getSession } from "@/features/auth";
-import { getUserCollectionGameIds } from "@/features/collection/queries/get-game-collection";
 import { SaveToCollectionButton } from "@/features/explore";
 import {
   combinePopularGameData,
@@ -11,6 +10,7 @@ import {
 import { Container } from "@/features/layout";
 import { LibraryView } from "@/features/library";
 import { GameCover } from "@/features/library/components/game-cover";
+import { getUserCollectionGameIds } from "@/model";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 

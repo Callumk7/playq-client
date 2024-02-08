@@ -1,20 +1,21 @@
-import { Button } from "@/components/ui/button";
 import {
+  Button,
+  DialogHeader,
+  Input,
+  DialogFooter,
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/form";
-import { Separator } from "@/components/ui/separator";
+  DialogDescription,
+  Separator,
+} from "@/components";
 import { createServerClient, getSession } from "@/features/auth";
-import { RemoveFromCollectionButton, getUserGameCollection } from "@/features/collection";
+import { RemoveFromCollectionButton } from "@/features/collection";
 import { SaveToCollectionButton } from "@/features/explore";
 import { GameCover, LibraryView } from "@/features/library";
 import { getPlaylistWithGames } from "@/features/playlists";
 import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
+import { getUserGameCollection } from "@/model";
 import { useCollectionStore } from "@/store/collection";
 import { Game } from "@/types/games";
 import { PlaylistWithGames } from "@/types/playlists";

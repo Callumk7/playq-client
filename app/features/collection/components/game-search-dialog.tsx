@@ -1,19 +1,19 @@
-import { Button } from "@/components/ui/button";
+import { ChevronRightIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { Link, useFetcher } from "@remix-run/react";
+import type { loader } from "@/routes/api.search";
+import { Input } from "@/components/ui/form";
+import { IGDBGame } from "@/types/igdb";
+import { SaveToCollectionButton } from "@/features/explore";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { ChevronRightIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { Link, useFetcher } from "@remix-run/react";
-import type { loader } from "@/routes/api.search"
-import { Input } from "@/components/ui/form";
-import { IGDBGame } from "@/types/igdb";
-import { SaveToCollectionButton } from "@/features/explore";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from "@/components";
 
 interface GameSearchDialogProps {
   userId: string;

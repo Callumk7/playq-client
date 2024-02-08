@@ -1,6 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
 import { createServerClient, getSession } from "@/features/auth";
 import { Container } from "@/features/layout";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
@@ -13,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { Input, Button, Label } from "@/components";
 
 ///
 /// LOADER

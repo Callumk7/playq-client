@@ -1,21 +1,18 @@
-import { Progress } from "@/components/ui/progress";
 import { createServerClient, getSession } from "@/features/auth";
 import {
   CollectionGame,
   CollectionMenubar,
-  getUserGameCollection,
 } from "@/features/collection";
-import { transformCollectionIntoGames } from "@/features/collection/queries/get-game-collection";
-import { getUserGenres } from "@/features/collection/queries/get-user-genres";
 import { LibraryView, useFilter, useSearch } from "@/features/library";
 import { GenreFilter } from "@/features/library/components/genre-filter";
 import { useSort } from "@/features/library/hooks/sort";
-import { getUserPlaylists } from "@/features/playlists";
-import useFilterStore from "@/store/filters";
+import { useFilterStore } from "@/store/filters";
 import { GameWithCollection } from "@/types/games";
-import { Label } from "@radix-ui/react-context-menu";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, redirect, useTypedLoaderData } from "remix-typedjson";
+import { handleDataFetching } from "./loader";
+import { transformCollectionIntoGames } from "@/model/collection";
+import { Label, Progress } from "@/components";
 
 ///
 /// LOADER FUNCTION
@@ -23,33 +20,15 @@ import { typedjson, redirect, useTypedLoaderData } from "remix-typedjson";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabase, headers } = createServerClient(request);
   const session = await getSession(supabase);
-
   if (!session) {
-    // there is no session, therefore, we are redirecting
-    // to the landing page. The `/?index` is required here
-    // for Remix to correctly call our loaders
     return redirect("/?index", {
-      // we still need to return response.headers to attach the set-cookie header
       headers,
     });
   }
 
-  const userCollectionPromise = getUserGameCollection(session.user.id);
-  const userPlaylistsPromise = getUserPlaylists(session.user.id);
-
-  const allUserGenresPromise = getUserGenres(session.user.id);
-
-  const [userCollection, userPlaylists, allGenres] = await Promise.all([
-    userCollectionPromise,
-    userPlaylistsPromise,
-    allUserGenresPromise,
-  ]);
-
-  userCollection.forEach((c) => {
-    if (!c.game) {
-      console.log(c.gameId);
-    }
-  });
+  const { userCollection, userPlaylists, allGenres } = await handleDataFetching(
+    session.user.id,
+  );
 
   // Not sure about this transform function. At this point, it might be too
   // arbitrary. Consider the data needs and review at a later date.
@@ -59,6 +38,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return typedjson({ session, userPlaylists, games, genreNames });
 };
 
+///
+/// ROUTE
+///
 export default function CollectionIndex() {
   const { userPlaylists, games, session, genreNames } =
     useTypedLoaderData<typeof loader>();
@@ -124,7 +106,7 @@ function CollectionProgress({
   completedGames: number;
 }) {
   return (
-    // make a change here if you want 
+    // make a change here if you want
     <div className="flex w-full flex-col gap-4">
       <div className="flex flex-col gap-1">
         <Label>Played</Label>

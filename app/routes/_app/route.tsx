@@ -4,7 +4,6 @@ import { Outlet, useFetcher } from "@remix-run/react";
 import { db } from "db";
 import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
-import { Container, Navbar, Sidebar } from "@/features/layout";
 import { CreatePlaylistDialog } from "@/features/playlists";
 import { createServerClient } from "@/features/auth/supabase/supabase.server";
 import { Playlist } from "@/types/playlists";
@@ -12,9 +11,10 @@ import { createBrowserClient } from "@supabase/ssr";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { User } from "@/types/users";
 import { friends } from "db/schema/users";
-import { getUserCollectionGameIds } from "@/features/collection/queries/get-game-collection";
 import { useCollectionStore } from "@/store/collection";
 import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
+import { getUserCollectionGameIds } from "@/model";
+import { Container, Navbar, Sidebar } from "@/components";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -66,7 +66,9 @@ export default function AppLayout() {
   const setUserCollection = useCollectionStore((state) => state.setUserCollection);
   setUserCollection(userCollection);
 
+  // supabase data requests
   const supaFetcher = useFetcher();
+
   // fetcher for dragging games to a playlist
   const playlistFetcher = useFetcher();
 

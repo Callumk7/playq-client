@@ -1,4 +1,4 @@
-import { NavigationLink } from "@/features/layout/components/navigation";
+import { NavigationLink } from "@/components";
 import { Outlet } from "@remix-run/react";
 
 export default function ExploreRoute() {

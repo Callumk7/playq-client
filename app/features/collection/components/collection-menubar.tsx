@@ -1,7 +1,7 @@
-import { Input } from "@/components/ui/form";
+import { Input } from "@/components";
 import { GameSortAndFilterMenu } from "@/features/library";
 import { GameSearchDialog } from "./game-search-dialog";
-import useFilterStore from "@/store/filters";
+import { useFilterStore } from "@/store/filters";
 
 interface CollectionMenubarProps {
   userId: string;

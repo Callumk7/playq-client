@@ -1,5 +1,4 @@
-import { Input } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
+import { Input, Label } from "@/components";
 import { createServerClient, getSession } from "@/features/auth";
 import { PlaylistCard } from "@/features/playlists/components/playlist-card";
 import { getDiscoverablePlaylists } from "@/features/playlists/lib/get-discoverable-playlists";

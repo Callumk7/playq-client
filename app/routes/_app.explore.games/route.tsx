@@ -1,14 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/form";
+import { Button, Input } from "@/components";
 import { IGDB_BASE_URL } from "@/constants";
 import { createServerClient, getSession } from "@/features/auth";
-import { getCollectionGameIds } from "@/features/collection";
 import { markResultsAsSaved } from "@/features/explore";
 import { ExploreGame } from "@/features/explore/components/search-game";
 import { LibraryView } from "@/features/library";
 import { GameListItem } from "@/features/library/components/game-list-item";
 import { ListView } from "@/features/library/components/list-view";
 import { FetchOptions, fetchGamesFromIGDB } from "@/lib/igdb";
+import { getUserCollectionGameIds } from "@/model";
 import { IGDBGame, IGDBGameSchemaArray } from "@/types/igdb";
 import { ArrowLeftIcon, ArrowRightIcon, ViewGridIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -34,7 +33,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   }
 
-  const gameIds = await getCollectionGameIds(session.user.id);
+  const gameIds = await getUserCollectionGameIds(session.user.id);
 
   const url = new URL(request.url);
   const search = url.searchParams.get("search");

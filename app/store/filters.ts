@@ -31,7 +31,7 @@ interface FilterStore {
 	handleToggleAllGenres: (genres: string[]) => void;
 }
 
-const useFilterStore = create<FilterStore>()(
+export const useFilterStore = create<FilterStore>()(
 	devtools((set) => ({
 		genreFilter: [],
 		searchTerm: "",
@@ -84,5 +84,3 @@ const useFilterStore = create<FilterStore>()(
 			}),
 	})),
 );
-
-export default useFilterStore;

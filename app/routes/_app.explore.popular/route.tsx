@@ -1,18 +1,22 @@
-import { Button } from "@/components/ui/button";
 import {
+  Button,
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/ui/command";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Progress } from "@/components/ui/progress";
-import { Toggle } from "@/components/ui/toggle";
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Progress,
+  Toggle,
+} from "@/components";
 import { createServerClient, getSession } from "@/features/auth";
-import { getUserCollectionGameIds } from "@/features/collection/queries/get-game-collection";
-import { genresToStrings, getAllGenres } from "@/features/collection/queries/get-user-genres";
+import {
+  genresToStrings,
+  getAllGenres,
+} from "@/features/collection/queries/get-user-genres";
 import { SaveToCollectionButton } from "@/features/explore";
 import {
   combinePopularGameData,
@@ -22,8 +26,15 @@ import {
 import { Container } from "@/features/layout";
 import { LibraryView } from "@/features/library";
 import { GameCover } from "@/features/library/components/game-cover";
+import { getUserCollectionGameIds } from "@/model";
 import { cn } from "@/util/cn";
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon, CubeIcon, PlayIcon } from "@radix-ui/react-icons";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CubeIcon,
+  PlayIcon,
+} from "@radix-ui/react-icons";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useState } from "react";
@@ -44,7 +55,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userCollectionGameidsPromise = getUserCollectionGameIds(session.user.id);
   const allGenres = await getAllGenres();
   const genreStrings = genresToStrings(allGenres);
-  genreStrings.forEach((s, i) => genreStrings[i] = s.toLowerCase())
+  genreStrings.forEach((s, i) => (genreStrings[i] = s.toLowerCase()));
 
   // fetch gameIds in parallel
   const [popularGamesByCollection, popularGamesByPlaylist, userCollectionGameIds] =
@@ -60,7 +71,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     popularGamesByPlaylist,
   });
 
-  return json({ processedData, userCollectionGameIds, session, genreStrings }, { headers });
+  return json(
+    { processedData, userCollectionGameIds, session, genreStrings },
+    { headers },
+  );
 };
 
 export default function PopularExplore() {
@@ -162,14 +176,11 @@ function GenreComboBox({ genres }: { genres: string[] }) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? genres.find((genre) => genre === value)
-            : "Filter on a genre"}
+          {value ? genres.find((genre) => genre === value) : "Filter on a genre"}
           {open ? (
-
-          <ChevronUpIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronUpIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           ) : (
-          <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           )}
         </Button>
       </PopoverTrigger>

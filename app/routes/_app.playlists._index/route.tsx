@@ -1,19 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import {
+  Card,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components";
 import { createServerClient, getSession } from "@/features/auth";
-import { PlaylistCard } from "@/features/playlists/components/playlist-card";
 import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
-import { TableIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useState } from "react";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
 
 // This route is for personal playlists: followed (public) and
@@ -34,7 +30,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function PlaylistView() {
-  const { allPlaylists, session } = useTypedLoaderData<typeof loader>();
+  const { allPlaylists } = useTypedLoaderData<typeof loader>();
 
   return (
     <main className="mt-10">

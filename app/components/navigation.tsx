@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components";
 import { Login } from "@/features/auth";
 import { NavLink } from "@remix-run/react";
 import { Session, SupabaseClient } from "@supabase/supabase-js";

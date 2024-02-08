@@ -1,4 +1,4 @@
-import { Container } from "@/features/layout";
+import { Container } from "@/components";
 import { Link } from "@remix-run/react";
 
 export default function CheckEmailPage() {
