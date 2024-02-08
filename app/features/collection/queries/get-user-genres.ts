@@ -1,3 +1,4 @@
+import { Genre } from "@/types/games";
 import { db } from "db";
 import { genres, genresToGames, usersToGames } from "db/schema/games";
 import { eq, inArray } from "drizzle-orm";
@@ -16,6 +17,10 @@ export const getAllGenres = async () => {
 	const allGenres = await db.selectDistinct().from(genres);
 	return allGenres;
 };
+
+export const genresToStrings = (genres: Genre[]): string[] => {
+	return genres.map(genre => genre.name)
+}
 
 export const getUserGenres = async (userId: string) => {
 	const userGames = await db

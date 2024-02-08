@@ -1,7 +1,18 @@
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
+import { Toggle } from "@/components/ui/toggle";
 import { createServerClient, getSession } from "@/features/auth";
 import { getUserCollectionGameIds } from "@/features/collection/queries/get-game-collection";
+import { genresToStrings, getAllGenres } from "@/features/collection/queries/get-user-genres";
 import { SaveToCollectionButton } from "@/features/explore";
 import {
   combinePopularGameData,
@@ -11,8 +22,11 @@ import {
 import { Container } from "@/features/layout";
 import { LibraryView } from "@/features/library";
 import { GameCover } from "@/features/library/components/game-cover";
+import { cn } from "@/util/cn";
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon, CubeIcon, PlayIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { useState } from "react";
 
 ///
 /// LOADER
@@ -28,6 +42,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const popularGamesByPlaylistPromise = getPopularGamesByPlaylist();
   const popularGamesByCollectionPromise = getPopularGamesByCollection();
   const userCollectionGameidsPromise = getUserCollectionGameIds(session.user.id);
+  const allGenres = await getAllGenres();
+  const genreStrings = genresToStrings(allGenres);
+  genreStrings.forEach((s, i) => genreStrings[i] = s.toLowerCase())
 
   // fetch gameIds in parallel
   const [popularGamesByCollection, popularGamesByPlaylist, userCollectionGameIds] =
@@ -43,11 +60,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     popularGamesByPlaylist,
   });
 
-  return json({ processedData, userCollectionGameIds, session }, { headers });
+  return json({ processedData, userCollectionGameIds, session, genreStrings }, { headers });
 };
 
 export default function PopularExplore() {
-  const { processedData, userCollectionGameIds, session } =
+  const { processedData, userCollectionGameIds, session, genreStrings } =
     useLoaderData<typeof loader>();
   // This could be done on the server..
   const maxCollectionCount = processedData.reduce(
@@ -58,8 +75,28 @@ export default function PopularExplore() {
     (max, game) => Math.max(max, game.playlistCount),
     0,
   );
+
+  const [sortBy, setSortBy] = useState<"collection" | "playlist">("collection");
+  const sortByCollection = sortBy === "collection";
+
+  const handleToggleSortBy = () => {
+    if (sortBy === "collection") {
+      processedData.sort((a, b) => b.playlistCount - a.playlistCount);
+      setSortBy("playlist");
+    } else {
+      processedData.sort((a, b) => b.collectionCount - a.collectionCount);
+      setSortBy("collection");
+    }
+  };
+
   return (
     <Container>
+      <div className="flex gap-6">
+        <Toggle pressed={sortByCollection} onPressedChange={handleToggleSortBy}>
+          {sortBy === "collection" ? <CubeIcon /> : <PlayIcon />}
+        </Toggle>
+        <GenreComboBox genres={genreStrings} />
+      </div>
       <LibraryView>
         {processedData.map((game) => (
           <div key={game.id} className="relative flex flex-col gap-3">
@@ -110,5 +147,58 @@ function ExploreGameDataRow({
         <Progress value={playlistCount} max={maxPlaylistCount} className="h-2" />
       </div>
     </div>
+  );
+}
+function GenreComboBox({ genres }: { genres: string[] }) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[200px] justify-between"
+        >
+          {value
+            ? genres.find((genre) => genre === value)
+            : "Filter on a genre"}
+          {open ? (
+
+          <ChevronUpIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          ) : (
+          <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandInput placeholder="Filter on a genre" />
+          <CommandEmpty>No genre found.</CommandEmpty>
+          <CommandGroup>
+            {genres.map((genre) => (
+              <CommandItem
+                key={genre}
+                value={genre}
+                onSelect={(currentValue) => {
+                  setValue(currentValue === value ? "" : currentValue);
+                  setOpen(false);
+                }}
+              >
+                <CheckIcon
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    value === genre ? "opacity-100" : "opacity-0",
+                  )}
+                />
+                {genre}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }

@@ -34,6 +34,7 @@ export const followers = pgTable(
 	{
 		userId: text("user_id").notNull(),
 		playlistId: text("playlist_id").notNull(),
+		rating: integer("rating")
 	},
 	(t) => ({
 		pk: primaryKey({ columns: [t.userId, t.playlistId] }),

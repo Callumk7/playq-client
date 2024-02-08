@@ -10,7 +10,15 @@ import {
 } from "@remix-run/react";
 import { Providers } from "./components/providers";
 
-export const links: LinksFunction = () => [{ rel: "stylesheet", href: stylesheet }];
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesheet },
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;0,800;1,900&family=Syne:wght@700;800&display=swap",
+  },
+];
 
 export default function App() {
   return (
@@ -22,7 +30,7 @@ export default function App() {
           <Meta />
           <Links />
         </head>
-        <body className="bg-background text-foreground">
+        <body className="bg-background text-foreground font-sans">
           <Outlet />
           <ScrollRestoration />
           <Scripts />

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -27,34 +28,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   }
 
-  const allPlaylists = await getCreatedAndFollowedPlaylists(session.user.id)
+  const allPlaylists = await getCreatedAndFollowedPlaylists(session.user.id);
 
   return typedjson({ allPlaylists, session });
 };
 
 export default function PlaylistView() {
   const { allPlaylists, session } = useTypedLoaderData<typeof loader>();
-  const [isTableView, setIsTableView] = useState(false);
 
   return (
-    <div>
-      <Button size={"icon"} onClick={() => setIsTableView(!isTableView)}>
-        <TableIcon />
-      </Button>
-      {isTableView ? (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {allPlaylists.map((playlist) => (
-            <PlaylistCard
-              userId={session.user.id}
-              key={playlist.id}
-              playlistId={playlist.id}
-              playlistName={playlist.name}
-              games={playlist.games.slice(0, 3).map((p) => p.game)}
-              creator={playlist.creator}
-            />
-          ))}
-        </div>
-      ) : (
+    <main className="mt-10">
+      <Card>
         <Table>
           <TableHeader>
             <TableRow>
@@ -73,8 +57,8 @@ export default function PlaylistView() {
             ))}
           </TableBody>
         </Table>
-      )}
-    </div>
+      </Card>
+    </main>
   );
 }
 

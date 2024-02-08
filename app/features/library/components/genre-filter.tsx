@@ -30,3 +30,15 @@ export function GenreFilter({
     </div>
   );
 }
+
+export function GenreTags({ genres }: { genres: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-2 self-start">
+      {genres.map((genre) => (
+        <Tag variant={"default"} key={genre}>
+          {genre}
+        </Tag>
+      ))}
+    </div>
+  );
+}

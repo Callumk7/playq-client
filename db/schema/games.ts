@@ -97,7 +97,12 @@ export const genresToGames = pgTable("genres_to_games", {
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	isUpdated: boolean("is_updated").default(false),
-});
+}, 
+
+	(t) => ({
+		pk: primaryKey({ columns: [t.genreId, t.gameId] }),
+	}),
+);
 
 export const genresToGamesRelations = relations(genresToGames, ({ one }) => ({
 	genre: one(genres, {

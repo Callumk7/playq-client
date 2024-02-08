@@ -7,6 +7,9 @@ export default {
 			fontSize: {
 				title: ["12rem", "3rem"],
 			},
+			fontFamily: {
+				sans: ["Poppins", "sans-serif"]
+			},
 			colors: {
 				background: {
 					DEFAULT: "hsl(var(--background-1))",
