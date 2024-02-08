@@ -44,6 +44,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				.update(playlists)
 				.set({
 					name: result.data.playlistName,
+					isUpdated: true,
+					updatedAt: new Date()
 				})
 				.where(eq(playlists.id, playlistId));
 
@@ -55,6 +57,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				.update(playlists)
 				.set({
 					isPrivate: result.data.isPrivate,
+					isUpdated: true,
+					updatedAt: new Date()
 				})
 				.where(eq(playlists.id, playlistId));
 

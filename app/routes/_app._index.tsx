@@ -54,12 +54,10 @@ export default function AppIndex() {
     (max, game) => Math.max(max, game.collectionCount),
     0,
   );
-  console.log(maxCollectionCount);
   const maxPlaylistCount = processedData.reduce(
     (max, game) => Math.max(max, game.playlistCount),
     0,
   );
-  console.log(maxPlaylistCount);
   return (
     <Container>
       <LibraryView>

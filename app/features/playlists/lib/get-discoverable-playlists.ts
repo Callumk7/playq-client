@@ -1,7 +1,7 @@
 import { isFalse } from "@/util/drizzle/is-false";
 import { db } from "db";
-import { playlists } from "db/schema/playlists";
-import { and, ne } from "drizzle-orm";
+import { followers, playlists } from "db/schema/playlists";
+import { and, eq, ne } from "drizzle-orm";
 
 export async function getDiscoverablePlaylists(userId: string) {
 	const discoverablePlaylists = await db.query.playlists.findMany({
@@ -16,6 +16,9 @@ export async function getDiscoverablePlaylists(userId: string) {
 						}
 					}
 				}
+			},
+			followers: {
+				where: eq(followers.userId, userId)
 			}
 		}
 	});

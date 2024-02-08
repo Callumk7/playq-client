@@ -15,7 +15,6 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "db";
 import { covers, games, genres, genresToGames } from "db/schema/games";
 import { eq, ilike, inArray, and, gt } from "drizzle-orm";
-import { useState } from "react";
 import { redirect, typedjson } from "remix-typedjson";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

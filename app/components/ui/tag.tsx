@@ -1,7 +1,7 @@
 import { VariantProps, cva } from "class-variance-authority";
 import clsx from "clsx";
 
-const tagVariants = cva("inline rounded-lg", {
+const tagVariants = cva("inline rounded-lg h-fit", {
   variants: {
     variant: {
       default: "bg-background border text-accent-foreground",
