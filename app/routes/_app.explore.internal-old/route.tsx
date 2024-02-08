@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { Toggle } from "@/components/ui/toggle";
 import { createServerClient, getSession } from "@/features/auth";
-import { getCollectionGameIds } from "@/features/collection";
 import { getAllGenres } from "@/features/collection/queries/get-user-genres";
 import { ExploreGameInternal } from "@/features/explore/components/search-game";
 import { useRouteData } from "@/features/explore/hooks/use-initial-data";
@@ -11,6 +10,7 @@ import { GameCover, LibraryView } from "@/features/library";
 import { GameListItemInternal } from "@/features/library/components/game-list-item";
 import { GenreFilter } from "@/features/library/components/genre-filter";
 import { ListView } from "@/features/library/components/list-view";
+import { getUserCollectionGameIds } from "@/model";
 import { useExploreStore } from "@/store/explore";
 import { ArrowLeftIcon, ArrowRightIcon, ViewGridIcon } from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -57,7 +57,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const genres = allGenres.map((g) => g.name);
 
   // this mutates the shape of the result
-  const gameIds = await getCollectionGameIds(session.user.id);
+  const gameIds = await getUserCollectionGameIds(session.user.id);
   const resultsMarkedAsSaved = markInternalResultsAsSaved(searchResults, gameIds);
 
   return typedjson({ resultsMarkedAsSaved, session, genres });

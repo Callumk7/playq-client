@@ -1,9 +1,10 @@
 import { createServerClient, getSession } from "@/features/auth";
 import {
+  CollectionControls,
   CollectionGame,
   CollectionMenubar,
 } from "@/features/collection";
-import { LibraryView, useFilter, useSearch } from "@/features/library";
+import { useFilter, useSearch } from "@/features/library";
 import { GenreFilter } from "@/features/library/components/genre-filter";
 import { useSort } from "@/features/library/hooks/sort";
 import { useFilterStore } from "@/store/filters";
@@ -12,7 +13,7 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, redirect, useTypedLoaderData } from "remix-typedjson";
 import { handleDataFetching } from "./loader";
 import { transformCollectionIntoGames } from "@/model/collection";
-import { Label, Progress } from "@/components";
+import { GameWithControls, Label, LibraryView, Progress } from "@/components";
 
 ///
 /// LOADER FUNCTION
@@ -81,17 +82,29 @@ export default function CollectionIndex() {
       </div>
       <LibraryView>
         {sortedGames.map((game) => (
-          <CollectionGame
-            game={game}
-            userId={session.user.id}
-            gameId={game.gameId}
-            coverId={game.cover.imageId}
+          <GameWithControls
             key={game.id}
-            userPlaylists={userPlaylists}
-            gamePlaylists={game.playlists}
-          />
+            coverId={game.cover.imageId}
+            gameId={game.gameId}
+          >
+            <CollectionControls
+              gameId={game.gameId}
+              isPlayed={game.played}
+              isCompleted={game.completed ?? false}
+              userId={session.user.id}
+              playlists={userPlaylists}
+              gamePlaylists={game.playlists}
+              setIsRateGameDialogOpen={setIsRateGameDialogOpen}
+            />
+          </GameWithControls>
         ))}
       </LibraryView>
+      <RateGameDialog
+        userId={userId}
+        gameId={gameId}
+        isRateGameDialogOpen={isRateGameDialogOpen}
+        setIsRateDialogOpen={setIsRateGameDialogOpen}
+      />
     </>
   );
 }

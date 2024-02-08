@@ -5,6 +5,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  Container,
   Label,
   Popover,
   PopoverContent,
@@ -23,7 +24,6 @@ import {
   getPopularGamesByCollection,
   getPopularGamesByPlaylist,
 } from "@/features/home/queries/popular-games";
-import { Container } from "@/features/layout";
 import { LibraryView } from "@/features/library";
 import { GameCover } from "@/features/library/components/game-cover";
 import { getUserCollectionGameIds } from "@/model";

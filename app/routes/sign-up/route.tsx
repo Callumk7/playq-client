@@ -1,5 +1,4 @@
 import { createServerClient } from "@/features/auth/supabase/supabase.server";
-import { Container } from "@/features/layout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateIcon } from "@radix-ui/react-icons";
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
@@ -9,7 +8,7 @@ import { users } from "db/schema/users";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zx } from "zodix";
-import { Input, Button, Label } from "@/components";
+import { Input, Button, Label, Container } from "@/components";
 
 // Used with react-hook-form, and zodix
 const signupSchema = z.object({

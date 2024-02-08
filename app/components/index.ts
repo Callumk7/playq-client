@@ -27,3 +27,4 @@ export * from "./ui/custom/slide-over";
 export * from "./layout";
 export * from "./navigation";
 export * from "./sidebar";
+export * from "./games";

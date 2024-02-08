@@ -9,7 +9,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
-import useFilterStore from "@/store/filters";
+import { useFilterStore } from "@/store/filters";
 
 export function GameSortAndFilterMenu() {
   const store = useFilterStore();

@@ -1,3 +1,4 @@
+import { Container } from "@/components";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { createServerClient, getSession } from "@/features/auth";
@@ -7,7 +8,6 @@ import {
   getPopularGamesByCollection,
   getPopularGamesByPlaylist,
 } from "@/features/home/queries/popular-games";
-import { Container } from "@/features/layout";
 import { LibraryView } from "@/features/library";
 import { GameCover } from "@/features/library/components/game-cover";
 import { getUserCollectionGameIds } from "@/model";

@@ -1,4 +1,4 @@
-import useFilterStore from "@/store/filters";
+import { useFilterStore } from "@/store/filters";
 
 export type SortOption =
 	| "nameAsc"

@@ -1,7 +1,7 @@
+import { Container } from "@/components";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { createServerClient, getSession } from "@/features/auth";
-import { Container } from "@/features/layout";
 import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "db";
