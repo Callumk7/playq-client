@@ -31,13 +31,21 @@ interface FilterStore {
 	setFilterOnRated: (filter: boolean) => void;
 	handleGenreToggled: (genre: string) => void;
 	handleToggleAllGenres: (genres: string[]) => void;
+	handleToggleSortName: () => void;
+	handleTogglePlayerRating: () => void;
+	handleToggleSortDateAdded: () => void;
+	handleToggleSortReleaseDate: () => void;
+	handleToggleSortAggRating: () => void;
+	handleToggleSortAggRatingCount: () => void;
+	handleToggleSortFollows: () => void;
+	handleToggleSortRating: () => void;
 }
 
 export const useFilterStore = create<FilterStore>()(
 	devtools((set) => ({
 		genreFilter: [],
 		searchTerm: "",
-		sortOption: "rating",
+		sortOption: "ratingDesc",
 		filterOnPlayed: false,
 		filterOnUnPlayed: false,
 		filterOnCompleted: false,
@@ -86,5 +94,53 @@ export const useFilterStore = create<FilterStore>()(
 					return { genreFilter: [] };
 				}
 			}),
+		handleToggleSortName: () =>
+			set((state) =>
+				state.sortOption === "nameAsc"
+					? { sortOption: "nameDesc" }
+					: { sortOption: "nameAsc" },
+			),
+		handleTogglePlayerRating: () =>
+			set((state) =>
+				state.sortOption === "playerRatingAsc"
+					? { sortOption: "playerRatingDesc" }
+					: { sortOption: "playerRatingAsc" },
+			),
+		handleToggleSortDateAdded: () =>
+			set((state) =>
+				state.sortOption === "dateAddedAsc"
+					? { sortOption: "dateAddedDesc" }
+					: { sortOption: "dateAddedAsc" },
+			),
+		handleToggleSortReleaseDate: () =>
+			set((state) =>
+				state.sortOption === "releaseDateAsc"
+					? { sortOption: "releaseDateDesc" }
+					: { sortOption: "releaseDateAsc" },
+			),
+		handleToggleSortRating: () =>
+			set((state) =>
+				state.sortOption === "ratingDesc"
+					? { sortOption: "ratingAsc" }
+					: { sortOption: "ratingDesc" },
+			),
+		handleToggleSortAggRating: () =>
+			set((state) =>
+				state.sortOption === "aggregatedRatingAsc"
+					? { sortOption: "aggregatedRatingDesc" }
+					: { sortOption: "aggregatedRatingAsc" },
+			),
+		handleToggleSortAggRatingCount: () =>
+			set((state) =>
+				state.sortOption === "aggregatedRatingCountAsc"
+					? { sortOption: "aggregatedRatingCountDesc" }
+					: { sortOption: "aggregatedRatingCountAsc" },
+			),
+		handleToggleSortFollows: () =>
+			set((state) =>
+				state.sortOption === "followersAsc"
+					? { sortOption: "followersDesc" }
+					: { sortOption: "followersAsc" },
+			),
 	})),
 );

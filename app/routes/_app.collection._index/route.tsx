@@ -16,10 +16,18 @@ import {
   useFilter,
   useSearch,
   useSort,
+  Table,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableBody,
+  TableCell,
 } from "@/components";
 import { useState } from "react";
 import { getUserGenres } from "@/features/collection/queries/get-user-genres";
 import { getUserPlaylists } from "@/features/playlists";
+import { Link } from "@remix-run/react";
+import { CollectionTableView } from "./components/collection-table-view";
 
 ///
 /// LOADER FUNCTION
@@ -82,6 +90,8 @@ export default function CollectionIndex() {
     setIsRateGameDialogOpen(true);
   };
 
+  const [isTableView, setIsTableView] = useState<boolean>(true);
+
   return (
     <>
       <div className="mb-8">
@@ -100,25 +110,34 @@ export default function CollectionIndex() {
           completedGames={completedGames}
         />
       </div>
-      <LibraryView>
-        {sortedGames.map((game) => (
-          <GameWithControls
-            key={game.id}
-            coverId={game.cover.imageId}
-            gameId={game.gameId}
-          >
-            <CollectionGameMenu
+      {isTableView ? (
+        <CollectionTableView
+          sortedGames={sortedGames}
+          userPlaylists={userPlaylists}
+          userId={session.user.id}
+          handleOpenRateGameDialog={handleOpenRateGameDialog}
+        />
+      ) : (
+        <LibraryView>
+          {sortedGames.map((game) => (
+            <GameWithControls
+              key={game.id}
+              coverId={game.cover.imageId}
               gameId={game.gameId}
-              isPlayed={game.played}
-              isCompleted={game.completed ?? false}
-              userId={session.user.id}
-              playlists={userPlaylists}
-              gamePlaylists={game.playlists}
-              handleOpenRateGameDialog={handleOpenRateGameDialog}
-            />
-          </GameWithControls>
-        ))}
-      </LibraryView>
+            >
+              <CollectionGameMenu
+                gameId={game.gameId}
+                isPlayed={game.played}
+                isCompleted={game.completed ?? false}
+                userId={session.user.id}
+                playlists={userPlaylists}
+                gamePlaylists={game.playlists}
+                handleOpenRateGameDialog={handleOpenRateGameDialog}
+              />
+            </GameWithControls>
+          ))}
+        </LibraryView>
+      )}
       <RateGameDialog
         userId={session.user.id}
         gameId={dialogGameId}

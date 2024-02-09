@@ -5,25 +5,32 @@ export type SortOption =
 	| "nameDesc"
 	| "releaseDateAsc"
 	| "releaseDateDesc"
-	| "rating"
+	| "ratingAsc"
+	| "ratingDesc"
+	| "aggregatedRatingAsc"
+	| "aggregatedRatingDesc"
+	| "aggregatedRatingCountAsc"
+	| "aggregatedRatingCountDesc"
 	| "playerRatingAsc"
 	| "playerRatingDesc"
 	| "dateAddedAsc"
-	| "dateAddedDesc";
-
+	| "dateAddedDesc"
+	| "followersAsc"
+	| "followersDesc";
 
 interface SortableGame {
 	title: string;
+	rating: number | null;
+	externalFollows: number | null;
 	aggregatedRating: number | null;
+	aggregatedRatingCount: number | null;
 	firstReleaseDate: Date | null;
 	playerRating: number | null;
 	dateAdded: Date;
 }
 
-export const useSort = <G extends SortableGame>(
-	games: G[],
-) => {
-	const sortOption = useFilterStore(state => state.sortOption);
+export const useSort = <G extends SortableGame>(games: G[]) => {
+	const sortOption = useFilterStore((state) => state.sortOption);
 	const sortedGames = applySorting(games, sortOption);
 
 	return {
@@ -49,7 +56,45 @@ const applySorting = <G extends SortableGame>(
 			);
 			break;
 
-		case "rating": {
+		case "ratingDesc": {
+			let bRating = 0;
+			let aRating = 0;
+			sortedGames.sort((a, b) => {
+				if (b.rating === null) {
+					bRating = 0;
+				} else {
+					bRating = b.rating;
+				}
+
+				if (a.rating === null) {
+					aRating = 0;
+				} else {
+					aRating = a.rating;
+				}
+				return bRating - aRating;
+			});
+			break;
+		}
+		case "ratingAsc": {
+			let bRating = 0;
+			let aRating = 0;
+			sortedGames.sort((a, b) => {
+				if (b.rating === null) {
+					bRating = 0;
+				} else {
+					bRating = b.rating;
+				}
+
+				if (a.rating === null) {
+					aRating = 0;
+				} else {
+					aRating = a.rating;
+				}
+				return aRating - bRating;
+			});
+			break;
+		}
+		case "aggregatedRatingDesc": {
 			let bRating = 0;
 			let aRating = 0;
 			sortedGames.sort((a, b) => {
@@ -65,6 +110,63 @@ const applySorting = <G extends SortableGame>(
 					aRating = a.aggregatedRating;
 				}
 				return bRating - aRating;
+			});
+			break;
+		}
+		case "aggregatedRatingAsc": {
+			let bRating = 0;
+			let aRating = 0;
+			sortedGames.sort((a, b) => {
+				if (b.aggregatedRating === null) {
+					bRating = 0;
+				} else {
+					bRating = b.aggregatedRating;
+				}
+
+				if (a.aggregatedRating === null) {
+					aRating = 0;
+				} else {
+					aRating = a.aggregatedRating;
+				}
+				return aRating - bRating;
+			});
+			break;
+		}
+		case "aggregatedRatingCountDesc": {
+			let bRatingCount = 0;
+			let aRatingCount = 0;
+			sortedGames.sort((a, b) => {
+				if (b.aggregatedRatingCount === null) {
+					bRatingCount = 0;
+				} else {
+					bRatingCount = b.aggregatedRatingCount;
+				}
+
+				if (a.aggregatedRatingCount === null) {
+					aRatingCount = 0;
+				} else {
+					aRatingCount = a.aggregatedRatingCount;
+				}
+				return bRatingCount - aRatingCount;
+			});
+			break;
+		}
+		case "aggregatedRatingCountAsc": {
+			let bRatingCount = 0;
+			let aRatingCount = 0;
+			sortedGames.sort((a, b) => {
+				if (b.aggregatedRatingCount === null) {
+					bRatingCount = 0;
+				} else {
+					bRatingCount = b.aggregatedRatingCount;
+				}
+
+				if (a.aggregatedRatingCount === null) {
+					aRatingCount = 0;
+				} else {
+					aRatingCount = a.aggregatedRatingCount;
+				}
+				return aRatingCount - bRatingCount;
 			});
 			break;
 		}
@@ -143,14 +245,52 @@ const applySorting = <G extends SortableGame>(
 			});
 			break;
 		}
+		case "followersAsc": {
+			let bFollowers = 0;
+			let aFollowers = 0;
+			sortedGames.sort((a, b) => {
+				if (b.externalFollows === null) {
+					bFollowers = 0;
+				} else {
+					bFollowers = b.externalFollows;
+				}
+
+				if (a.externalFollows === null) {
+					aFollowers = 0;
+				} else {
+					aFollowers = a.externalFollows;
+				}
+				return bFollowers - aFollowers;
+			});
+			break;
+		}
+		case "followersDesc": {
+			let bFollowers = 0;
+			let aFollowers = 0;
+			sortedGames.sort((a, b) => {
+				if (b.externalFollows === null) {
+					bFollowers = 0;
+				} else {
+					bFollowers = b.externalFollows;
+				}
+
+				if (a.externalFollows === null) {
+					aFollowers = 0;
+				} else {
+					aFollowers = a.externalFollows;
+				}
+				return aFollowers - bFollowers;
+			});
+			break;
+		}
 		// TODO: date added is not working correctly.
 		// BUG: date added is not working correctly.
 		case "dateAddedAsc": {
-			sortedGames.sort((a, b) => b.dateAdded.getDate() - a.dateAdded.getDate())
+			sortedGames.sort((a, b) => b.dateAdded.getDate() - a.dateAdded.getDate());
 			break;
 		}
 		case "dateAddedDesc": {
-			sortedGames.sort((a, b) => a.dateAdded.getDate() - b.dateAdded.getDate())
+			sortedGames.sort((a, b) => a.dateAdded.getDate() - b.dateAdded.getDate());
 			break;
 		}
 		default:
