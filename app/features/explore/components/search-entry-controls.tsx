@@ -1,5 +1,4 @@
-import { RemoveFromCollectionButton } from "@/features/collection";
-import { SaveToCollectionButton } from "./save-to-collection-button";
+import { RemoveFromCollectionButton, SaveToCollectionButton } from "@/components";
 import { cn } from "@/util/cn";
 
 interface SearchEntryControlsProps {

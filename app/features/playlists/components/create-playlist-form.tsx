@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
-import { useFetcher } from "@remix-run/react";
+import { Form, useNavigation } from "@remix-run/react";
 import { useEffect } from "react";
 
 interface CreatePlaylistFormProps {
@@ -9,14 +9,15 @@ interface CreatePlaylistFormProps {
   setDialogOpen: (open: boolean) => void;
 }
 
-export function CreatePlaylistForm({ userId, dialogOpen, setDialogOpen }: CreatePlaylistFormProps) {
-  const fetcher = useFetcher();
-  const isSubmitting = fetcher.state === "submitting";
+export function CreatePlaylistForm({
+  userId,
+  dialogOpen,
+  setDialogOpen,
+}: CreatePlaylistFormProps) {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.formAction === "/playlists";
 
-  // No need to wait.. just close the dialog.
-  // Although...
-  // This does not do anything relating to how remix will
-  // handle optimistically updating the ui..
+  // Close the modal when the navigation begins
   useEffect(() => {
     if (isSubmitting && dialogOpen) {
       setDialogOpen(false);
@@ -24,9 +25,9 @@ export function CreatePlaylistForm({ userId, dialogOpen, setDialogOpen }: Create
   }, [isSubmitting, dialogOpen, setDialogOpen]);
 
   return (
-    <fetcher.Form
+    <Form
       method="post"
-      action="/api/playlists"
+      action="/playlists"
       className="flex flex-row items-center space-x-3"
     >
       <Input
@@ -39,6 +40,6 @@ export function CreatePlaylistForm({ userId, dialogOpen, setDialogOpen }: Create
       <Button variant={"outline"} size={"sm"} disabled={isSubmitting}>
         add
       </Button>
-    </fetcher.Form>
+    </Form>
   );
 }

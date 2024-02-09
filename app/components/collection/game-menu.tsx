@@ -20,7 +20,7 @@ import {
 } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
 
-interface GameMenuButtonProps {
+interface CollectionGameMenuProps {
   gameId: number;
   isPlayed: boolean;
   isCompleted: boolean;
@@ -30,7 +30,7 @@ interface GameMenuButtonProps {
   handleOpenRateGameDialog: (gameId: number) => void;
 }
 
-export function GameMenuButton({
+export function CollectionGameMenu({
   gameId,
   isPlayed,
   isCompleted,
@@ -38,7 +38,7 @@ export function GameMenuButton({
   playlists,
   gamePlaylists,
   handleOpenRateGameDialog,
-}: GameMenuButtonProps) {
+}: CollectionGameMenuProps) {
   const deleteFetcher = useFetcher();
   const playedFetcher = useFetcher();
   const completedFetcher = useFetcher();
@@ -84,7 +84,7 @@ export function GameMenuButton({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"ghost"} size={"icon"}>
+        <Button variant={"outline"} size={"icon"}>
           <HamburgerMenuIcon />
         </Button>
       </DropdownMenuTrigger>

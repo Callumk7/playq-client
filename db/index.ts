@@ -1,4 +1,3 @@
-import { singleton } from "@/util/singleton.server";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as gamesSchema from "./schema/games";
@@ -7,10 +6,8 @@ import * as playlistsSchema from "./schema/playlists";
 
 const pg = postgres(process.env.DATABASE_URL!);
 
-export const db = singleton("drizzle", () =>
-	drizzle(pg, {
-		schema: { ...usersSchema, ...gamesSchema, ...playlistsSchema },
-	}),
-);
+export const db = drizzle(pg, {
+	schema: { ...usersSchema, ...gamesSchema, ...playlistsSchema },
+});
 
 export type DB = typeof db;

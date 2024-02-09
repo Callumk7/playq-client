@@ -1,5 +1,4 @@
-import { GameSortAndFilterMenu, Input } from "@/components";
-import { GameSearchDialog } from "./game-search-dialog";
+import { GameSortAndFilterMenu, Input, ExternalSearchDialog } from "@/components";
 import { useFilterStore } from "@/store/filters";
 
 interface CollectionMenubarProps {
@@ -13,7 +12,7 @@ export function CollectionMenubar({ userId }: CollectionMenubarProps) {
   return (
     <div className="flex justify-between">
       <div className="flex w-full justify-start gap-4">
-        <GameSearchDialog userId={userId} />
+        <ExternalSearchDialog userId={userId} />
         <GameSortAndFilterMenu />
       </div>
       <Input

@@ -1,10 +1,8 @@
 import { ChevronRightIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Link, useFetcher } from "@remix-run/react";
 import type { loader } from "@/routes/api.search";
-import { Input } from "@/components/ui/form";
 import { IGDBGame } from "@/types/igdb";
 import { SaveToCollectionButton } from "@/features/explore";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Button,
   Dialog,
@@ -13,18 +11,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
+  ScrollArea,
 } from "@/components";
 
-interface GameSearchDialogProps {
+interface ExternalSearchDialogProps {
   userId: string;
 }
 
-interface SearchResultProps {
-  game: IGDBGame;
-  userId: string;
-}
-
-export function GameSearchDialog({ userId }: GameSearchDialogProps) {
+export function ExternalSearchDialog({ userId }: ExternalSearchDialogProps) {
   // recommended from discord: you can import the type from the route,
   // and then use it as a type arg.
   const fetcher = useFetcher<typeof loader>();
@@ -70,6 +65,11 @@ export function GameSearchDialog({ userId }: GameSearchDialogProps) {
       </DialogContent>
     </Dialog>
   );
+}
+
+interface SearchResultProps {
+  game: IGDBGame;
+  userId: string;
 }
 
 function SearchResult({ game, userId }: SearchResultProps) {
