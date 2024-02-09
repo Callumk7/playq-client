@@ -14,3 +14,26 @@ const minimumPlaylistData = await db
 	return minimumPlaylistData;
 }
 
+export const getPlaylistWithGamesAndFollowers = async (playlistId: string) => {
+	const playlistWithGames = await db.query.playlists.findFirst({
+		where: eq(playlists.id, playlistId),
+		with: {
+			games: {
+				with: {
+					game: {
+						with: {
+							cover: true,
+						},
+					},
+				},
+			},
+			followers: {
+				columns: {
+					userId: true
+				}
+			}
+		},
+	});
+
+	return playlistWithGames;
+};

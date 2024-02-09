@@ -38,7 +38,7 @@ export function PlaylistMenubar({
     <div className="flex justify-between">
       <Menubar>
         <MenubarMenu>
-          <MenubarTrigger>Playlist</MenubarTrigger>
+          <MenubarTrigger>Menu</MenubarTrigger>
           <MenubarContent>
             <MenubarItem onClick={() => setDeletePlaylistDialogOpen(true)}>
               Delete
