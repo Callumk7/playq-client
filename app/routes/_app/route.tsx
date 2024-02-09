@@ -1,18 +1,15 @@
 import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { Outlet, useFetcher } from "@remix-run/react";
-import { db } from "db";
-import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { CreatePlaylistDialog } from "@/features/playlists";
-import { createServerClient } from "@/services";
+import { createServerClient, getSession } from "@/services";
 import { createBrowserClient } from "@supabase/ssr";
-import { friends } from "db/schema/users";
 import { useCollectionStore } from "@/store/collection";
-import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
 import { getUserCollectionGameIds } from "@/model";
 import { Container, Navbar, Sidebar } from "@/components";
 import { Playlist, User } from "@/types";
+import { getCreatedAndFollowedPlaylists, getUserFriends } from "./loader";
 
 export const meta: MetaFunction = () => {
   return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -28,24 +25,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   };
 
   const { supabase, headers } = createServerClient(request);
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const session = await getSession(supabase);
 
   let userPlaylists: Playlist[] = [];
   let userFriends: User[] = [];
   let userCollection: number[] = [];
   if (session) {
     userPlaylists = await getCreatedAndFollowedPlaylists(session.user.id);
-    userFriends = await db.query.friends
-      .findMany({
-        where: eq(friends.userId, session.user.id),
-        with: {
-          friend: true,
-        },
-      })
-      .then((results) => results.map((result) => result.friend));
+    userFriends = await getUserFriends(session.user.id);
 
     // Set the store for user gameIds as a cache on the app route.
     userCollection = await getUserCollectionGameIds(session.user.id);
@@ -66,9 +53,6 @@ export default function AppLayout() {
 
   // supabase data requests
   const supaFetcher = useFetcher();
-
-  // fetcher for dragging games to a playlist
-  const playlistFetcher = useFetcher();
 
   // We create a single instance of Supabase to use across client components
   const [supabase] = useState(() =>

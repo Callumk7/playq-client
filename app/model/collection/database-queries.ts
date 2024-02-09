@@ -2,7 +2,19 @@ import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { eq } from "drizzle-orm";
 
-export const getUserGameCollection = async (userId: string) => {
+export const getUserCollection = async (userId: string) => {
+	const userCollection = await db.query.usersToGames.findMany({
+		where: eq(usersToGames.userId, userId),
+		with: {
+			game: true
+		},
+		columns: {}
+	})
+
+	return userCollection
+}
+
+export const getUserGamesWithDetails = async (userId: string) => {
 	const userCollection = await db.query.usersToGames.findMany({
 		where: eq(usersToGames.userId, userId),
 		with: {

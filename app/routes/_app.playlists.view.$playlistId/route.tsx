@@ -16,20 +16,18 @@ import {
 import { createServerClient, getSession } from "@/services";
 import { getPlaylistWithGames } from "@/features/playlists";
 import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
-import { getUserGameCollection } from "@/model";
 import { useCollectionStore } from "@/store/collection";
 import { Game } from "@/types/games";
 import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useFetcher } from "@remix-run/react";
 import { Session } from "@supabase/supabase-js";
-import { db } from "db";
-import { playlists } from "db/schema/playlists";
-import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { z } from "zod";
 import { zx } from "zodix";
+import { getUserCollection } from "@/model";
+import { getMinimumPlaylistData } from "./loading";
 
 // Type guard types
 interface Blocked {
@@ -52,11 +50,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const session = await getSession(supabase);
 
   if (!session) {
-    // there is no session, therefore, we are redirecting
-    // to the landing page. The `/?index` is required here
-    // for Remix to correctly call our loaders
     return redirect("/?index", {
-      // we still need to return response.headers to attach the set-cookie header
       headers,
     });
   }
@@ -65,15 +59,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     playlistId: z.string(),
   });
 
-  // We need to do some checks to see what permissions the user has for this
-  // specific playlist.
-  const minPlaylistData = await db
-    .select({
-      creator: playlists.creatorId,
-      isPrivate: playlists.isPrivate,
-    })
-    .from(playlists)
-    .where(eq(playlists.id, playlistId));
+  const minPlaylistData = await getMinimumPlaylistData(playlistId); // minimum to decide permissions
 
   // if creator != user & isPrivate
   if (minPlaylistData[0].creator !== session.user.id && minPlaylistData[0].isPrivate) {
@@ -81,7 +67,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   }
 
   const playlistWithGamesPromise = getPlaylistWithGames(playlistId);
-  const userCollectionPromise = getUserGameCollection(session.user.id);
+  const userCollectionPromise = getUserCollection(session.user.id);
 
   const [playlistWithGames, userCollection] = await Promise.all([
     playlistWithGamesPromise,
@@ -89,7 +75,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   ]);
 
   const usersGames = userCollection.map((c) => c.game);
-
   const isCreator = playlistWithGames!.creatorId === session.user.id;
 
   return typedjson({ playlistWithGames, usersGames, blocked: false, isCreator, session });

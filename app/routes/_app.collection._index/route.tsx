@@ -3,7 +3,7 @@ import { useFilterStore } from "@/store/filters";
 import { GameWithCollection } from "@/types/games";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, redirect, useTypedLoaderData } from "remix-typedjson";
-import { transformCollectionIntoGames } from "@/model/collection";
+import { getUserGamesWithDetails, transformCollectionIntoGames } from "@/model";
 import {
   CollectionGameMenu,
   CollectionMenubar,
@@ -20,7 +20,6 @@ import {
 import { useState } from "react";
 import { getUserGenres } from "@/features/collection/queries/get-user-genres";
 import { getUserPlaylists } from "@/features/playlists";
-import { getUserGameCollection } from "@/model";
 
 ///
 /// LOADER FUNCTION
@@ -34,7 +33,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   }
 
-  const userCollectionPromise = getUserGameCollection(session.user.id);
+  const userCollectionPromise = getUserGamesWithDetails(session.user.id);
   const userPlaylistsPromise = getUserPlaylists(session.user.id);
   const allUserGenresPromise = getUserGenres(session.user.id);
 
