@@ -33,8 +33,14 @@ export const useFilter = <G extends WithGenres & WithUserData>(games: G[]) => {
 	if (store.filterOnPlayed) {
 		output = output.filter((game) => game.played);
 	}
+	if (store.filterOnUnPlayed) {
+		output = output.filter((game) => !game.played);
+	}
 	if (store.filterOnCompleted) {
 		output = output.filter((game) => game.completed);
+	}
+	if (store.filterOnUnCompleted) {
+		output = output.filter((game) => !game.completed);
 	}
 	if (store.filterOnRated) {
 		output = output.filter((game) => game.playerRating !== null);

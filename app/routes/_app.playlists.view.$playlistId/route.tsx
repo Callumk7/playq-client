@@ -13,7 +13,7 @@ import {
   GameCover,
   LibraryView,
 } from "@/components";
-import { createServerClient, getSession } from "@/features/auth";
+import { createServerClient, getSession } from "@/services";
 import { getPlaylistWithGames } from "@/features/playlists";
 import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
 import { getUserGameCollection } from "@/model";

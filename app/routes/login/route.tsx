@@ -1,4 +1,3 @@
-import { createServerClient, getSession } from "@/features/auth";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/ssr";
@@ -10,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Input, Button, Label, Container } from "@/components";
+import { createServerClient, getSession } from "@/services";
 
 ///
 /// LOADER

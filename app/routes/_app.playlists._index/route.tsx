@@ -7,7 +7,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components";
-import { createServerClient, getSession } from "@/features/auth";
+import { createServerClient, getSession } from "@/services";
 import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";

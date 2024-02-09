@@ -15,7 +15,7 @@ import {
   Progress,
   Toggle,
 } from "@/components";
-import { createServerClient, getSession } from "@/features/auth";
+import { createServerClient, getSession } from "@/services";
 import {
   genresToStrings,
   getAllGenres,

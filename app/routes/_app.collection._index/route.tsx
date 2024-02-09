@@ -1,9 +1,8 @@
-import { createServerClient, getSession } from "@/features/auth";
+import { createServerClient, getSession } from "@/services";
 import { useFilterStore } from "@/store/filters";
 import { GameWithCollection } from "@/types/games";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, redirect, useTypedLoaderData } from "remix-typedjson";
-import { handleDataFetching } from "./loader";
 import { transformCollectionIntoGames } from "@/model/collection";
 import {
   CollectionGameMenu,
@@ -19,6 +18,9 @@ import {
   useSort,
 } from "@/components";
 import { useState } from "react";
+import { getUserGenres } from "@/features/collection/queries/get-user-genres";
+import { getUserPlaylists } from "@/features/playlists";
+import { getUserGameCollection } from "@/model";
 
 ///
 /// LOADER FUNCTION
@@ -32,9 +34,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   }
 
-  const { userCollection, userPlaylists, allGenres } = await handleDataFetching(
-    session.user.id,
-  );
+  const userCollectionPromise = getUserGameCollection(session.user.id);
+  const userPlaylistsPromise = getUserPlaylists(session.user.id);
+  const allUserGenresPromise = getUserGenres(session.user.id);
+
+  const [userCollection, userPlaylists, allGenres] = await Promise.all([
+    userCollectionPromise,
+    userPlaylistsPromise,
+    allUserGenresPromise,
+  ]);
 
   // Not sure about this transform function. At this point, it might be too
   // arbitrary. Consider the data needs and review at a later date.

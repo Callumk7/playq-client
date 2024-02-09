@@ -109,15 +109,40 @@ export function GameSortAndFilterMenu() {
             Completed
           </MenubarCheckboxItem>
           <MenubarCheckboxItem
+            checked={store.filterOnUnCompleted}
+              onClick={store.handleToggleFilterOnUnCompleted}
+          >
+            Not Completed
+          </MenubarCheckboxItem>
+          <MenubarCheckboxItem
             checked={store.filterOnPlayed}
             onClick={store.handleToggleFilterOnPlayed}
           >
             Played
           </MenubarCheckboxItem>
-          <MenubarItem inset>Starred</MenubarItem>
+          <MenubarCheckboxItem
+            checked={store.filterOnUnPlayed}
+            onClick={store.handleToggleFilterOnUnPlayed}
+          >
+            Not Played
+          </MenubarCheckboxItem>
+          <MenubarCheckboxItem
+            checked={store.filterOnRated}
+            onClick={store.handleToggleFilterOnRated}
+          >
+            Rated
+          </MenubarCheckboxItem>
+          <MenubarCheckboxItem
+            checked={store.filterOnUnrated}
+            onClick={store.handleToggleFilterOnUnrated}
+          >
+            Not Rated
+          </MenubarCheckboxItem>
           {(store.filterOnPlayed ||
+            store.filterOnUnPlayed ||
             store.filterOnStarred ||
             store.filterOnRated ||
+            store.filterOnUnCompleted ||
             store.filterOnCompleted || store.genreFilter.length > 0) && (
             <MenubarItem
               inset
@@ -125,8 +150,10 @@ export function GameSortAndFilterMenu() {
               onClick={() => {
                 store.setGenreFilter([]);
                 store.setFilterOnPlayed(false);
+                store.setFilterOnUnPlayed(false);
                 store.setFilterOnRated(false);
                 store.setFilterOnCompleted(false);
+                store.setFilterOnUnCompleted(false);
               }}
             >
               Clear Filters

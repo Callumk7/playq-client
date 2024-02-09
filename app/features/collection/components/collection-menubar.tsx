@@ -1,5 +1,4 @@
-import { Input } from "@/components";
-import { GameSortAndFilterMenu } from "@/features/library";
+import { GameSortAndFilterMenu, Input } from "@/components";
 import { GameSearchDialog } from "./game-search-dialog";
 import { useFilterStore } from "@/store/filters";
 

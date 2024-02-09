@@ -1,14 +1,14 @@
-import { createServerClient } from "@/features/auth/supabase/supabase.server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateIcon } from "@radix-ui/react-icons";
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { db } from "db";
 import { users } from "db/schema/users";
-import { UseFormRegister, useForm } from "react-hook-form";
+import { FieldValues, UseFormRegister, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zx } from "zodix";
 import { Input, Button, Label, Container } from "@/components";
+import { createServerClient } from "@/services";
 
 // Used with react-hook-form, and zodix
 const signupSchema = z.object({
@@ -117,12 +117,12 @@ export default function SignUpPage() {
   );
 }
 
-interface FormInputFieldProps {
-  name: string;
+interface FormInputFieldProps<T extends FieldValues> {
+  name: keyof T;
   type?: string;
   label: string;
   placeholder?: string;
-  register: UseFormRegister<z.infer<typeof signupSchema>>;
+  register: UseFormRegister<T>;
   error?: string;
 }
 
@@ -133,11 +133,11 @@ function FormInputField({
   name,
   register,
   error,
-}: FormInputFieldProps) {
+}: FormInputFieldProps<z.infer<typeof signupSchema>>) {
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={name}>{label}</Label>
-      <Input type={type} id={name} placeholder={placeholder} {...register(name)} />
+      <Label htmlFor={name as string}>{label}</Label>
+      <Input type={type} id={name as string} placeholder={placeholder} {...register(name)} />
       <p className="min-h-4 text-sm font-medium leading-none text-destructive">
         {error && error}
       </p>

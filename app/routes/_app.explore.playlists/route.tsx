@@ -1,5 +1,5 @@
 import { Input, Label } from "@/components";
-import { createServerClient, getSession } from "@/features/auth";
+import { createServerClient, getSession } from "@/services";
 import { PlaylistCard } from "@/features/playlists/components/playlist-card";
 import { getDiscoverablePlaylists } from "@/features/playlists/lib/get-discoverable-playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";

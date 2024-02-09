@@ -1,5 +1,5 @@
 import { Container, GameCover, Label, LibraryView, Progress } from "@/components";
-import { createServerClient, getSession } from "@/features/auth";
+import { createServerClient, getSession } from "@/services";
 import { SaveToCollectionButton } from "@/features/explore";
 import {
   combinePopularGameData,

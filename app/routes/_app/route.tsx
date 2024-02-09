@@ -5,7 +5,7 @@ import { db } from "db";
 import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { CreatePlaylistDialog } from "@/features/playlists";
-import { createServerClient } from "@/features/auth/supabase/supabase.server";
+import { createServerClient } from "@/services";
 import { createBrowserClient } from "@supabase/ssr";
 import { friends } from "db/schema/users";
 import { useCollectionStore } from "@/store/collection";

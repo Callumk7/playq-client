@@ -1,4 +1,4 @@
-import { SortOption } from "@/features/library/hooks/sort";
+import { SortOption } from "@/components";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
@@ -25,7 +25,9 @@ interface FilterStore {
 	handleToggleFilterOnStarred: () => void;
 	setFilterOnStarred: (filter: boolean) => void;
 	setFilterOnPlayed: (filter: boolean) => void;
+	setFilterOnUnPlayed: (filter: boolean) => void;
 	setFilterOnCompleted: (filter: boolean) => void;
+	setFilterOnUnCompleted: (filter: boolean) => void;
 	setFilterOnRated: (filter: boolean) => void;
 	handleGenreToggled: (genre: string) => void;
 	handleToggleAllGenres: (genres: string[]) => void;
@@ -66,8 +68,10 @@ export const useFilterStore = create<FilterStore>()(
 			set((state) => ({ filterOnStarred: !state.filterOnStarred })),
 		setFilterOnStarred: (filter) => set({ filterOnStarred: filter }),
 		setFilterOnRated: (filter) => set({ filterOnRated: filter }),
-		setFilterOnCompleted: (filter) => set({ filterOnCompleted: filter }),
 		setFilterOnPlayed: (filter) => set({ filterOnPlayed: filter }),
+		setFilterOnUnPlayed: (filter) => set({ filterOnUnPlayed: filter }),
+		setFilterOnCompleted: (filter) => set({ filterOnCompleted: filter }),
+		setFilterOnUnCompleted: (filter) => set({ filterOnUnCompleted: filter }),
 		handleGenreToggled: (genre) =>
 			set((state) => ({
 				genreFilter: state.genreFilter.includes(genre)

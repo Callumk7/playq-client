@@ -1,5 +1,5 @@
 import { Button, Input, Label, LibraryView, Slider, GenreFilter, } from "@/components";
-import { createServerClient, getSession } from "@/features/auth";
+import { createServerClient, getSession } from "@/services";
 import { getAllGenres } from "@/features/collection/queries/get-user-genres";
 import { ExploreGameInternal } from "@/features/explore/components/search-game";
 import { useRouteData } from "@/features/explore/hooks/use-initial-data";
