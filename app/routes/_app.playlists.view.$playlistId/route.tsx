@@ -1,12 +1,5 @@
 import {
 	Button,
-	DialogHeader,
-	Input,
-	DialogFooter,
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	DialogDescription,
 	Separator,
 	RemoveFromCollectionButton,
 	SaveToCollectionButton,
@@ -14,12 +7,11 @@ import {
 	LibraryView,
 } from "@/components";
 import { createServerClient, getSession } from "@/services";
-import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
 import { useUserCacheStore } from "@/store/collection";
 import { Game } from "@/types/games";
 import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { Form, useFetcher } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import { Session } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
@@ -28,6 +20,10 @@ import { zx } from "zodix";
 import { getUserCollection } from "@/model";
 import { getMinimumPlaylistData, getPlaylistWithGamesAndFollowers } from "./loading";
 import { StatsSidebar } from "../res.playlist-sidebar.$userId";
+import { RenamePlaylistDialog } from "./components/rename-playlist-dialog";
+import { DeletePlaylistDialog } from "./components/delete-playlist-dialog";
+import { PlaylistMenubar } from "./components/playlist-menubar";
+import { PlaylistCommentForm } from "./components/playlist-comment";
 
 // Type guard types
 interface Blocked {
@@ -96,8 +92,9 @@ export default function PlaylistRoute() {
 	const rename = useFetcher();
 	const isSubmitting = rename.state === "submitting";
 
-	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>();
-	const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] = useState<boolean>();
+	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
+	const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] =
+		useState<boolean>(false);
 
 	// zustand store. We use these Ids to check to see if the game already
 	// exists in the user's collection.
@@ -138,7 +135,7 @@ export default function PlaylistRoute() {
 				<h1 className="mt-5 py-2 text-3xl font-semibold">{playlistWithGames?.name}</h1>
 				<Separator />
 				<div className="relative grid grid-cols-12 gap-10">
-					<div className="col-span-9">
+					<div className="col-span-9 flex flex-col gap-10">
 						<LibraryView>
 							{playlistWithGames?.games.map((game) => (
 								<div key={game.game.id} className="flex flex-col gap-2">
@@ -157,6 +154,12 @@ export default function PlaylistRoute() {
 								</div>
 							))}
 						</LibraryView>
+						<Separator className="mt-10" />
+						<h2 className="text-2xl font-semibold">Comments</h2>
+						<PlaylistCommentForm
+							userId={session.user.id}
+							playlistId={playlistWithGames.id}
+						/>
 					</div>
 					<div className="relative col-span-3">
 						<StatsSidebar
@@ -168,38 +171,16 @@ export default function PlaylistRoute() {
 					</div>
 				</div>
 			</div>
-			<Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>Choose a new name</DialogTitle>
-					</DialogHeader>
-					<rename.Form method="PATCH" action={`/api/playlists/${playlistWithGames.id}`}>
-						<Input name="playlistName" type="text" />
-					</rename.Form>
-				</DialogContent>
-			</Dialog>
-			<Dialog
-				open={deletePlaylistDialogOpen}
-				onOpenChange={setDeletePlaylistDialogOpen}
-				modal={true}
-			>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>
-							Are you sure that you really want to delete this playlist?
-						</DialogTitle>
-						<DialogDescription>
-							Once you delete a playlist it is impossible to recover. All saved games will
-							be lost to the void forever.
-						</DialogDescription>
-					</DialogHeader>
-					<Form method="delete" action={`/api/playlists/${playlistWithGames.id}`}>
-						<DialogFooter>
-							<Button variant={"destructive"}>Delete</Button>
-						</DialogFooter>
-					</Form>
-				</DialogContent>
-			</Dialog>
+			<RenamePlaylistDialog
+				renameDialogOpen={renameDialogOpen}
+				setRenameDialogOpen={setRenameDialogOpen}
+				playlistId={playlistWithGames.id}
+			/>
+			<DeletePlaylistDialog
+				deletePlaylistDialogOpen={deletePlaylistDialogOpen}
+				setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
+				playlistId={playlistWithGames.id}
+			/>
 		</>
 	);
 }
