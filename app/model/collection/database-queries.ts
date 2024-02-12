@@ -6,13 +6,13 @@ export const getUserCollection = async (userId: string) => {
 	const userCollection = await db.query.usersToGames.findMany({
 		where: eq(usersToGames.userId, userId),
 		with: {
-			game: true
+			game: true,
 		},
-		columns: {}
-	})
+		columns: {},
+	});
 
-	return userCollection
-}
+	return userCollection;
+};
 
 export const getUserGamesWithDetails = async (userId: string) => {
 	const userCollection = await db.query.usersToGames.findMany({

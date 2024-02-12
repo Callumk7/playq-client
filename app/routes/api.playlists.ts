@@ -7,7 +7,6 @@ import { zx } from "zodix";
 
 // Route handler for the CREATION OF PLAYLISTS
 export const action = async ({ request }: ActionFunctionArgs) => {
-
 	// Safety net
 	if (request.method !== "POST") {
 		return json("Method not allowed", { status: 405 });

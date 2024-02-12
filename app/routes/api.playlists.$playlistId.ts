@@ -45,20 +45,20 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				.set({
 					name: result.data.playlistName,
 					isUpdated: true,
-					updatedAt: new Date()
+					updatedAt: new Date(),
 				})
 				.where(eq(playlists.id, playlistId));
 
 			return json({ updatedPlaylist });
 		}
 
-		if ('isPrivate' in result.data) {
+		if ("isPrivate" in result.data) {
 			const updatedPlaylist = await db
 				.update(playlists)
 				.set({
 					isPrivate: result.data.isPrivate,
 					isUpdated: true,
-					updatedAt: new Date()
+					updatedAt: new Date(),
 				})
 				.where(eq(playlists.id, playlistId));
 

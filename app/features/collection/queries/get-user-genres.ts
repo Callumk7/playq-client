@@ -19,8 +19,8 @@ export const getAllGenres = async () => {
 };
 
 export const genresToStrings = (genres: Genre[]): string[] => {
-	return genres.map(genre => genre.name)
-}
+	return genres.map((genre) => genre.name);
+};
 
 export const getUserGenres = async (userId: string) => {
 	const userGames = await db
@@ -36,9 +36,9 @@ export const getUserGenres = async (userId: string) => {
 		.where(inArray(genresToGames.gameId, gameIds))
 		.rightJoin(genres, eq(genresToGames.genreId, genres.id));
 
-	const userGenres =  userGenresQueryArray
+	const userGenres = userGenresQueryArray
 		.filter((q) => q.genres !== null)
-		.map(q => q.genres)
+		.map((q) => q.genres);
 
 	return userGenres;
 };

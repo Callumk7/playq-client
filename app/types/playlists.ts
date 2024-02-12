@@ -22,13 +22,13 @@ export type Followers = z.infer<typeof followersSelectSchema>;
 export type InsertFollowers = z.infer<typeof followersInsertSchema>;
 
 export type GamesOnPlaylistWithGameData = GamesOnPlaylist & {
-	game: GameWithCover
-}
+	game: GameWithCover;
+};
 
 export type PlaylistWithGames = Playlist & {
-	games: GamesOnPlaylistWithGameData[]
-}
+	games: GamesOnPlaylistWithGameData[];
+};
 
 export type PlaylistWithFollowers = Playlist & {
-	followers: Followers[]
-}
+	followers: Followers[];
+};

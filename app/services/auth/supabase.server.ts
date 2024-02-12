@@ -36,4 +36,3 @@ export async function getSession(supabase: SupabaseClient) {
 	} = await supabase.auth.getSession();
 	return session;
 }
-

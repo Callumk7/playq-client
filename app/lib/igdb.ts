@@ -14,7 +14,6 @@ export const fetchGamesFromIGDB = async (
 	options: FetchOptions,
 	headersOverride?: Record<string, string>,
 ): Promise<unknown[]> => {
-
 	let body = "";
 
 	if (options.search) {
@@ -34,7 +33,7 @@ export const fetchGamesFromIGDB = async (
 	}
 
 	if (options.offset) {
-		body += `offset ${options.offset};`
+		body += `offset ${options.offset};`;
 	}
 
 	if (options.filters) {
@@ -85,4 +84,4 @@ export const fetchGenresFromIGDB = async () => {
 		console.error(e);
 		throw new Error("Error fetching games from IGDB");
 	}
-}
+};

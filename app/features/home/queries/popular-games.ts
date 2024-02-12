@@ -19,7 +19,8 @@ export const getPopularGamesByPlaylist = async (): Promise<GameCount[]> => {
 		})
 		.from(gamesOnPlaylists)
 		.groupBy(gamesOnPlaylists.gameId)
-		.orderBy(desc(count(gamesOnPlaylists.gameId))).limit(25)
+		.orderBy(desc(count(gamesOnPlaylists.gameId)))
+		.limit(25);
 
 	return popularGamesByPlaylist;
 };
@@ -34,7 +35,8 @@ export const getPopularGamesByCollection = async (): Promise<GameCount[]> => {
 		})
 		.from(usersToGames)
 		.groupBy(usersToGames.gameId)
-		.orderBy(desc(count(usersToGames.gameId))).limit(25)
+		.orderBy(desc(count(usersToGames.gameId)))
+		.limit(25);
 
 	return popularGamesByCollection;
 };

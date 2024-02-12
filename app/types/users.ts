@@ -17,8 +17,8 @@ export type Friend = z.infer<typeof selectFriendSchema>;
 export type FriendWithDetails = Friend & {
 	user: User;
 	friend: User;
-}
+};
 
 export type UserWithFriends = User & {
 	friends: FriendWithDetails[];
-}
+};

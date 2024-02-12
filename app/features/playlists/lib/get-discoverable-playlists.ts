@@ -12,15 +12,15 @@ export async function getDiscoverablePlaylists(userId: string) {
 				with: {
 					game: {
 						with: {
-							cover: true
-						}
-					}
-				}
+							cover: true,
+						},
+					},
+				},
 			},
 			followers: {
-				where: eq(followers.userId, userId)
-			}
-		}
+				where: eq(followers.userId, userId),
+			},
+		},
 	});
 
 	return discoverablePlaylists;

@@ -3,16 +3,16 @@ import { playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
 
 export const getMinimumPlaylistData = async (playlistId: string) => {
-const minimumPlaylistData = await db
-	.select({
-		creator: playlists.creatorId,
-		isPrivate: playlists.isPrivate,
-	})
-	.from(playlists)
-	.where(eq(playlists.id, playlistId));
+	const minimumPlaylistData = await db
+		.select({
+			creator: playlists.creatorId,
+			isPrivate: playlists.isPrivate,
+		})
+		.from(playlists)
+		.where(eq(playlists.id, playlistId));
 
 	return minimumPlaylistData;
-}
+};
 
 export const getPlaylistWithGamesAndFollowers = async (playlistId: string) => {
 	const playlistWithGames = await db.query.playlists.findFirst({
@@ -29,9 +29,9 @@ export const getPlaylistWithGamesAndFollowers = async (playlistId: string) => {
 			},
 			followers: {
 				columns: {
-					userId: true
-				}
-			}
+					userId: true,
+				},
+			},
 		},
 	});
 

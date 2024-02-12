@@ -21,7 +21,7 @@ export async function getDiscoverablePlaylists(userId: string) {
 			? or(
 					eq(playlists.creatorId, userId),
 					inArray(playlists.creatorId, userFriends),
-				)
+			  )
 			: eq(playlists.creatorId, userId);
 
 	const discoverablePlaylists = await db.query.playlists.findMany({
@@ -63,42 +63,41 @@ export async function getDiscoverablePlaylists(userId: string) {
 }
 
 export async function getPlaylistsWithCoversAndCreator(limit: number) {
-  const playlists = await db.query.playlists.findMany({
-    columns: {
-      id: true,
-      name: true,
-    },
-    with: {
-      creator: {
-        columns: {
-          id: true,
-          username: true,
-        },
-      },
-      games: {
-        columns: {
-          gameId: true,
-        },
-        limit: 4,
-        with: {
-          game: {
-            columns: {
-              id: true,
-            },
-            with: {
-              cover: {
-                columns: {
-                  imageId: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    limit: limit,
-  });
+	const playlists = await db.query.playlists.findMany({
+		columns: {
+			id: true,
+			name: true,
+		},
+		with: {
+			creator: {
+				columns: {
+					id: true,
+					username: true,
+				},
+			},
+			games: {
+				columns: {
+					gameId: true,
+				},
+				limit: 4,
+				with: {
+					game: {
+						columns: {
+							id: true,
+						},
+						with: {
+							cover: {
+								columns: {
+									imageId: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		limit: limit,
+	});
 
-  return playlists;
+	return playlists;
 }
-

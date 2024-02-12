@@ -5,7 +5,7 @@ interface GameHasTitle {
 }
 
 export const useSearch = <G extends GameHasTitle>(games: G[]) => {
-	const searchTerm = useFilterStore(state => state.searchTerm);
+	const searchTerm = useFilterStore((state) => state.searchTerm);
 
 	let output: G[] = [...games];
 	if (searchTerm !== "") {

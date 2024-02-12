@@ -1,4 +1,11 @@
-import { games, covers, artworks, screenshots, genres, usersToGames } from "db/schema/games";
+import {
+	games,
+	covers,
+	artworks,
+	screenshots,
+	genres,
+	usersToGames,
+} from "db/schema/games";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { playlistsSelectSchema } from "./playlists";
@@ -38,7 +45,7 @@ export type InsertUsersToGames = z.infer<typeof insertUsersToGamesSchema>;
 export type GameWithCover = Game & { cover: Cover };
 export type CollectionWithGame = UsersToGames & { game: GameWithCover };
 
-/// 
+///
 /// Shape the data for the client
 ///
 export const gameWithCollectionSchema = gamesSelectSchema.extend({
@@ -51,7 +58,7 @@ export const gameWithCollectionSchema = gamesSelectSchema.extend({
 	playerRating: z.number().nullable(),
 	completed: z.boolean().nullable(),
 	position: z.number().nullable(),
-	dateAdded: z.date()
-})
+	dateAdded: z.date(),
+});
 
 export type GameWithCollection = z.infer<typeof gameWithCollectionSchema>;

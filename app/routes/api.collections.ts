@@ -24,7 +24,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				.insert(usersToGames)
 				.values({
 					gameId,
-					userId
+					userId,
 				})
 				.onConflictDoNothing()
 				.returning();
@@ -54,7 +54,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	if (request.method === "DELETE") {
 		const result = await zx.parseFormSafe(request, {
 			gameId: zx.NumAsString,
-			userId: z.string()
+			userId: z.string(),
 		});
 
 		if (result.success) {

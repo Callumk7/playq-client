@@ -22,7 +22,7 @@ export const useExploreStore = create<ExploreFilterStore>()(
 		genreFilter: [],
 		sortOption: "rating",
 		filterCollectionOut: false,
-		toggleShowFilters: () => set((state) => ({ showFilters: !state.showFilters})),
+		toggleShowFilters: () => set((state) => ({ showFilters: !state.showFilters })),
 		setGenreFilter: (filter) => set({ genreFilter: filter }),
 		setSortOption: (sortOption) => set({ sortOption }),
 		setFilterCollectionOut: (filter) => set({ filterCollectionOut: filter }),

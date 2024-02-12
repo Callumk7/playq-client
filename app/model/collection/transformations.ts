@@ -19,7 +19,7 @@ export const transformCollectionIntoGames = (
 		cover: c.game.cover,
 		playlists: c.game.playlists.map((p) => p.playlist),
 		genres: c.game.genres.map((g) => g.genre),
-		dateAdded: c.createdAt
+		dateAdded: c.createdAt,
 	}));
 
 	// validate at runtime
