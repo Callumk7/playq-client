@@ -1,4 +1,12 @@
-import { Button, Input, Label, LibraryView, Slider, GenreFilter } from "@/components";
+import {
+	Button,
+	Input,
+	Label,
+	LibraryView,
+	Slider,
+	GenreFilter,
+	GenreToggles,
+} from "@/components";
 import { createServerClient, getSession } from "@/services";
 import { getAllGenres } from "@/features/collection/queries/get-user-genres";
 import { ExploreGameInternal } from "@/features/explore/components/search-game";
@@ -11,6 +19,7 @@ import { db } from "db";
 import { covers, games, genres, genresToGames } from "db/schema/games";
 import { eq, ilike, inArray, and, gt } from "drizzle-orm";
 import { redirect, typedjson } from "remix-typedjson";
+import { getSearchResultsFromDb } from "./loader";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	// AUTH
@@ -34,23 +43,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	if (search) conditions.push(ilike(games.title, `%${search}%`));
 	if (genreSearch.length > 0) conditions.push(inArray(genres.name, genreSearch));
 
-	const searchResults = await db
-		.select()
-		.from(genresToGames)
-		.innerJoin(genres, eq(genresToGames.genreId, genres.id))
-		.innerJoin(games, eq(games.gameId, genresToGames.gameId))
-		.leftJoin(covers, eq(games.gameId, covers.gameId))
-		.where(and(...conditions))
-		.limit(150)
-		.orderBy(games.rating, games.externalFollows);
-
-	const uniqueGames = searchResults.filter(
-		(res, i, self) => i === self.findIndex((t) => t.games.id === res.games.id),
-	);
-
+	const searchResults = await getSearchResultsFromDb(conditions);
 	// this mutates the shape of the result
 	const gameIds = await getUserCollectionGameIds(session.user.id);
-	const resultsMarkedAsSaved = markInternalResultsAsSaved(uniqueGames, gameIds);
+	const resultsMarkedAsSaved = markInternalResultsAsSaved(searchResults, gameIds);
 
 	const allGenres = await getAllGenres();
 	const genreNames = allGenres.map((g) => g.name);
@@ -67,38 +63,33 @@ export default function ExploreRoute() {
 	return (
 		<div className="mb-12">
 			<div className="flex flex-col gap-y-6">
-				<div className="flex gap-3">
-					<fetcher.Form method="get" className="flex flex-col gap-3">
-						<Label>Title</Label>
-						<Input
-							name="search"
-							type="search"
-							placeholder="What are you looking for?"
-							className="w-[360px]" // This needs to be responsive
-						/>
-						{store.genreFilter.map((g) => (
-							<input key={g} type="hidden" name="genres" value={g} />
-						))}
-						<Label>Rating</Label>
-						<Slider name="rating" defaultValue={[80]} />
-						<Label>Follows</Label>
-						<Slider name="follows" defaultValue={[50]} />
-						<Button variant={"outline"} type="submit">
-							Search
+				<fetcher.Form method="get" className="flex flex-col gap-3 w-3/4">
+					<Label>Title</Label>
+					<Input name="search" type="search" placeholder="What are you looking for?" />
+					{store.genreFilter.map((g) => (
+						<input key={g} type="hidden" name="genres" value={g} />
+					))}
+					<div className="flex gap-4">
+						<Button type="submit">Search</Button>
+						<Button variant={"outline"} type="button" onClick={store.toggleShowFilters}>
+							Advanced Filters
 						</Button>
-					</fetcher.Form>
-					<Button variant={"outline"} onClick={store.toggleShowFilters}>
-						Advanced Filters
-					</Button>
-				</div>
-				{store.showFilters && (
-					<GenreFilter
-						genres={data.genreNames}
-						genreFilter={store.genreFilter}
-						handleGenreToggled={store.handleGenreToggled}
-						handleToggleAllGenres={store.handleToggleAllGenres}
-					/>
-				)}
+					</div>
+					{store.showFilters && (
+						<>
+							<GenreToggles
+								genres={data.genreNames}
+								genreFilter={store.genreFilter}
+								handleGenreToggled={store.handleGenreToggled}
+								handleToggleAllGenres={store.handleToggleAllGenres}
+							/>
+							<Label>Rating</Label>
+							<Slider name="rating" defaultValue={[80]} />
+							<Label>Follows</Label>
+							<Slider name="follows" defaultValue={[50]} />
+						</>
+					)}
+				</fetcher.Form>
 				<LibraryView>
 					{data.resultsMarkedAsSaved.map((result) => (
 						<ExploreGameInternal

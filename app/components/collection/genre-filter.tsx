@@ -1,4 +1,4 @@
-import { Tag } from "@/components/ui/tag";
+import { Tag, TagToggle } from "@/components/ui/tag";
 
 interface GenreFilterProps {
 	genres: string[];
@@ -38,6 +38,32 @@ export function GenreTags({ genres }: { genres: string[] }) {
 				<Tag variant={"default"} key={genre}>
 					{genre}
 				</Tag>
+			))}
+		</div>
+	);
+}
+
+export function GenreToggles({
+	genres,
+	genreFilter,
+	handleGenreToggled,
+	handleToggleAllGenres,
+}: GenreFilterProps) {
+	return (
+		<div className="flex flex-wrap gap-2 self-start">
+			<Tag variant={genreFilter.length === genres.length ? "primary" : "secondary"}>
+				<button type="button" onClick={() => handleToggleAllGenres(genres)}>
+					All
+				</button>
+			</Tag>
+			{genres.map((genre) => (
+				<TagToggle
+					pressed={genreFilter.includes(genre)}
+					onPressedChange={() => handleGenreToggled(genre)}
+					name="genres"
+				>
+					{genre}
+				</TagToggle>
 			))}
 		</div>
 	);
