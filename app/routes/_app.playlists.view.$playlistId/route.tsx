@@ -1,15 +1,16 @@
 import {
 	Button,
-	Separator,
-	RemoveFromCollectionButton,
-	SaveToCollectionButton,
 	GameCover,
 	LibraryView,
+	RemoveFromCollectionButton,
+	SaveToCollectionButton,
+	Separator,
 } from "@/components";
+import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
 import { useUserCacheStore } from "@/store/collection";
 import { Game } from "@/types/games";
-import { PlaylistWithGames } from "@/types/playlists";
+import { PlaylistCommentsWithAuthor, PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { Session } from "@supabase/supabase-js";
@@ -17,13 +18,17 @@ import { useEffect, useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { z } from "zod";
 import { zx } from "zodix";
-import { getUserCollection } from "@/model";
-import { getMinimumPlaylistData, getPlaylistWithGamesAndFollowers } from "./loading";
 import { StatsSidebar } from "../res.playlist-sidebar.$userId";
-import { RenamePlaylistDialog } from "./components/rename-playlist-dialog";
 import { DeletePlaylistDialog } from "./components/delete-playlist-dialog";
+import { Comment } from "./components/pl-comment";
+import { PlaylistCommentForm } from "./components/pl-comment-form";
 import { PlaylistMenubar } from "./components/playlist-menubar";
-import { PlaylistCommentForm } from "./components/playlist-comment";
+import { RenamePlaylistDialog } from "./components/rename-playlist-dialog";
+import {
+	getMinimumPlaylistData,
+	getPlaylistComments,
+	getPlaylistWithGamesAndFollowers,
+} from "./loading";
 
 // Type guard types
 interface Blocked {
@@ -38,6 +43,7 @@ interface Result {
 	usersGames: Game[];
 	isCreator: boolean;
 	session: Session;
+	playlistComments: PlaylistCommentsWithAuthor[];
 }
 
 ///
@@ -64,12 +70,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		return typedjson({ blocked: true });
 	}
 
+	const playlistCommentsPromise = getPlaylistComments(playlistId);
 	const playlistWithGamesPromise = getPlaylistWithGamesAndFollowers(playlistId);
 	const userCollectionPromise = getUserCollection(session.user.id);
 
-	const [playlistWithGames, userCollection] = await Promise.all([
+	const [playlistWithGames, userCollection, playlistComments] = await Promise.all([
 		playlistWithGamesPromise,
 		userCollectionPromise,
+		playlistCommentsPromise,
 	]);
 
 	const usersGames = userCollection.map((c) => c.game);
@@ -80,6 +88,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		usersGames,
 		blocked: false,
 		isCreator,
+		playlistComments,
 		session,
 	});
 };
@@ -110,7 +119,7 @@ export default function PlaylistRoute() {
 		return <div>This Playlist is Private</div>;
 	}
 
-	const { playlistWithGames, usersGames, isCreator, session } = result;
+	const { playlistWithGames, usersGames, isCreator, session, playlistComments } = result;
 
 	return (
 		<>
@@ -135,7 +144,7 @@ export default function PlaylistRoute() {
 				<h1 className="mt-5 py-2 text-3xl font-semibold">{playlistWithGames?.name}</h1>
 				<Separator />
 				<div className="relative grid grid-cols-12 gap-10">
-					<div className="col-span-9 flex flex-col gap-10">
+					<div className="col-span-9 flex flex-col gap-5">
 						<LibraryView>
 							{playlistWithGames?.games.map((game) => (
 								<div key={game.game.id} className="flex flex-col gap-2">
@@ -160,6 +169,11 @@ export default function PlaylistRoute() {
 							userId={session.user.id}
 							playlistId={playlistWithGames.id}
 						/>
+						<div className="grid gap-3">
+							{playlistComments.map((comment) => (
+								<Comment key={comment.id} comment={comment} author={comment.author} />
+							))}
+						</div>
 					</div>
 					<div className="relative col-span-3">
 						<StatsSidebar
