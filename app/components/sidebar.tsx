@@ -57,8 +57,8 @@ export function Sidebar({
             ))}
           </div>
         </TabsContent>
-        <TabsContent value="friends">
-          <div>
+        <TabsContent value="friends" className="pt-10">
+          <div className="flex w-full flex-col gap-5">
             {friends.map((friend) => (
               <SidebarFriendEntry key={friend.id} friend={friend} />
             ))}
@@ -85,7 +85,7 @@ function SidebarPlaylistEntry({ playlist, isCreator }: SidebarPlaylistEntryProps
     <PlaylistContextMenu asChild>
       <Link
         to={`playlists/view/${playlist.id}`}
-        className="flex gap-2 rounded-md p-4 hover:bg-background-hover items-center"
+        className="flex items-center gap-2 rounded-md p-4 hover:bg-background-hover"
         ref={setNodeRef}
         style={style}
       >
@@ -101,5 +101,5 @@ interface SidebarFriendEntryProps {
 }
 
 function SidebarFriendEntry({ friend }: SidebarFriendEntryProps) {
-  return <div>{friend.email}</div>;
+  return <div className="overflow-clip">{friend.username}</div>;
 }

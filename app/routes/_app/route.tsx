@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { CreatePlaylistDialog } from "@/features/playlists";
 import { createServerClient, getSession } from "@/services";
 import { createBrowserClient } from "@supabase/ssr";
-import { useCollectionStore } from "@/store/collection";
+import { useUserCacheStore } from "@/store/collection";
 import { getUserCollectionGameIds } from "@/model";
 import { Container, Navbar, Sidebar } from "@/components";
 import { Playlist, User } from "@/types";
@@ -48,8 +48,10 @@ export default function AppLayout() {
   const { ENV, session, userPlaylists, userFriends, userCollection } =
     useTypedLoaderData<typeof loader>();
   // set the store for use around the app
-  const setUserCollection = useCollectionStore((state) => state.setUserCollection);
+  const setUserCollection = useUserCacheStore((state) => state.setUserCollection);
+  const setUserFriends = useUserCacheStore((state) => state.setUserFriends);
   setUserCollection(userCollection);
+  setUserFriends(userFriends.map((friend) => friend.id));
 
   // supabase data requests
   const supaFetcher = useFetcher();

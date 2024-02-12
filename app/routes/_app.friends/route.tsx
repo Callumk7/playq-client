@@ -53,7 +53,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const session = await getSession(supabase);
 
   const formData = await request.formData();
-  const friendId = String(formData.get("friendId"));
+  const friendId = String(formData.get("friend_id"));
 
   console.log(friendId);
 
@@ -79,7 +79,7 @@ export default function FriendsRoute() {
           <div key={user.id}>
             <h1>{user.email}</h1>
             <Form method="post" className="flex flex-col gap-2 p-1">
-              <input type="hidden" value={user.id} name="friendId" />
+              <input type="hidden" value={user.id} name="friend_id" />
               <Button variant={"outline"} size={"sm"}>
                 Add
               </Button>

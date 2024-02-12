@@ -16,7 +16,7 @@ import {
 import { createServerClient, getSession } from "@/services";
 import { getPlaylistWithGames } from "@/features/playlists";
 import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
-import { useCollectionStore } from "@/store/collection";
+import { useUserCacheStore } from "@/store/collection";
 import { Game } from "@/types/games";
 import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -96,7 +96,7 @@ export default function PlaylistRoute() {
 
   // zustand store. We use these Ids to check to see if the game already
   // exists in the user's collection.
-  const userCollection = useCollectionStore((state) => state.userCollection);
+  const userCollection = useUserCacheStore((state) => state.userCollection);
 
   useEffect(() => {
     if (isSubmitting && renameDialogOpen) {
