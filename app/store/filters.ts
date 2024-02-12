@@ -90,9 +90,8 @@ export const useFilterStore = create<FilterStore>()(
 			set((state) => {
 				if (genres.length > state.genreFilter.length) {
 					return { genreFilter: genres };
-				} else {
-					return { genreFilter: [] };
 				}
+				return { genreFilter: [] };
 			}),
 		handleToggleSortName: () =>
 			set((state) =>

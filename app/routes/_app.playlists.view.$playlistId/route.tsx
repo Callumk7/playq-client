@@ -14,7 +14,6 @@ import {
 	LibraryView,
 } from "@/components";
 import { createServerClient, getSession } from "@/services";
-import { getPlaylistWithGames } from "@/features/playlists";
 import { PlaylistMenubar } from "@/features/playlists/components/playlist-menubar";
 import { useUserCacheStore } from "@/store/collection";
 import { Game } from "@/types/games";
@@ -108,7 +107,7 @@ export default function PlaylistRoute() {
 		if (isSubmitting && renameDialogOpen) {
 			setRenameDialogOpen(false);
 		}
-	}, [isSubmitting, renameDialogOpen, setRenameDialogOpen]);
+	}, [isSubmitting, renameDialogOpen]);
 
 	if (result.blocked) {
 		return <div>This Playlist is Private</div>;

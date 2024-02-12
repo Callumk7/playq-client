@@ -16,7 +16,10 @@ export const useUserCacheStore = create<UserCacheStore>()(
 	devtools((set) => ({
 		userCollection: [],
 		userFriends: [],
-		setUserCollection: (userCollection) => set({ userCollection }),
+		setUserCollection: (userCollection) => {
+			console.log("setting user collection");
+			return set({ userCollection });
+		},
 		appendToUserCollection: (gameId) =>
 			set((state) => ({ userCollection: [...state.userCollection, gameId] })),
 		removeFromUserCollection: (gameId) =>
