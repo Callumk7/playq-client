@@ -8,7 +8,11 @@ interface SaveToCollectionButtonProps {
   variant?: "ghost" | "outline" | "default";
 }
 
-export function SaveToCollectionButton({ gameId, userId, variant = "ghost" }: SaveToCollectionButtonProps) {
+export function SaveToCollectionButton({
+  gameId,
+  userId,
+  variant = "ghost",
+}: SaveToCollectionButtonProps) {
   const saveFetcher = useFetcher();
 
   return (

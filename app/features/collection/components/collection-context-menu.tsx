@@ -64,7 +64,7 @@ function PlaylistSubMenuItem({
   const addToPlaylistFetcher = useFetcher();
 
   // This was just trying to validate the input, but it is kind of stupid
-  // because the submit method has no validation. 
+  // because the submit method has no validation.
   const gameInsert = {
     addedBy: userId,
   };

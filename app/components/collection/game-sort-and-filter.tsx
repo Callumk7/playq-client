@@ -22,7 +22,7 @@ export function GameSortAndFilterMenu() {
           <MenubarRadioGroup value={store.sortOption}>
             <MenubarRadioItem
               value="rating"
-              onClick={() => store.setSortOption("rating")}
+              onClick={() => store.setSortOption("ratingDesc")}
             >
               Rating
             </MenubarRadioItem>
@@ -110,7 +110,7 @@ export function GameSortAndFilterMenu() {
           </MenubarCheckboxItem>
           <MenubarCheckboxItem
             checked={store.filterOnUnCompleted}
-              onClick={store.handleToggleFilterOnUnCompleted}
+            onClick={store.handleToggleFilterOnUnCompleted}
           >
             Not Completed
           </MenubarCheckboxItem>
@@ -127,14 +127,14 @@ export function GameSortAndFilterMenu() {
             Not Played
           </MenubarCheckboxItem>
           <MenubarCheckboxItem
-            checked={store.filterOnRated}
-            onClick={store.handleToggleFilterOnRated}
+            checked={store.filterOnUnPlayed}
+            onClick={store.handleToggleFilterOnUnPlayed}
           >
             Rated
           </MenubarCheckboxItem>
           <MenubarCheckboxItem
             checked={store.filterOnUnrated}
-            onClick={store.handleToggleFilterOnUnrated}
+            onClick={store.handleToggleFilterOnUnPlayed}
           >
             Not Rated
           </MenubarCheckboxItem>
@@ -143,7 +143,8 @@ export function GameSortAndFilterMenu() {
             store.filterOnStarred ||
             store.filterOnRated ||
             store.filterOnUnCompleted ||
-            store.filterOnCompleted || store.genreFilter.length > 0) && (
+            store.filterOnCompleted ||
+            store.genreFilter.length > 0) && (
             <MenubarItem
               inset
               className="font-bold text-destructive"

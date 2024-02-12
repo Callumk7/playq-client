@@ -16,17 +16,10 @@ import {
   useFilter,
   useSearch,
   useSort,
-  Table,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableBody,
-  TableCell,
 } from "@/components";
 import { useState } from "react";
 import { getUserGenres } from "@/features/collection/queries/get-user-genres";
 import { getUserPlaylists } from "@/features/playlists";
-import { Link } from "@remix-run/react";
 import { CollectionTableView } from "./components/collection-table-view";
 
 ///
@@ -63,8 +56,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 /// ROUTE
 ///
 export default function CollectionIndex() {
-  const { userPlaylists, games, session, genreNames } =
-    useTypedLoaderData<typeof loader>();
+  const { userPlaylists, games, session, genreNames } = useTypedLoaderData<typeof loader>();
 
   const { filteredGames } = useFilter(games);
   const { searchedGames } = useSearch(filteredGames);
@@ -102,13 +94,9 @@ export default function CollectionIndex() {
           handleToggleAllGenres={handleToggleAllGenres}
         />
       </div>
-      <CollectionMenubar userId={session.user.id} />
+      <CollectionMenubar userId={session.user.id} setIsTableView={setIsTableView} isTableView={isTableView} />
       <div className="my-6">
-        <CollectionProgress
-          gameCount={gameCount}
-          playedGames={playedGames}
-          completedGames={completedGames}
-        />
+        <CollectionProgress gameCount={gameCount} playedGames={playedGames} completedGames={completedGames} />
       </div>
       {isTableView ? (
         <CollectionTableView
@@ -120,11 +108,7 @@ export default function CollectionIndex() {
       ) : (
         <LibraryView>
           {sortedGames.map((game) => (
-            <GameWithControls
-              key={game.id}
-              coverId={game.cover.imageId}
-              gameId={game.gameId}
-            >
+            <GameWithControls key={game.id} coverId={game.cover.imageId} gameId={game.gameId}>
               <CollectionGameMenu
                 gameId={game.gameId}
                 isPlayed={game.played}

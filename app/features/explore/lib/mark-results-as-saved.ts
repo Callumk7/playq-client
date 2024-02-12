@@ -1,4 +1,3 @@
-import { GameWithCover } from "@/types/games";
 import { IGDBGame } from "@/types/igdb";
 
 export const markResultsAsSaved = (
@@ -20,7 +19,7 @@ export const markResultsAsSaved = (
 	});
 };
 
-export const markInternalResultsAsSaved = <G extends { games: {gameId: number}  }>(
+export const markInternalResultsAsSaved = <G extends { games: { gameId: number } }>(
 	searchResults: G[],
 	userCollection: number[],
 ) => {
