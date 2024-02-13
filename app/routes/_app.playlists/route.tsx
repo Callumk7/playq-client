@@ -5,6 +5,8 @@ import { db } from "db";
 import { playlists } from "db/schema/playlists";
 import { z } from "zod";
 import { zx } from "zodix";
+import { WORKER_URL } from "@/constants";
+import { InsertActivity } from "@/types/activity";
 
 // Route handler for the CREATION OF PLAYLISTS
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -24,15 +26,29 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		}
 
 		const { playlistName, userId } = result.data;
+		const newId = `pl_${uuidv4()}`;
 
 		const createdPlaylist = await db
 			.insert(playlists)
 			.values({
-				id: `pl_${uuidv4()}`,
+				id: newId,
 				name: playlistName,
 				creatorId: userId,
 			})
 			.returning();
+
+		// save activity
+		const activityInsert: InsertActivity = {
+			id: `act_${uuidv4()}`,
+			type: "pl_create",
+			userId: userId,
+			playlistId: newId,
+		};
+
+		await fetch(`${WORKER_URL}/activity`, {
+			method: "POST",
+			body: JSON.stringify(activityInsert),
+		});
 
 		return redirect(`/playlists/view/${createdPlaylist[0].id}`);
 	}

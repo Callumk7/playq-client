@@ -1,4 +1,6 @@
 import { WORKER_URL } from "@/constants";
+import { InsertActivity } from "@/types/activity";
+import { uuidv4 } from "@/util/generate-uuid";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
@@ -40,14 +42,26 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				}
 			});
 
+			// save activity
+			const activityInsert: InsertActivity = {
+				id: `act_${uuidv4()}`,
+				type: "col_add",
+				userId: userId,
+				gameId: gameId,
+			};
+
+			await fetch(`${WORKER_URL}/activity`, {
+				method: "POST",
+				body: JSON.stringify(activityInsert),
+			});
+
 			return json({
 				success: savedGame,
 			});
-		} else {
-			return json({
-				error: result.error,
-			});
 		}
+		return json({
+			error: result.error,
+		});
 	}
 
 	// DELETE /api/collections
@@ -71,10 +85,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			return json({
 				success: removedGame,
 			});
-		} else {
-			return json({
-				error: result.error,
-			});
 		}
+		return json({
+			error: result.error,
+		});
 	}
 };

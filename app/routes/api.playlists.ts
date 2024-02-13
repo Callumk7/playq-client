@@ -1,3 +1,5 @@
+import { WORKER_URL } from "@/constants";
+import { InsertActivity } from "@/types/activity";
 import { uuidv4 } from "@/util/generate-uuid";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
@@ -24,14 +26,29 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 		const { playlistName, userId } = result.data;
 
+		const newId = `pl_${uuidv4()}`;
+
 		const createdPlaylist = await db
 			.insert(playlists)
 			.values({
-				id: `pl_${uuidv4()}`,
+				id: newId,
 				name: playlistName,
 				creatorId: userId,
 			})
 			.returning();
+
+		// save activity
+		const activityInsert: InsertActivity = {
+			id: `act_${uuidv4()}`,
+			type: "pl_create",
+			userId: userId,
+			playlistId: newId,
+		};
+
+		await fetch(`${WORKER_URL}/activity`, {
+			method: "POST",
+			body: JSON.stringify(activityInsert),
+		});
 
 		return json({ success: true, playlist: createdPlaylist });
 	}

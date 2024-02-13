@@ -1,4 +1,8 @@
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { WORKER_URL } from "@/constants";
+import { createServerClient, getSession } from "@/services";
+import { InsertActivity } from "@/types/activity";
+import { uuidv4 } from "@/util/generate-uuid";
+import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { db } from "db";
 import { gamesOnPlaylists, playlists } from "db/schema/playlists";
 import { and, eq } from "drizzle-orm";
@@ -7,6 +11,9 @@ import { zx } from "zodix";
 
 // Route handler for ADDING AND REMOVING GAMES FROM PLAYLISTS
 export const action = async ({ request, params }: ActionFunctionArgs) => {
+	const { supabase } = createServerClient(request);
+	const session = await getSession(supabase);
+
 	const { playlistId, gameId } = params;
 
 	if (!playlistId) {
@@ -41,6 +48,20 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				addedGamePromise,
 				updatePlaylistPromise,
 			]);
+
+			// save activity
+			const activityInsert: InsertActivity = {
+				id: `act_${uuidv4()}`,
+				type: "pl_add_game",
+				gameId: Number(gameId),
+				playlistId: playlistId,
+				userId: session?.user.id,
+			};
+
+			await fetch(`${WORKER_URL}/activity`, {
+				method: "POST",
+				body: JSON.stringify(activityInsert),
+			});
 
 			return json({ addedGame });
 		}
