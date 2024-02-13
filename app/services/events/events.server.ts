@@ -39,6 +39,10 @@ class ActivityManager extends EventEmitter {
 	markGameAsCompleted(userId: string, gameId: number) {
 		this.emit("game_completed", userId, gameId, Date.now());
 	}
+
+	rateGame(userId: string, gameId: number, rating: number) {
+		this.emit("game_rated", userId, gameId, rating, Date.now());
+	}
 }
 
 export const activityManager = new ActivityManager();
@@ -192,6 +196,25 @@ activityManager.on(
 			.then(() =>
 				console.log(
 					`comment_add logged; user: ${userId}, comment: ${commentId}, at: ${timestamp}`,
+				),
+			);
+	},
+);
+
+activityManager.on(
+	"game_rated",
+	(userId: string, gameId: number, rating: number, timestamp: string) => {
+		db.insert(activity)
+			.values({
+				id: `act_${uuidv4()}`,
+				userId: userId,
+				gameId: gameId,
+				rating: rating,
+				type: "game_rated",
+			})
+			.then(() =>
+				console.log(
+					`game_rated logged; user: ${userId}, gameId: ${gameId}, rating: ${rating} at: ${timestamp}`,
 				),
 			);
 	},

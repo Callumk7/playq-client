@@ -14,6 +14,7 @@ export const typeEnum = pgEnum("activity_type", [
 	"comment_add",
 	"game_played",
 	"game_completed",
+	"game_rated",
 ]);
 
 export const activity = pgTable("activity", {
@@ -24,6 +25,7 @@ export const activity = pgTable("activity", {
 	playlistId: text("playlist_id"),
 	gameId: integer("game_id"),
 	commentId: text("comment_id"),
+	rating: integer("rating"),
 });
 
 export const activityRelations = relations(activity, ({ one }) => ({

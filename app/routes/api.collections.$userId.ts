@@ -67,6 +67,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 	if (gameUpdate.completed) {
 		activityManager.markGameAsCompleted(userId, result.data.gameId);
 	}
+	if (gameUpdate.playerRating) {
+		activityManager.rateGame(userId, result.data.gameId, result.data.rating!);
+	}
 
 	return json({ updateGame });
 };
