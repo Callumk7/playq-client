@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { gamesOnPlaylists } from "./playlists";
 import { users } from "./users";
+import { activity } from "./activity";
 
 export const games = pgTable("games", {
 	id: text("id").primaryKey(),
@@ -36,6 +37,7 @@ export const gamesRelations = relations(games, ({ one, many }) => ({
 	users: many(usersToGames),
 	playlists: many(gamesOnPlaylists),
 	genres: many(genresToGames),
+	activity: many(activity),
 }));
 
 export const covers = pgTable("covers", {

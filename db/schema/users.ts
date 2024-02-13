@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import { boolean, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 import { usersToGames } from "./games";
 import { followers } from "./playlists";
+import { activity } from "./activity";
 
 export const users = pgTable("users", {
 	id: text("id").primaryKey(),
@@ -28,6 +29,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 		relationName: "user",
 	}),
 	playlistFollows: many(followers),
+	activity: many(activity),
 }));
 
 export const friends = pgTable(

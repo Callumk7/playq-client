@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { games } from "./games";
+import { activity } from "./activity";
 
 export const playlists = pgTable("playlists", {
 	id: text("id").primaryKey(),
@@ -28,6 +29,7 @@ export const playlistsRelations = relations(playlists, ({ one, many }) => ({
 	games: many(gamesOnPlaylists),
 	followers: many(followers),
 	comments: many(playlistComments),
+	activity: many(activity),
 }));
 
 export const followers = pgTable(
@@ -90,7 +92,7 @@ export const playlistComments = pgTable("playlist_comments", {
 	isUpdated: boolean("is_updated").default(false),
 });
 
-export const playlistCommentsRelations = relations(playlistComments, ({ one }) => ({
+export const playlistCommentsRelations = relations(playlistComments, ({ one, many }) => ({
 	playlist: one(playlists, {
 		fields: [playlistComments.playlistId],
 		references: [playlists.id],
@@ -99,4 +101,5 @@ export const playlistCommentsRelations = relations(playlistComments, ({ one }) =
 		fields: [playlistComments.authorId],
 		references: [users.id],
 	}),
+	activity: many(activity),
 }));
