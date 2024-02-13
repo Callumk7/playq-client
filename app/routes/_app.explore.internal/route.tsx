@@ -66,9 +66,6 @@ export default function ExploreRoute() {
 				<fetcher.Form method="get" className="flex flex-col gap-3 w-3/4">
 					<Label>Title</Label>
 					<Input name="search" type="search" placeholder="What are you looking for?" />
-					{store.genreFilter.map((g) => (
-						<input key={g} type="hidden" name="genres" value={g} />
-					))}
 					<div className="flex gap-4">
 						<Button type="submit">Search</Button>
 						<Button variant={"outline"} type="button" onClick={store.toggleShowFilters}>

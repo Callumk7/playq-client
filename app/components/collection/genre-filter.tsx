@@ -61,6 +61,7 @@ export function GenreToggles({
 					pressed={genreFilter.includes(genre)}
 					onPressedChange={() => handleGenreToggled(genre)}
 					name="genres"
+          value={genre}
 				>
 					{genre}
 				</TagToggle>
