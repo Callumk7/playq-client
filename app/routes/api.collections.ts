@@ -1,6 +1,5 @@
 import { WORKER_URL } from "@/constants";
-import { InsertActivity } from "@/types/activity";
-import { uuidv4 } from "@/util/generate-uuid";
+import { activityManager } from "@/services/events/events.server";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
@@ -42,18 +41,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				}
 			});
 
-			// save activity
-			const activityInsert: InsertActivity = {
-				id: `act_${uuidv4()}`,
-				type: "col_add",
-				userId: userId,
-				gameId: gameId,
-			};
-
-			await fetch(`${WORKER_URL}/activity`, {
-				method: "POST",
-				body: JSON.stringify(activityInsert),
-			});
+			activityManager.addToCollection(userId, gameId);
 
 			return json({
 				success: savedGame,
@@ -72,15 +60,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		});
 
 		if (result.success) {
+			const { gameId, userId } = result.data;
 			// remove a game from the user's collection
 			const removedGame = await db
 				.delete(usersToGames)
 				.where(
-					and(
-						eq(usersToGames.userId, result.data.userId),
-						eq(usersToGames.gameId, result.data.gameId),
-					),
+					and(eq(usersToGames.userId, userId), eq(usersToGames.gameId, gameId)),
 				);
+
+			activityManager.removeFromCollection(userId, gameId);
 
 			return json({
 				success: removedGame,

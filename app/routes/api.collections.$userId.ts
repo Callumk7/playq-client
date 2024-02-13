@@ -1,3 +1,4 @@
+import { activityManager } from "@/services/events/events.server";
 import { InsertUsersToGames } from "@/types/games";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
@@ -60,7 +61,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		)
 		.returning();
 
-	console.log(updateGame);
+	if (gameUpdate.played) {
+		activityManager.markGameAsPlayed(userId, result.data.gameId);
+	}
+	if (gameUpdate.completed) {
+		activityManager.markGameAsCompleted(userId, result.data.gameId);
+	}
 
 	return json({ updateGame });
 };

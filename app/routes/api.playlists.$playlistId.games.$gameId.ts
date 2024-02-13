@@ -1,8 +1,6 @@
-import { WORKER_URL } from "@/constants";
 import { createServerClient, getSession } from "@/services";
-import { InsertActivity } from "@/types/activity";
-import { uuidv4 } from "@/util/generate-uuid";
-import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
+import { activityManager } from "@/services/events/events.server";
+import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { gamesOnPlaylists, playlists } from "db/schema/playlists";
 import { and, eq } from "drizzle-orm";
@@ -49,19 +47,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				updatePlaylistPromise,
 			]);
 
-			// save activity
-			const activityInsert: InsertActivity = {
-				id: `act_${uuidv4()}`,
-				type: "pl_add_game",
-				gameId: Number(gameId),
-				playlistId: playlistId,
-				userId: session?.user.id,
-			};
-
-			await fetch(`${WORKER_URL}/activity`, {
-				method: "POST",
-				body: JSON.stringify(activityInsert),
-			});
+			activityManager.addGameToPlaylist(
+				session?.user.id ?? "no_user_found",
+				playlistId,
+				Number(gameId),
+			);
 
 			return json({ addedGame });
 		}
@@ -83,6 +73,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 			removedGamePromise,
 			updatePlaylistPromise,
 		]);
+
+		activityManager.removeGameFromPlaylist(
+			session?.user.id ?? "no_user_found",
+			playlistId,
+			Number(gameId),
+		);
 
 		return json({ removedGame });
 	}

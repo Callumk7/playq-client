@@ -1,4 +1,5 @@
 import { WORKER_URL } from "@/constants";
+import { activityManager } from "@/services/events/events.server";
 import { InsertActivity } from "@/types/activity";
 import { uuidv4 } from "@/util/generate-uuid";
 import { ActionFunctionArgs, json } from "@remix-run/node";
@@ -37,18 +38,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			})
 			.returning();
 
-		// save activity
-		const activityInsert: InsertActivity = {
-			id: `act_${uuidv4()}`,
-			type: "pl_create",
-			userId: userId,
-			playlistId: newId,
-		};
-
-		await fetch(`${WORKER_URL}/activity`, {
-			method: "POST",
-			body: JSON.stringify(activityInsert),
-		});
+		activityManager.createPlaylist(userId, newId);
 
 		return json({ success: true, playlist: createdPlaylist });
 	}

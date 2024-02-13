@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zx } from "zodix";
 import { WORKER_URL } from "@/constants";
 import { InsertActivity } from "@/types/activity";
+import { activityManager } from "@/services/events/events.server";
 
 // Route handler for the CREATION OF PLAYLISTS
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -37,18 +38,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			})
 			.returning();
 
-		// save activity
-		const activityInsert: InsertActivity = {
-			id: `act_${uuidv4()}`,
-			type: "pl_create",
-			userId: userId,
-			playlistId: newId,
-		};
-
-		await fetch(`${WORKER_URL}/activity`, {
-			method: "POST",
-			body: JSON.stringify(activityInsert),
-		});
+		activityManager.createPlaylist(userId, newId);
 
 		return redirect(`/playlists/view/${createdPlaylist[0].id}`);
 	}
