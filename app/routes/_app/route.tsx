@@ -8,8 +8,13 @@ import { createBrowserClient } from "@supabase/ssr";
 import { useUserCacheStore } from "@/store/collection";
 import { getUserCollectionGameIds } from "@/model";
 import { Container, Navbar, Sidebar } from "@/components";
-import { Playlist, User } from "@/types";
-import { getCreatedAndFollowedPlaylists, getUserFriends } from "./loader";
+import { Playlist, User, UserWithActivity } from "@/types";
+import {
+	getCreatedAndFollowedPlaylists,
+	getFriendActivity,
+	getUserFriends,
+	transformActivity,
+} from "./loader";
 
 export const meta: MetaFunction = () => {
 	return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -30,22 +35,26 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	let userPlaylists: Playlist[] = [];
 	let userFriends: User[] = [];
 	let userCollection: number[] = [];
+	let friendActivity: UserWithActivity[] = [];
 	if (session) {
 		userPlaylists = await getCreatedAndFollowedPlaylists(session.user.id);
 		userFriends = await getUserFriends(session.user.id);
+		friendActivity = await getFriendActivity(session.user.id);
 
 		// Set the store for user gameIds as a cache on the app route.
 		userCollection = await getUserCollectionGameIds(session.user.id);
 	}
 
+	const activityFeed = transformActivity(friendActivity);
+
 	return typedjson(
-		{ ENV, session, userPlaylists, userFriends, userCollection },
+		{ ENV, session, userPlaylists, userFriends, userCollection, activityFeed },
 		{ headers },
 	);
 };
 
 export default function AppLayout() {
-	const { ENV, session, userPlaylists, userFriends, userCollection } =
+	const { ENV, session, userPlaylists, userFriends, userCollection, activityFeed } =
 		useTypedLoaderData<typeof loader>();
 	// set the store for use around the app
 	const setUserCollection = useUserCacheStore((state) => state.setUserCollection);
@@ -91,9 +100,9 @@ export default function AppLayout() {
 					<Sidebar
 						userId={session!.user.id}
 						playlists={userPlaylists}
-						friends={userFriends}
 						setDialogOpen={setDialogOpen}
 						hasSession={session ? true : false}
+						activityFeed={activityFeed}
 					/>
 				</div>
 				<div className="h-full lg:pl-64">

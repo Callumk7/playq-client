@@ -1,25 +1,25 @@
 import { PlaylistContextMenu } from "@/features/playlists/components/playlist-context-menu";
 import { Playlist } from "@/types/playlists";
-import { User } from "@/types/users";
-import { useDroppable } from "@dnd-kit/core";
+import { UserWithActivityFeedEntry } from "@/types/users";
 import { HamburgerMenuIcon, PlusIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from ".";
+import { SavedToCollectionActivity } from "@/routes/res.game.$gameId";
 
 interface SidebarProps {
 	userId: string;
 	playlists: Playlist[];
-	friends: User[];
 	setDialogOpen: (open: boolean) => void;
 	hasSession: boolean;
+	activityFeed: UserWithActivityFeedEntry[];
 }
 
 export function Sidebar({
 	userId,
 	playlists,
-	friends,
 	setDialogOpen,
 	hasSession,
+	activityFeed,
 }: SidebarProps) {
 	return (
 		<div className="h-full w-full border px-5 py-3">
@@ -28,8 +28,8 @@ export function Sidebar({
 					<TabsTrigger value="playlists" className="w-full">
 						Playlists
 					</TabsTrigger>
-					<TabsTrigger value="friends" className="w-full">
-						Friends
+					<TabsTrigger value="activity" className="w-full">
+						Activity
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="playlists">
@@ -57,12 +57,8 @@ export function Sidebar({
 						))}
 					</div>
 				</TabsContent>
-				<TabsContent value="friends" className="pt-10">
-					<div className="flex w-full flex-col gap-5">
-						{friends.map((friend) => (
-							<SidebarFriendEntry key={friend.id} friend={friend} />
-						))}
-					</div>
+				<TabsContent value="activity" className="pt-10">
+					<ActivityFeed activityFeed={activityFeed} />
 				</TabsContent>
 			</Tabs>
 		</div>
@@ -75,19 +71,11 @@ interface SidebarPlaylistEntryProps {
 }
 
 function SidebarPlaylistEntry({ playlist, isCreator }: SidebarPlaylistEntryProps) {
-	const { isOver, setNodeRef } = useDroppable({
-		id: playlist.id,
-	});
-	const style = {
-		color: isOver ? "green" : undefined,
-	};
 	return (
 		<PlaylistContextMenu asChild>
 			<Link
 				to={`playlists/view/${playlist.id}`}
 				className="flex items-center gap-2 rounded-md p-4 hover:bg-background-hover"
-				ref={setNodeRef}
-				style={style}
 			>
 				{isCreator && <div className="h-2 w-2 rounded-full bg-primary" />}
 				<span className="text-sm font-bold">{playlist.name}</span>
@@ -96,10 +84,46 @@ function SidebarPlaylistEntry({ playlist, isCreator }: SidebarPlaylistEntryProps
 	);
 }
 
-interface SidebarFriendEntryProps {
-	friend: User;
+interface ActivityFeedProps {
+	activityFeed: UserWithActivityFeedEntry[];
+}
+function ActivityFeed({ activityFeed }: ActivityFeedProps) {
+	return (
+		<div className="flex w-full flex-col gap-5">
+			{activityFeed.map((activity) =>
+				activity.activity.type === "col_add" ? (
+					<SavedToCollectionActivity activity={activity} />
+				) : activity.activity.type === "pl_create" ? (
+					<PlaylistCreateActivity activity={activity} />
+				) : activity.activity.type === "game_rated" ? (
+					<GameRatedActivity activity={activity} />
+				) : activity.activity.type === "comment_add" ? (
+					<CommentLeftActivity activity={activity} />
+				) : activity.activity.type === "pl_follow" ? (
+					<PlaylistFollowedActivity activity={activity} />
+				) : activity.activity.type === "pl_add_game" ? (
+					<PlaylistAddGameActivity activity={activity} />
+				) : null,
+			)}
+		</div>
+	);
 }
 
-function SidebarFriendEntry({ friend }: SidebarFriendEntryProps) {
-	return <div className="overflow-clip">{friend.username}</div>;
+function PlaylistCreateActivity({ activity }: { activity: UserWithActivityFeedEntry }) {
+	return <div>playlist created work in progress</div>;
+}
+
+function GameRatedActivity({ activity }: { activity: UserWithActivityFeedEntry }) {
+	return <div>playlist created work in progress</div>;
+}
+function CommentLeftActivity({ activity }: { activity: UserWithActivityFeedEntry }) {
+	return <div>playlist created work in progress</div>;
+}
+
+function PlaylistFollowedActivity({ activity }: { activity: UserWithActivityFeedEntry }) {
+	return <div>playlist created work in progress</div>;
+}
+
+function PlaylistAddGameActivity({ activity }: { activity: UserWithActivityFeedEntry }) {
+	return <div>playlist created work in progress</div>;
 }
