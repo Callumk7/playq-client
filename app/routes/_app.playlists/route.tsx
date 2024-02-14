@@ -5,8 +5,6 @@ import { db } from "db";
 import { playlists } from "db/schema/playlists";
 import { z } from "zod";
 import { zx } from "zodix";
-import { WORKER_URL } from "@/constants";
-import { InsertActivity } from "@/types/activity";
 import { activityManager } from "@/services/events/events.server";
 
 // Route handler for the CREATION OF PLAYLISTS
