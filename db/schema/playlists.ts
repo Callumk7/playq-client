@@ -10,6 +10,7 @@ import {
 import { users } from "./users";
 import { games } from "./games";
 import { activity } from "./activity";
+import { notes } from "./notes";
 
 export const playlists = pgTable("playlists", {
 	id: text("id").primaryKey(),
@@ -30,6 +31,7 @@ export const playlistsRelations = relations(playlists, ({ one, many }) => ({
 	followers: many(followers),
 	comments: many(playlistComments),
 	activity: many(activity),
+	notes: many(notes),
 }));
 
 export const followers = pgTable(

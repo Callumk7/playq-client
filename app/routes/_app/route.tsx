@@ -59,8 +59,10 @@ export default function AppLayout() {
 	// set the store for use around the app
 	const setUserCollection = useUserCacheStore((state) => state.setUserCollection);
 	const setUserFriends = useUserCacheStore((state) => state.setUserFriends);
+	const setUserPlaylists = useUserCacheStore((state) => state.setUserPlaylists);
 	setUserCollection(userCollection);
 	setUserFriends(userFriends.map((friend) => friend.id));
+	setUserPlaylists(userPlaylists.map((playlist) => playlist.id));
 
 	// supabase data requests
 	const supaFetcher = useFetcher();

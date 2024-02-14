@@ -6,7 +6,6 @@ import { typedjson, redirect, useTypedLoaderData } from "remix-typedjson";
 import { getUserGamesWithDetails, transformCollectionIntoGames } from "@/model";
 import {
 	CollectionGameMenu,
-	CollectionMenubar,
 	GameWithControls,
 	Label,
 	LibraryView,
@@ -21,6 +20,7 @@ import { useState } from "react";
 import { getUserGenres } from "@/features/collection/queries/get-user-genres";
 import { getUserPlaylists } from "@/features/playlists";
 import { CollectionTableView } from "./components/collection-table-view";
+import { CollectionMenubar } from "./components/collection-menubar";
 
 ///
 /// LOADER FUNCTION
@@ -83,7 +83,7 @@ export default function CollectionIndex() {
 		setIsRateGameDialogOpen(true);
 	};
 
-	const [isTableView, setIsTableView] = useState<boolean>(true);
+	const [isTableView, setIsTableView] = useState<boolean>(false);
 
 	return (
 		<>
@@ -155,7 +155,6 @@ function CollectionProgress({
 	completedGames: number;
 }) {
 	return (
-		// make a change here if you want
 		<div className="flex w-full flex-col gap-4">
 			<div className="flex flex-col gap-1">
 				<Label>Played</Label>

@@ -3,7 +3,7 @@ import { Playlist } from "@/types/playlists";
 import { UserWithActivityFeedEntry } from "@/types/users";
 import { HamburgerMenuIcon, PlusIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
-import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from ".";
+import { Button, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from ".";
 import { SavedToCollectionActivity } from "@/routes/res.game.$gameId";
 
 interface SidebarProps {
@@ -22,7 +22,7 @@ export function Sidebar({
 	activityFeed,
 }: SidebarProps) {
 	return (
-		<div className="h-full w-full border px-5 py-3">
+		<div className="h-screen w-full border px-5 py-3">
 			<Tabs defaultValue="playlists">
 				<TabsList className="w-full">
 					<TabsTrigger value="playlists" className="w-full">
@@ -58,7 +58,9 @@ export function Sidebar({
 					</div>
 				</TabsContent>
 				<TabsContent value="activity" className="pt-10">
-					<ActivityFeed activityFeed={activityFeed} />
+					<ScrollArea className="w-full h-[90vh]">
+						<ActivityFeed activityFeed={activityFeed} />
+					</ScrollArea>
 				</TabsContent>
 			</Tabs>
 		</div>
@@ -72,7 +74,7 @@ interface SidebarPlaylistEntryProps {
 
 function SidebarPlaylistEntry({ playlist, isCreator }: SidebarPlaylistEntryProps) {
 	return (
-		<PlaylistContextMenu asChild>
+		<PlaylistContextMenu>
 			<Link
 				to={`playlists/view/${playlist.id}`}
 				className="flex items-center gap-2 rounded-md p-4 hover:bg-background-hover"

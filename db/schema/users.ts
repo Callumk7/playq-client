@@ -3,6 +3,7 @@ import { boolean, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-co
 import { usersToGames } from "./games";
 import { followers } from "./playlists";
 import { activity } from "./activity";
+import { notes } from "./notes";
 
 export const users = pgTable("users", {
 	id: text("id").primaryKey(),
@@ -15,9 +16,6 @@ export const users = pgTable("users", {
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	isUpdated: boolean("is_updated").default(false),
 	profilePicture: text("profile_picture"),
-	// playlists
-	// comments
-	// followedPlaylists
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -30,6 +28,12 @@ export const usersRelations = relations(users, ({ many }) => ({
 	}),
 	playlistFollows: many(followers),
 	activity: many(activity),
+	commentsMade: many(notes, {
+		relationName: "author",
+	}),
+	profileComments: many(notes, {
+		relationName: "profile",
+	}),
 }));
 
 export const friends = pgTable(

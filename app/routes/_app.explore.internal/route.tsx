@@ -1,12 +1,4 @@
-import {
-	Button,
-	Input,
-	Label,
-	LibraryView,
-	Slider,
-	GenreFilter,
-	GenreToggles,
-} from "@/components";
+import { Button, Input, Label, LibraryView, Slider, GenreToggles } from "@/components";
 import { createServerClient, getSession } from "@/services";
 import { getAllGenres } from "@/features/collection/queries/get-user-genres";
 import { ExploreGameInternal } from "@/features/explore/components/search-game";
@@ -15,9 +7,8 @@ import { markInternalResultsAsSaved } from "@/features/explore/lib/mark-results-
 import { getUserCollectionGameIds } from "@/model";
 import { useExploreStore } from "@/store/explore";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { db } from "db";
-import { covers, games, genres, genresToGames } from "db/schema/games";
-import { eq, ilike, inArray, and, gt } from "drizzle-orm";
+import { games, genres } from "db/schema/games";
+import { ilike, inArray, gt } from "drizzle-orm";
 import { redirect, typedjson } from "remix-typedjson";
 import { getSearchResultsFromDb } from "./loader";
 
@@ -81,9 +72,9 @@ export default function ExploreRoute() {
 								handleToggleAllGenres={store.handleToggleAllGenres}
 							/>
 							<Label>Rating</Label>
-							<Slider name="rating" defaultValue={[80]} />
+							<Slider name="rating" defaultValue={[50]} />
 							<Label>Follows</Label>
-							<Slider name="follows" defaultValue={[50]} />
+							<Slider name="follows" defaultValue={[5]} />
 						</>
 					)}
 				</fetcher.Form>

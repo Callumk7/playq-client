@@ -29,6 +29,7 @@ import {
 	getPlaylistComments,
 	getPlaylistWithGamesAndFollowers,
 } from "./loading";
+import { NoteWithAuthor } from "@/types/notes";
 
 // Type guard types
 interface Blocked {
@@ -43,7 +44,7 @@ interface Result {
 	usersGames: Game[];
 	isCreator: boolean;
 	session: Session;
-	playlistComments: PlaylistCommentsWithAuthor[];
+	playlistComments: NoteWithAuthor[];
 }
 
 ///
@@ -104,6 +105,7 @@ export default function PlaylistRoute() {
 	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
 	const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] =
 		useState<boolean>(false);
+	const [isCommenting, setIsCommenting] = useState<boolean>(false);
 
 	// zustand store. We use these Ids to check to see if the game already
 	// exists in the user's collection.
@@ -164,11 +166,22 @@ export default function PlaylistRoute() {
 							))}
 						</LibraryView>
 						<Separator className="mt-10" />
-						<h2 className="text-2xl font-semibold">Comments</h2>
-						<PlaylistCommentForm
-							userId={session.user.id}
-							playlistId={playlistWithGames.id}
-						/>
+						<div className="flex gap-5 items-center">
+							<h2 className="text-2xl font-semibold">Comments</h2>
+							<Button
+								variant={"outline"}
+								size={"sm"}
+								onClick={() => setIsCommenting(!isCommenting)}
+							>
+								{isCommenting ? "Hide" : "Post a Comment"}
+							</Button>
+						</div>
+						{isCommenting && (
+							<PlaylistCommentForm
+								userId={session.user.id}
+								playlistId={playlistWithGames.id}
+							/>
+						)}
 						<div className="grid gap-3">
 							{playlistComments.map((comment) => (
 								<Comment key={comment.id} comment={comment} author={comment.author} />
