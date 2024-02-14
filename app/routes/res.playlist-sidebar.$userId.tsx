@@ -60,12 +60,12 @@ export function StatsSidebar({
 	followerCount,
 }: StatsSidebarProps) {
 	const fetcher = useFetcher<typeof loader>();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Only run the effect on mount
 	useEffect(() => {
 		fetcher.submit(
 			{ userId: userId, playlistId: playlistId },
 			{ method: "get", action: `/res/playlist-sidebar/${userId}` },
 		);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	return (
 		<div className="h-full flex flex-col gap-8">

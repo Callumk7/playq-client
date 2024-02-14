@@ -1,6 +1,7 @@
 import { db } from "db";
-import { playlists } from "db/schema/playlists";
-import { eq } from "drizzle-orm";
+import { notes } from "db/schema/notes";
+import { playlistComments, playlists } from "db/schema/playlists";
+import { and, eq } from "drizzle-orm";
 
 export const getMinimumPlaylistData = async (playlistId: string) => {
 	const minimumPlaylistData = await db
@@ -37,3 +38,14 @@ export const getPlaylistWithGamesAndFollowers = async (playlistId: string) => {
 
 	return playlistWithGames;
 };
+
+export const getPlaylistComments = async (playlistId: string) => {
+	const plComments = await db.query.notes.findMany({
+		where: and(eq(notes.location, "playlist"), eq(notes.playlistId, playlistId)),
+		with: {
+			author: true
+		}
+	})
+
+	return plComments;
+}

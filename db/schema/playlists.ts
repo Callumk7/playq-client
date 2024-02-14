@@ -9,6 +9,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { games } from "./games";
+import { activity } from "./activity";
+import { notes } from "./notes";
 
 export const playlists = pgTable("playlists", {
 	id: text("id").primaryKey(),
@@ -27,6 +29,9 @@ export const playlistsRelations = relations(playlists, ({ one, many }) => ({
 	}),
 	games: many(gamesOnPlaylists),
 	followers: many(followers),
+	comments: many(playlistComments),
+	activity: many(activity),
+	notes: many(notes),
 }));
 
 export const followers = pgTable(
@@ -34,7 +39,7 @@ export const followers = pgTable(
 	{
 		userId: text("user_id").notNull(),
 		playlistId: text("playlist_id").notNull(),
-		rating: integer("rating")
+		rating: integer("rating"),
 	},
 	(t) => ({
 		pk: primaryKey({ columns: [t.userId, t.playlistId] }),
@@ -77,4 +82,26 @@ export const gamesOnPlaylistsRelations = relations(gamesOnPlaylists, ({ one }) =
 		fields: [gamesOnPlaylists.addedBy],
 		references: [users.id],
 	}),
+}));
+
+export const playlistComments = pgTable("playlist_comments", {
+	id: text("id").primaryKey().notNull(),
+	authorId: text("author_id").notNull(),
+	playlistId: text("playlist_id").notNull(),
+	body: text("body").notNull(),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+	isUpdated: boolean("is_updated").default(false),
+});
+
+export const playlistCommentsRelations = relations(playlistComments, ({ one, many }) => ({
+	playlist: one(playlists, {
+		fields: [playlistComments.playlistId],
+		references: [playlists.id],
+	}),
+	author: one(users, {
+		fields: [playlistComments.authorId],
+		references: [users.id],
+	}),
+	activity: many(activity),
 }));

@@ -9,6 +9,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { gamesOnPlaylists } from "./playlists";
 import { users } from "./users";
+import { activity } from "./activity";
+import { notes } from "./notes";
 
 export const games = pgTable("games", {
 	id: text("id").primaryKey(),
@@ -36,6 +38,8 @@ export const gamesRelations = relations(games, ({ one, many }) => ({
 	users: many(usersToGames),
 	playlists: many(gamesOnPlaylists),
 	genres: many(genresToGames),
+	activity: many(activity),
+	notes: many(notes),
 }));
 
 export const covers = pgTable("covers", {
@@ -135,7 +139,7 @@ export const usersToGames = pgTable(
 	}),
 );
 
-export const usersToGamesRelations = relations(usersToGames, ({ one }) => ({
+export const usersToGamesRelations = relations(usersToGames, ({ one, many }) => ({
 	user: one(users, {
 		fields: [usersToGames.userId],
 		references: [users.id],
@@ -144,4 +148,5 @@ export const usersToGamesRelations = relations(usersToGames, ({ one }) => ({
 		fields: [usersToGames.gameId],
 		references: [games.gameId],
 	}),
+	comments: many(notes),
 }));

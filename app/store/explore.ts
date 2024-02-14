@@ -1,4 +1,4 @@
-import { SortOption } from "@/features/library/hooks/sort";
+import { SortOption } from "@/components";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
@@ -20,7 +20,7 @@ export const useExploreStore = create<ExploreFilterStore>()(
 	devtools((set) => ({
 		showFilters: false,
 		genreFilter: [],
-		sortOption: "rating",
+		sortOption: "ratingDesc",
 		filterCollectionOut: false,
 		toggleShowFilters: () => set((state) => ({ showFilters: !state.showFilters })),
 		setGenreFilter: (filter) => set({ genreFilter: filter }),
@@ -38,9 +38,8 @@ export const useExploreStore = create<ExploreFilterStore>()(
 			set((state) => {
 				if (genres.length > state.genreFilter.length) {
 					return { genreFilter: genres };
-				} else {
-					return { genreFilter: [] };
 				}
+				return { genreFilter: [] };
 			}),
 	})),
 );

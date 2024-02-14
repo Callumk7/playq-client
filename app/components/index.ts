@@ -29,3 +29,4 @@ export * from "./navigation";
 export * from "./sidebar";
 export * from "./games";
 export * from "./collection";
+export * from "./comments";

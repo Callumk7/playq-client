@@ -4,8 +4,8 @@ import {
 	MenubarItem,
 	MenubarMenu,
 	MenubarTrigger,
-} from "@/components/ui/menubar";
-import { Game } from "@/types/games";
+} from "@/components";
+import { Game } from "@/types";
 import { useFetcher } from "@remix-run/react";
 
 interface PlaylistMenubarProps {

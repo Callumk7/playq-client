@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { TooltipProvider } from "./ui/tooltip";
 import { useState } from "react";
+import { TooltipProvider } from ".";
 
 export function Providers({ children }: { children: React.ReactNode }) {
 	// It is important to create the queryClient instance inside of our app, within react state.

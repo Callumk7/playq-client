@@ -103,10 +103,10 @@ export default function ExploreRoute() {
 
 	// This ensures that we get the new offset value when
 	// triggering the fetch.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Only run when the offset changes
 	useEffect(() => {
 		console.log(offset);
 		fetcher.submit(formRef.current);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [offset]); // This effect runs whenever 'offset' changes
 
 	useEffect(() => {

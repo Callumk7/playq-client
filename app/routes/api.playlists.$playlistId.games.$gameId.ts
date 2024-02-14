@@ -1,3 +1,5 @@
+import { createServerClient, getSession } from "@/services";
+import { activityManager } from "@/services/events/events.server";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { gamesOnPlaylists, playlists } from "db/schema/playlists";
@@ -7,6 +9,9 @@ import { zx } from "zodix";
 
 // Route handler for ADDING AND REMOVING GAMES FROM PLAYLISTS
 export const action = async ({ request, params }: ActionFunctionArgs) => {
+	const { supabase } = createServerClient(request);
+	const session = await getSession(supabase);
+
 	const { playlistId, gameId } = params;
 
 	if (!playlistId) {
@@ -42,6 +47,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				updatePlaylistPromise,
 			]);
 
+			activityManager.addGameToPlaylist(
+				session?.user.id ?? "no_user_found",
+				playlistId,
+				Number(gameId),
+			);
+
 			return json({ addedGame });
 		}
 
@@ -62,6 +73,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 			removedGamePromise,
 			updatePlaylistPromise,
 		]);
+
+		activityManager.removeGameFromPlaylist(
+			session?.user.id ?? "no_user_found",
+			playlistId,
+			Number(gameId),
+		);
 
 		return json({ removedGame });
 	}
