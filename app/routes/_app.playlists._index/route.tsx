@@ -16,6 +16,7 @@ import { HamburgerMenuIcon, PlusIcon } from "@radix-ui/react-icons";
 import { CreatePlaylistDialog } from "@/features/playlists";
 import { useState } from "react";
 import { Link } from "@remix-run/react";
+import { PlaylistProgress } from "../res.playlist-sidebar.$userId";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
@@ -48,28 +49,44 @@ export default function PlaylistView() {
 						<HamburgerMenuIcon />
 					</Button>
 				</div>
-      <div className="mt-7"><Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Creator</TableHead>
-                <TableHead>Games</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {allPlaylists.map((playlist) => (
-                <TableRow key={playlist.id}>
-                  <TableCell className="font-semibold">
-                    <Link to={`/playlists/view/${playlist.id}`}>{playlist.name}</Link>
-                  </TableCell>
-                  <TableCell>{playlist.creator.username}</TableCell>
-                  <TableCell>{playlist.games.length}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card></div>
+				<div className="mt-7">
+					<Card>
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead>Name</TableHead>
+									<TableHead>Creator</TableHead>
+									<TableHead>Games</TableHead>
+									<TableHead>Progress</TableHead>
+									<TableHead>Options</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{allPlaylists.map((playlist) => (
+									<TableRow key={playlist.id}>
+										<TableCell className="font-semibold">
+											<Link to={`/playlists/view/${playlist.id}`}>{playlist.name}</Link>
+										</TableCell>
+										<TableCell>{playlist.creator.username}</TableCell>
+										<TableCell>{playlist.games.length}</TableCell>
+										<TableCell>
+											<PlaylistProgress
+												userId={session.user.id}
+												playlistId={playlist.id}
+												max={playlist.games.length}
+											/>
+										</TableCell>
+										<TableCell>
+											<Button variant={"outline"} size={"icon"}>
+												<HamburgerMenuIcon />
+											</Button>
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</Card>
+				</div>
 			</main>
 			<CreatePlaylistDialog
 				userId={session.user.id}

@@ -1,4 +1,5 @@
 import {
+	Button,
 	Menubar,
 	MenubarContent,
 	MenubarItem,
@@ -15,6 +16,8 @@ interface PlaylistMenubarProps {
 	userId: string;
 	setRenameDialogOpen: (renameDialogOpen: boolean) => void;
 	setDeletePlaylistDialogOpen: (deletePlaylistDialogOpen: boolean) => void;
+	isEditing: boolean;
+	setIsEditing: (isEditing: boolean) => void;
 }
 
 export function PlaylistMenubar({
@@ -24,6 +27,8 @@ export function PlaylistMenubar({
 	userId,
 	setRenameDialogOpen,
 	setDeletePlaylistDialogOpen,
+	isEditing,
+	setIsEditing,
 }: PlaylistMenubarProps) {
 	const addGameFetcher = useFetcher();
 	const markAsPrivateFetcher = useFetcher();
@@ -35,7 +40,7 @@ export function PlaylistMenubar({
 		);
 	};
 	return (
-		<div className="flex justify-between">
+		<div className="flex gap-3">
 			<Menubar>
 				<MenubarMenu>
 					<MenubarTrigger>Menu</MenubarTrigger>
@@ -73,6 +78,12 @@ export function PlaylistMenubar({
 					</MenubarContent>
 				</MenubarMenu>
 			</Menubar>
+			<Button
+				variant={isEditing ? "default" : "outline"}
+				onClick={() => setIsEditing(!isEditing)}
+			>
+				Edit
+			</Button>
 		</div>
 	);
 }

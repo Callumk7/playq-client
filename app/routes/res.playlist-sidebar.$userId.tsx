@@ -1,10 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent, Progress, Label } from "@/components";
+import { playlistProgress } from "@/model/playlists/progress";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
-import { db } from "db";
-import { usersToGames } from "db/schema/games";
-import { gamesOnPlaylists } from "db/schema/playlists";
-import { and, eq } from "drizzle-orm";
 import { useEffect } from "react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -20,29 +17,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		};
 	}
 
-	const collectionData = await db
-		.select()
-		.from(gamesOnPlaylists)
-		.leftJoin(usersToGames, eq(gamesOnPlaylists.gameId, usersToGames.gameId))
-		.where(
-			and(eq(gamesOnPlaylists.playlistId, playlistId), eq(usersToGames.userId, userId)),
-		);
-
-	let inCollectionCount = 0;
-	let playedCount = 0;
-	let completedCount = 0;
-	const max = collectionData.length;
-	for (const result of collectionData) {
-		if (result.users_to_games) {
-			inCollectionCount += 1;
-			if (result.users_to_games.played) {
-				playedCount += 1;
-			}
-			if (result.users_to_games.completed) {
-				completedCount += 1;
-			}
-		}
-	}
+	const { inCollectionCount, playedCount, completedCount } = await playlistProgress(
+		userId,
+		playlistId,
+	);
 
 	return { inCollectionCount, playedCount, completedCount };
 };
@@ -113,6 +91,37 @@ export function StatsSidebar({
 					</div>
 				</CardContent>
 			</Card>
+		</div>
+	);
+}
+
+interface PlaylistProgressProps {
+	userId: string;
+	playlistId: string;
+	max: number;
+}
+
+export function PlaylistProgress({ userId, playlistId, max }: PlaylistProgressProps) {
+	const fetcher = useFetcher<typeof loader>();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Only run the effect on mount
+	useEffect(() => {
+		fetcher.submit(
+			{ userId: userId, playlistId: playlistId },
+			{ method: "get", action: `/res/playlist-sidebar/${userId}` },
+		);
+	}, []);
+	return (
+		<div className="flex flex-col gap-1">
+			<Progress
+				value={fetcher.data ? fetcher.data.playedCount : 0}
+				max={max}
+				className="h-2"
+			/>
+			<Progress
+				value={fetcher.data ? fetcher.data.completedCount : 0}
+				max={max}
+				className="h-2"
+			/>
 		</div>
 	);
 }

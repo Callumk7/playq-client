@@ -5,11 +5,13 @@ interface PlaylistEntryControlsProps {
 	inCollection: boolean;
 	gameId: number;
 	userId: string;
+	isEditing: boolean;
 }
 export function PlaylistEntryControls({
 	inCollection,
 	gameId,
 	userId,
+	isEditing,
 }: PlaylistEntryControlsProps) {
 	return (
 		<div className="flex gap-2">
@@ -18,9 +20,11 @@ export function PlaylistEntryControls({
 			) : (
 				<SaveToCollectionButton gameId={gameId} userId={userId} />
 			)}
-			<Button variant={"destructive"} size={"icon"}>
-				<TrashIcon />
-			</Button>
+			{isEditing && (
+				<Button variant={"destructive"} size={"icon"}>
+					<TrashIcon />
+				</Button>
+			)}
 		</div>
 	);
 }

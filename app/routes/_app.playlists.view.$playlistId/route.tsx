@@ -1,11 +1,4 @@
-import {
-	Button,
-	GameCover,
-	LibraryView,
-	RemoveFromCollectionButton,
-	SaveToCollectionButton,
-	Separator,
-} from "@/components";
+import { Button, GameCover, LibraryView, Separator } from "@/components";
 import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
 import { useUserCacheStore } from "@/store/cache";
@@ -109,10 +102,14 @@ export default function PlaylistRoute() {
 		useState<boolean>(false);
 	const [isCommenting, setIsCommenting] = useState<boolean>(false);
 
+	const [isEditing, setIsEditing] = useState<boolean>(false);
+
 	// zustand store. We use these Ids to check to see if the game already
 	// exists in the user's collection.
 	const userCollection = useUserCacheStore((state) => state.userCollection);
 
+	// hmmm. I don't remember writing this. But I am sure there is a better solution to this
+	// than an effect. The component itself should handle this.
 	useEffect(() => {
 		if (isSubmitting && renameDialogOpen) {
 			setRenameDialogOpen(false);
@@ -137,6 +134,8 @@ export default function PlaylistRoute() {
 							userId={playlistWithGames.creatorId}
 							setRenameDialogOpen={setRenameDialogOpen}
 							setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
+							isEditing={isEditing}
+							setIsEditing={setIsEditing}
 						/>
 					)}
 					{playlistWithGames?.isPrivate && (
@@ -157,6 +156,7 @@ export default function PlaylistRoute() {
 										inCollection={userCollection.includes(game.gameId)}
 										gameId={game.gameId}
 										userId={session.user.id}
+										isEditing={isEditing}
 									/>
 								</div>
 							))}
