@@ -8,9 +8,9 @@ import {
 } from "@/components";
 import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
-import { useUserCacheStore } from "@/store/collection";
+import { useUserCacheStore } from "@/store/cache";
 import { Game } from "@/types/games";
-import { PlaylistCommentsWithAuthor, PlaylistWithGames } from "@/types/playlists";
+import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { Session } from "@supabase/supabase-js";
@@ -30,8 +30,10 @@ import {
 	getPlaylistWithGamesAndFollowers,
 } from "./loading";
 import { NoteWithAuthor } from "@/types/notes";
+import { PlaylistEntryControls } from "./components/playlist-entry-controls.tsx";
 
-// Type guard types
+// Type guard types. We can block users by returning "blocked" from the loader.
+// As such, if we want type safety, we need to define the types first and narrow.
 interface Blocked {
 	blocked: true;
 }
@@ -151,17 +153,11 @@ export default function PlaylistRoute() {
 							{playlistWithGames?.games.map((game) => (
 								<div key={game.game.id} className="flex flex-col gap-2">
 									<GameCover coverId={game.game.cover.imageId} gameId={game.gameId} />
-									{userCollection.includes(game.gameId) ? (
-										<RemoveFromCollectionButton
-											gameId={game.gameId}
-											userId={session.user.id}
-										/>
-									) : (
-										<SaveToCollectionButton
-											gameId={game.gameId}
-											userId={session.user.id}
-										/>
-									)}
+									<PlaylistEntryControls
+										inCollection={userCollection.includes(game.gameId)}
+										gameId={game.gameId}
+										userId={session.user.id}
+									/>
 								</div>
 							))}
 						</LibraryView>

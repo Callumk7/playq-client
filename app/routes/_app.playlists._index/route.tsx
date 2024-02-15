@@ -12,13 +12,11 @@ import { createServerClient, getSession } from "@/services";
 import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
-import { useOutletContext } from "@remix-run/react";
 import { HamburgerMenuIcon, PlusIcon } from "@radix-ui/react-icons";
 import { CreatePlaylistDialog } from "@/features/playlists";
 import { useState } from "react";
+import { Link } from "@remix-run/react";
 
-// This route is for personal playlists: followed (public) and
-// owned only. Use the explore route for more discovery features
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
 	const session = await getSession(supabase);
@@ -50,26 +48,28 @@ export default function PlaylistView() {
 						<HamburgerMenuIcon />
 					</Button>
 				</div>
-				<Card>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>Name</TableHead>
-								<TableHead>Creator</TableHead>
-								<TableHead>Games</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{allPlaylists.map((playlist) => (
-								<TableRow key={playlist.id}>
-									<TableCell>{playlist.name}</TableCell>
-									<TableCell>{playlist.creator.username}</TableCell>
-									<TableCell>{playlist.games.length}</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</Card>
+      <div className="mt-7"><Card>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Creator</TableHead>
+                <TableHead>Games</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {allPlaylists.map((playlist) => (
+                <TableRow key={playlist.id}>
+                  <TableCell className="font-semibold">
+                    <Link to={`/playlists/view/${playlist.id}`}>{playlist.name}</Link>
+                  </TableCell>
+                  <TableCell>{playlist.creator.username}</TableCell>
+                  <TableCell>{playlist.games.length}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card></div>
 			</main>
 			<CreatePlaylistDialog
 				userId={session.user.id}
@@ -79,5 +79,3 @@ export default function PlaylistView() {
 		</>
 	);
 }
-
-// this has column optimisations that might not be ready

@@ -8,6 +8,7 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuItem,
 	DropdownMenuCheckboxItem,
+	Checkbox,
 } from "@/components";
 import { Playlist } from "@/types/playlists";
 import {
@@ -28,6 +29,9 @@ interface CollectionGameMenuProps {
 	playlists: Playlist[];
 	gamePlaylists?: Playlist[];
 	handleOpenRateGameDialog: (gameId: number) => void;
+	selectMode: boolean;
+	selectedGames: number[];
+	setSelectedGames: (games: number[]) => void;
 }
 
 export function CollectionGameMenu({
@@ -38,10 +42,14 @@ export function CollectionGameMenu({
 	playlists,
 	gamePlaylists,
 	handleOpenRateGameDialog,
+	selectMode,
+	selectedGames,
+	setSelectedGames,
 }: CollectionGameMenuProps) {
 	const deleteFetcher = useFetcher();
 	const playedFetcher = useFetcher();
 	const completedFetcher = useFetcher();
+
 	const handleRemove = () => {
 		deleteFetcher.submit(
 			{
@@ -81,57 +89,74 @@ export function CollectionGameMenu({
 		);
 	};
 
+	const handleToggleCheck = () => {
+		if (selectedGames.includes(gameId)) {
+			setSelectedGames(selectedGames.filter((g) => g !== gameId));
+		} else {
+			setSelectedGames([...selectedGames, gameId]);
+		}
+	};
+
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button variant={"outline"} size={"icon"}>
-					<HamburgerMenuIcon />
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent>
-				<DropdownMenuSub>
-					<DropdownMenuSubTrigger>
-						<PlusIcon className="mr-2" />
-						<span>Add to playlist</span>
-					</DropdownMenuSubTrigger>
-					<DropdownMenuSubContent>
-						{playlists.map((playlist) => (
-							<PlaylistSubMenuItem
-								key={playlist.id}
-								playlist={playlist}
-								gameId={gameId}
-								userId={userId}
-								gamePlaylists={gamePlaylists}
-							/>
-						))}
-					</DropdownMenuSubContent>
-				</DropdownMenuSub>
-				<DropdownMenuItem onClick={() => handleOpenRateGameDialog(gameId)}>
-					<MixIcon className="mr-2" />
-					<span>Rate game</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={handleMarkAsPlayed}>
-					{isPlayed ? (
-						<StarFilledIcon className="mr-2 text-primary" />
-					) : (
-						<StarIcon className="mr-2" />
-					)}
-					<span>Mark as played</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={handleMarkAsCompleted}>
-					{isCompleted ? (
-						<StarFilledIcon className="mr-2 text-primary" />
-					) : (
-						<StarIcon className="mr-2" />
-					)}
-					<span>Mark as completed</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={handleRemove}>
-					<TrashIcon className="mr-2" />
-					<span>Remove from collection</span>
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
+		<div className="flex gap-3 items-center">
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button variant={"outline"} size={"icon"}>
+						<HamburgerMenuIcon />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent>
+					<DropdownMenuSub>
+						<DropdownMenuSubTrigger>
+							<PlusIcon className="mr-2" />
+							<span>Add to playlist</span>
+						</DropdownMenuSubTrigger>
+						<DropdownMenuSubContent>
+							{playlists.map((playlist) => (
+								<PlaylistSubMenuItem
+									key={playlist.id}
+									playlist={playlist}
+									gameId={gameId}
+									userId={userId}
+									gamePlaylists={gamePlaylists}
+								/>
+							))}
+						</DropdownMenuSubContent>
+					</DropdownMenuSub>
+					<DropdownMenuItem onClick={() => handleOpenRateGameDialog(gameId)}>
+						<MixIcon className="mr-2" />
+						<span>Rate game</span>
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={handleMarkAsPlayed}>
+						{isPlayed ? (
+							<StarFilledIcon className="mr-2 text-primary" />
+						) : (
+							<StarIcon className="mr-2" />
+						)}
+						<span>Mark as played</span>
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={handleMarkAsCompleted}>
+						{isCompleted ? (
+							<StarFilledIcon className="mr-2 text-primary" />
+						) : (
+							<StarIcon className="mr-2" />
+						)}
+						<span>Mark as completed</span>
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={handleRemove}>
+						<TrashIcon className="mr-2" />
+						<span>Remove from collection</span>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+			{selectMode && (
+				<Checkbox
+					checked={selectedGames.includes(gameId)}
+					onCheckedChange={handleToggleCheck}
+					className="w-5 h-5"
+				/>
+			)}
+		</div>
 	);
 }
 

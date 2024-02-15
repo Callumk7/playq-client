@@ -9,7 +9,7 @@ import {
 	MenubarSubTrigger,
 	MenubarTrigger,
 } from "@/components";
-import { useUserCacheStore } from "@/store/collection";
+import { useUserCacheStore } from "@/store/cache";
 import { Playlist } from "@/types";
 
 interface GameViewMenubarProps {
