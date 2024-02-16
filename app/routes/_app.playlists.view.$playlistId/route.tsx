@@ -1,8 +1,12 @@
 import { Button, GameCover, LibraryView, Separator } from "@/components";
-import { getUserCollection } from "@/model";
+import {
+	getUserCollection,
+	getUserGamesWithDetails,
+	transformCollectionIntoGames,
+} from "@/model";
 import { createServerClient, getSession } from "@/services";
-import { useUserCacheStore } from "@/store/cache";
-import { Game } from "@/types/games";
+import { Game, GameWithCollection } from "@/types/games";
+import { NoteWithAuthor } from "@/types/notes";
 import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
@@ -15,6 +19,7 @@ import { StatsSidebar } from "../res.playlist-sidebar.$userId";
 import { DeletePlaylistDialog } from "./components/delete-playlist-dialog";
 import { Comment } from "./components/pl-comment";
 import { PlaylistCommentForm } from "./components/pl-comment-form";
+import { PlaylistEntryControls } from "./components/playlist-entry-controls.tsx";
 import { PlaylistMenubar } from "./components/playlist-menubar";
 import { RenamePlaylistDialog } from "./components/rename-playlist-dialog";
 import {
@@ -22,8 +27,7 @@ import {
 	getPlaylistComments,
 	getPlaylistWithGamesAndFollowers,
 } from "./loading";
-import { NoteWithAuthor } from "@/types/notes";
-import { PlaylistEntryControls } from "./components/playlist-entry-controls.tsx";
+import { useUserCacheStore } from "@/store/cache";
 
 // Type guard types. We can block users by returning "blocked" from the loader.
 // As such, if we want type safety, we need to define the types first and narrow.
@@ -36,7 +40,7 @@ interface Result {
 	playlistWithGames: PlaylistWithGames & {
 		followers: { userId: string }[];
 	};
-	usersGames: Game[];
+	games: GameWithCollection[];
 	isCreator: boolean;
 	session: Session;
 	playlistComments: NoteWithAuthor[];
@@ -68,7 +72,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 	const playlistCommentsPromise = getPlaylistComments(playlistId);
 	const playlistWithGamesPromise = getPlaylistWithGamesAndFollowers(playlistId);
-	const userCollectionPromise = getUserCollection(session.user.id);
+	const userCollectionPromise = getUserGamesWithDetails(session.user.id);
 
 	const [playlistWithGames, userCollection, playlistComments] = await Promise.all([
 		playlistWithGamesPromise,
@@ -76,12 +80,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		playlistCommentsPromise,
 	]);
 
-	const usersGames = userCollection.map((c) => c.game);
+	const games: GameWithCollection[] = transformCollectionIntoGames(userCollection);
 	const isCreator = playlistWithGames!.creatorId === session.user.id;
 
 	return typedjson({
 		playlistWithGames,
-		usersGames,
+		games,
 		blocked: false,
 		isCreator,
 		playlistComments,
@@ -120,7 +124,7 @@ export default function PlaylistRoute() {
 		return <div>This Playlist is Private</div>;
 	}
 
-	const { playlistWithGames, usersGames, isCreator, session, playlistComments } = result;
+	const { playlistWithGames, games, isCreator, session, playlistComments } = result;
 
 	return (
 		<>
@@ -129,7 +133,7 @@ export default function PlaylistRoute() {
 					{isCreator && (
 						<PlaylistMenubar
 							isPrivate={playlistWithGames.isPrivate}
-							games={usersGames}
+							games={games}
 							playlistId={playlistWithGames.id}
 							userId={playlistWithGames.creatorId}
 							setRenameDialogOpen={setRenameDialogOpen}

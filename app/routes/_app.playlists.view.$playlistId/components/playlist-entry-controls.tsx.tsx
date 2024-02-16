@@ -1,24 +1,37 @@
-import { Button, RemoveFromCollectionButton, SaveToCollectionButton } from "@/components";
-import { TrashIcon } from "@radix-ui/react-icons";
+import {
+	Button,
+	CollectionGameMenu,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
+	RemoveFromCollectionButton,
+	SaveToCollectionButton,
+} from "@/components";
+import { GameWithCollection } from "@/types";
+import { HamburgerMenuIcon, MixIcon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 
 interface PlaylistEntryControlsProps {
+	game: GameWithCollection;
 	inCollection: boolean;
-	gameId: number;
 	userId: string;
 	isEditing: boolean;
 }
 export function PlaylistEntryControls({
+	game,
 	inCollection,
-	gameId,
 	userId,
 	isEditing,
 }: PlaylistEntryControlsProps) {
 	return (
 		<div className="flex gap-2">
 			{inCollection ? (
-				<RemoveFromCollectionButton gameId={gameId} userId={userId} />
+				<div>You have this one</div>
 			) : (
-				<SaveToCollectionButton gameId={gameId} userId={userId} />
+				<SaveToCollectionButton gameId={game.gameId} userId={userId} />
 			)}
 			{isEditing && (
 				<Button variant={"destructive"} size={"icon"}>

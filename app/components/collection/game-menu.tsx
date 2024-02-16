@@ -20,6 +20,8 @@ import {
 	TrashIcon,
 } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
+import { isCatchResponse } from "@remix-run/react/dist/data";
+import { DetailedReactHTMLElement, HTMLAttributes, ReactNode, cloneElement } from "react";
 
 interface CollectionGameMenuProps {
 	gameId: number;
@@ -135,14 +137,13 @@ export function CollectionGameMenu({
 						)}
 						<span>Mark as played</span>
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={handleMarkAsCompleted}>
-						{isCompleted ? (
-							<StarFilledIcon className="mr-2 text-primary" />
-						) : (
-							<StarIcon className="mr-2" />
-						)}
-						<span>Mark as completed</span>
-					</DropdownMenuItem>
+					<GameOption
+						onClick={handleMarkAsCompleted}
+						text={"Mark as completed"}
+						isFlagged={isCompleted}
+					>
+						<StarFilledIcon className="mr-2" />
+					</GameOption>
 					<DropdownMenuItem onClick={handleRemove}>
 						<TrashIcon className="mr-2" />
 						<span>Remove from collection</span>
@@ -175,8 +176,6 @@ function PlaylistSubMenuItem({
 }: PlaylistSubMenuItemProps) {
 	const addToPlaylistFetcher = useFetcher();
 
-	// This was just trying to validate the input, but it is kind of stupid
-	// because the submit method has no validation.
 	const gameInsert = {
 		addedBy: userId,
 	};
@@ -204,5 +203,23 @@ function PlaylistSubMenuItem({
 		>
 			{playlist.name}
 		</DropdownMenuCheckboxItem>
+	);
+}
+
+interface GameOptionProps {
+	children: ReactNode;
+	onClick: () => void;
+	text: string;
+	isFlagged?: boolean;
+}
+
+function GameOption({ children, onClick, text, isFlagged = false }: GameOptionProps) {
+	return (
+		<DropdownMenuItem onClick={onClick}>
+			{cloneElement(children, {
+				className: `${children.props.className} ${isFlagged ? "text-primary" : ""}`,
+			})}
+			<span>{text}</span>
+		</DropdownMenuItem>
 	);
 }
