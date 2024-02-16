@@ -21,12 +21,13 @@ export * from "./ui/tabs";
 export * from "./ui/tag";
 export * from "./ui/toggle";
 export * from "./ui/tooltip";
+export * from "./ui/switch";
 
 export * from "./ui/custom/slide-over";
 
 export * from "./layout";
 export * from "./navigation";
 export * from "./sidebar";
-export * from "./games";
 export * from "./collection";
 export * from "./comments";
+export * from "./games";
