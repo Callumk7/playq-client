@@ -40,7 +40,7 @@ interface Result {
 	playlistWithGames: PlaylistWithGames & {
 		followers: { userId: string }[];
 	};
-	games: GameWithCollection[];
+	userCollection: Game[];
 	isCreator: boolean;
 	session: Session;
 	playlistComments: NoteWithAuthor[];
@@ -72,7 +72,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 	const playlistCommentsPromise = getPlaylistComments(playlistId);
 	const playlistWithGamesPromise = getPlaylistWithGamesAndFollowers(playlistId);
-	const userCollectionPromise = getUserGamesWithDetails(session.user.id);
+	const userCollectionPromise = getUserCollection(session.user.id);
 
 	const [playlistWithGames, userCollection, playlistComments] = await Promise.all([
 		playlistWithGamesPromise,
@@ -80,12 +80,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		playlistCommentsPromise,
 	]);
 
-	const games: GameWithCollection[] = transformCollectionIntoGames(userCollection);
 	const isCreator = playlistWithGames!.creatorId === session.user.id;
 
 	return typedjson({
 		playlistWithGames,
-		games,
+		userCollection,
 		blocked: false,
 		isCreator,
 		playlistComments,
@@ -108,10 +107,6 @@ export default function PlaylistRoute() {
 
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 
-	// zustand store. We use these Ids to check to see if the game already
-	// exists in the user's collection.
-	const userCollection = useUserCacheStore((state) => state.userCollection);
-
 	// hmmm. I don't remember writing this. But I am sure there is a better solution to this
 	// than an effect. The component itself should handle this.
 	useEffect(() => {
@@ -124,7 +119,9 @@ export default function PlaylistRoute() {
 		return <div>This Playlist is Private</div>;
 	}
 
-	const { playlistWithGames, games, isCreator, session, playlistComments } = result;
+	const { playlistWithGames, userCollection, isCreator, session, playlistComments } =
+		result;
+	const userCollectionGameIds = userCollection.map((c) => c.gameId);
 
 	return (
 		<>
@@ -133,7 +130,7 @@ export default function PlaylistRoute() {
 					{isCreator && (
 						<PlaylistMenubar
 							isPrivate={playlistWithGames.isPrivate}
-							games={games}
+							games={userCollection}
 							playlistId={playlistWithGames.id}
 							userId={playlistWithGames.creatorId}
 							setRenameDialogOpen={setRenameDialogOpen}
@@ -157,7 +154,7 @@ export default function PlaylistRoute() {
 								<div key={game.game.id} className="flex flex-col gap-2">
 									<GameCover coverId={game.game.cover.imageId} gameId={game.gameId} />
 									<PlaylistEntryControls
-										inCollection={userCollection.includes(game.gameId)}
+										inCollection={userCollectionGameIds.includes(game.gameId)}
 										gameId={game.gameId}
 										userId={session.user.id}
 										isEditing={isEditing}

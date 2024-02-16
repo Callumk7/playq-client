@@ -43,9 +43,9 @@ export const getPlaylistComments = async (playlistId: string) => {
 	const plComments = await db.query.notes.findMany({
 		where: and(eq(notes.location, "playlist"), eq(notes.playlistId, playlistId)),
 		with: {
-			author: true
-		}
-	})
+			author: true,
+		},
+	});
 
 	return plComments;
-}
+};

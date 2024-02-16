@@ -22,6 +22,7 @@ import {
 } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
 import { useCollectionControls } from "./hooks/controls";
+import { ReactNode } from "react";
 
 interface CollectionGameMenuProps {
 	gameId: number;
@@ -194,5 +195,27 @@ function PlaylistSubMenuItem({
 		>
 			{playlist.name}
 		</DropdownMenuCheckboxItem>
+	);
+}
+
+interface CollectionDropdownToggleItemProps {
+	onClick: () => void;
+	toggle: boolean;
+	toggleOnComponent: ReactNode;
+	toggleOffComponent: ReactNode;
+	children: ReactNode;
+}
+export function CollectionDropdownToggleItem({
+	onClick,
+	toggle,
+	toggleOnComponent,
+	toggleOffComponent,
+	children,
+}: CollectionDropdownToggleItemProps) {
+	return (
+		<DropdownMenuItem onClick={onClick}>
+			{toggle ? toggleOnComponent : toggleOffComponent}
+			{children}
+		</DropdownMenuItem>
 	);
 }
