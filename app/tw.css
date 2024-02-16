@@ -12,6 +12,7 @@
 
     --destructive: 348 53% 58%; /* red */
     --destructive-foreground: 65 17% 98%;
+    --destructive-accent: 348 48% 65%;
 
     --success: 166 91% 65%; /* green */
     --success-foreground: 240 17% 10%;
