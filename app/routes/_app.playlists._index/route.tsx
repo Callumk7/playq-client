@@ -12,11 +12,20 @@ import { createServerClient, getSession } from "@/services";
 import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
-import { HamburgerMenuIcon, PlusIcon } from "@radix-ui/react-icons";
+import {
+	HamburgerMenuIcon,
+	Pencil1Icon,
+	PlusIcon,
+	SewingPinIcon,
+	TrashIcon,
+} from "@radix-ui/react-icons";
 import { CreatePlaylistDialog } from "@/features/playlists";
 import { useState } from "react";
 import { Link } from "@remix-run/react";
 import { PlaylistProgress } from "../res.playlist-sidebar.$userId";
+import { Playlist } from "@/types";
+import { RenamePlaylistDialog } from "../_app.playlists.view.$playlistId/components/rename-playlist-dialog";
+import { DeletePlaylistDialog } from "../_app.playlists.view.$playlistId/components/delete-playlist-dialog";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
@@ -36,6 +45,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function PlaylistView() {
 	const { allPlaylists, session } = useTypedLoaderData<typeof loader>();
 	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
+	const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] =
+		useState<boolean>(false);
+	const [playlistToEdit, setPlaylistToEdit] = useState<string>("");
 
 	return (
 		<>
@@ -77,9 +90,12 @@ export default function PlaylistView() {
 											/>
 										</TableCell>
 										<TableCell>
-											<Button variant={"outline"} size={"icon"}>
-												<HamburgerMenuIcon />
-											</Button>
+											<PlaylistOptions
+												playlist={playlist}
+												setRenameDialogOpen={setRenameDialogOpen}
+												setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
+												setPlaylistToEdit={setPlaylistToEdit}
+											/>
 										</TableCell>
 									</TableRow>
 								))}
@@ -93,6 +109,54 @@ export default function PlaylistView() {
 				dialogOpen={dialogOpen}
 				setDialogOpen={setDialogOpen}
 			/>
+			<RenamePlaylistDialog
+				renameDialogOpen={renameDialogOpen}
+				setRenameDialogOpen={setRenameDialogOpen}
+				playlistId={playlistToEdit}
+			/>
+			<DeletePlaylistDialog
+				deletePlaylistDialogOpen={deletePlaylistDialogOpen}
+				setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
+				playlistId={playlistToEdit}
+			/>
 		</>
+	);
+}
+
+interface PlaylistOptionsProps {
+	playlist: Playlist;
+	setRenameDialogOpen: (renameDialogOpen: boolean) => void;
+	setDeletePlaylistDialogOpen: (deletePlaylistDialogOpen: boolean) => void;
+	setPlaylistToEdit: (playlistToEdit: string) => void;
+}
+
+export function PlaylistOptions({
+	playlist,
+	setRenameDialogOpen,
+	setDeletePlaylistDialogOpen,
+	setPlaylistToEdit,
+}: PlaylistOptionsProps) {
+	const handleDelete = () => {
+		setPlaylistToEdit(playlist.id);
+		setDeletePlaylistDialogOpen(true);
+	};
+
+	const handleEdit = () => {
+		setPlaylistToEdit(playlist.id);
+		setRenameDialogOpen(true);
+	};
+
+	return (
+		<div className="flex gap-3">
+			<Button variant={"outline"} size={"icon"} onClick={handleDelete}>
+				<TrashIcon />
+			</Button>
+			<Button variant={"outline"} size={"icon"} onClick={handleEdit}>
+				<Pencil1Icon />
+			</Button>
+			<Button variant={"outline"} size={"icon"}>
+				<SewingPinIcon />
+			</Button>
+		</div>
 	);
 }
