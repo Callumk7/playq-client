@@ -22,7 +22,7 @@ export const notes = pgTable("notes", {
 	profileId: text("profile_id"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-	isUpdated: boolean("is_updated").default(false),
+	isUpdated: boolean("is_updated").default(false).notNull().notNull(),
 });
 
 export const notesRelations = relations(notes, ({ one }) => ({

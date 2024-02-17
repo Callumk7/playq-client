@@ -18,7 +18,7 @@ export const playlists = pgTable("playlists", {
 	creatorId: text("creator_id").notNull(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-	isUpdated: boolean("is_updated").default(false),
+	isUpdated: boolean("is_updated").default(false).notNull(),
 	isPrivate: boolean("is_private").default(false).notNull(),
 });
 
@@ -40,6 +40,7 @@ export const followers = pgTable(
 		userId: text("user_id").notNull(),
 		playlistId: text("playlist_id").notNull(),
 		rating: integer("rating"),
+		pinned: boolean("pinned").notNull().default(false),
 	},
 	(t) => ({
 		pk: primaryKey({ columns: [t.userId, t.playlistId] }),
@@ -84,6 +85,7 @@ export const gamesOnPlaylistsRelations = relations(gamesOnPlaylists, ({ one }) =
 	}),
 }));
 
+// DEPRECIATED DO NOT USE
 export const playlistComments = pgTable("playlist_comments", {
 	id: text("id").primaryKey().notNull(),
 	authorId: text("author_id").notNull(),
@@ -91,7 +93,7 @@ export const playlistComments = pgTable("playlist_comments", {
 	body: text("body").notNull(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-	isUpdated: boolean("is_updated").default(false),
+	isUpdated: boolean("is_updated").default(false).notNull(),
 });
 
 export const playlistCommentsRelations = relations(playlistComments, ({ one, many }) => ({

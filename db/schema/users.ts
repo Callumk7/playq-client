@@ -14,7 +14,7 @@ export const users = pgTable("users", {
 	lastName: text("last_name"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-	isUpdated: boolean("is_updated").default(false),
+	isUpdated: boolean("is_updated").default(false).notNull(),
 	profilePicture: text("profile_picture"),
 });
 

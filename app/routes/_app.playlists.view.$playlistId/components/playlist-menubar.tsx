@@ -25,8 +25,9 @@ import { useState } from "react";
 
 interface PlaylistMenubarProps {
 	isPrivate: boolean;
-	games: Game[];
+	userCollection: Game[];
 	playlistId: string;
+	playlistGames: number[];
 	userId: string;
 	setRenameDialogOpen: (renameDialogOpen: boolean) => void;
 	setDeletePlaylistDialogOpen: (deletePlaylistDialogOpen: boolean) => void;
@@ -36,7 +37,8 @@ interface PlaylistMenubarProps {
 
 export function PlaylistMenubar({
 	isPrivate,
-	games,
+	userCollection,
+	playlistGames,
 	playlistId,
 	userId,
 	setRenameDialogOpen,
@@ -74,25 +76,33 @@ export function PlaylistMenubar({
 			>
 				Edit
 			</Button>
-			<AddGameToPlaylistDialog games={games} userId={userId} playlistId={playlistId} />
+			<AddGameToPlaylistDialog
+				userCollection={userCollection}
+				playlistGames={playlistGames}
+				userId={userId}
+				playlistId={playlistId}
+			/>
 		</div>
 	);
 }
 
 interface AddGameToPlaylistDialogProps {
-	games: Game[];
+	userCollection: Game[];
+	playlistGames: number[];
 	userId: string;
 	playlistId: string;
 }
 
 function AddGameToPlaylistDialog({
-	games,
+	userCollection,
+	playlistGames,
 	userId,
 	playlistId,
 }: AddGameToPlaylistDialogProps) {
 	const addGameFetcher = useFetcher();
+	const [open, setOpen] = useState<boolean>(false);
 	return (
-		<Dialog aria-label="Add game to playlist dialog">
+		<Dialog aria-label="Add game to playlist dialog" open={open} onOpenChange={setOpen}>
 			<DialogTrigger>
 				<Button variant={"outline"} aria-label="Add games button">
 					<PlusCircledIcon className="mr-3" aria-hidden="true" />
@@ -104,6 +114,7 @@ function AddGameToPlaylistDialog({
 					method="POST"
 					action={`/api/playlists/${playlistId}/games`}
 					aria-labelledby="addGameForm"
+					onSubmit={() => setOpen(false)}
 				>
 					<input type="hidden" name="addedBy" value={userId} />
 					<ScrollArea className="h-[50vh] w-full">
@@ -116,8 +127,12 @@ function AddGameToPlaylistDialog({
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{games.map((game) => (
-									<AddGameTableRow key={game.id} game={game} />
+								{userCollection.map((game) => (
+									<AddGameTableRow
+										key={game.id}
+										game={game}
+										inPlaylist={playlistGames.includes(game.gameId)}
+									/>
 								))}
 							</TableBody>
 						</Table>
@@ -133,8 +148,8 @@ function AddGameToPlaylistDialog({
 	);
 }
 
-function AddGameTableRow({ game }: { game: Game }) {
-	const [checked, setChecked] = useState(false);
+function AddGameTableRow({ game, inPlaylist }: { game: Game; inPlaylist: boolean }) {
+	const [checked, setChecked] = useState(inPlaylist);
 	return (
 		<TableRow key={game.id}>
 			<TableCell onClick={() => setChecked(!checked)}>{game.title}</TableCell>

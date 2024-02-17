@@ -130,7 +130,8 @@ export default function PlaylistRoute() {
 					{isCreator && (
 						<PlaylistMenubar
 							isPrivate={playlistWithGames.isPrivate}
-							games={userCollection}
+							userCollection={userCollection}
+							playlistGames={playlistWithGames.games.map((game) => game.gameId)}
 							playlistId={playlistWithGames.id}
 							userId={playlistWithGames.creatorId}
 							setRenameDialogOpen={setRenameDialogOpen}

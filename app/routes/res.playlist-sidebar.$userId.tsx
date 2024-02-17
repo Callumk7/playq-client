@@ -1,4 +1,12 @@
-import { Card, CardHeader, CardTitle, CardContent, Progress, Label } from "@/components";
+import {
+	Card,
+	CardHeader,
+	CardTitle,
+	CardContent,
+	Progress,
+	Label,
+	CardSubTitle,
+} from "@/components";
 import { playlistProgress } from "@/model/playlists/progress";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
@@ -49,7 +57,7 @@ export function StatsSidebar({
 		<div className="h-full flex flex-col gap-8">
 			<Card>
 				<CardHeader>
-					<CardTitle>Progress</CardTitle>
+					<CardSubTitle>Progress</CardSubTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="flex flex-col gap-5">
@@ -76,7 +84,7 @@ export function StatsSidebar({
 			</Card>
 			<Card>
 				<CardHeader>
-					<CardTitle>Playlist Stats</CardTitle>
+					<CardSubTitle>Playlist Stats</CardSubTitle>
 				</CardHeader>
 				<CardContent>
 					<div className="flex flex-col gap-5">
