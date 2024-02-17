@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { DBImage } from "@/features/library/components/game-cover";
 import { PlaylistGenres } from "@/routes/res.playlist-genres";
-import { Playlist, PlaylistWithFollowers } from "@/types/playlists";
-import { BookmarkFilledIcon, BookmarkIcon, UpdateIcon } from "@radix-ui/react-icons";
-import { Link, useFetcher } from "@remix-run/react";
+import { PlaylistWithFollowers } from "@/types/playlists";
+import { Link } from "@remix-run/react";
 import { FollowPlaylistButton } from "./follow-playlist-button";
 
 interface PlaylistCardProps {
@@ -23,7 +21,6 @@ interface PlaylistCardProps {
 }
 
 export function PlaylistCard({ playlist, userId, games, creator }: PlaylistCardProps) {
-	const followFetcher = useFetcher();
 	const isFollowedByUser = playlist.followers.some((f) => f.userId === userId);
 	return (
 		<Link

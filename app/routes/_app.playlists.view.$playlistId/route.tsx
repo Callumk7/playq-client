@@ -1,11 +1,7 @@
 import { Button, GameCover, LibraryView, Separator } from "@/components";
-import {
-	getUserCollection,
-	getUserGamesWithDetails,
-	transformCollectionIntoGames,
-} from "@/model";
+import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
-import { Game, GameWithCollection } from "@/types/games";
+import { Game } from "@/types/games";
 import { NoteWithAuthor } from "@/types/notes";
 import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
@@ -26,8 +22,9 @@ import {
 	getMinimumPlaylistData,
 	getPlaylistComments,
 	getPlaylistWithGamesAndFollowers,
+	getUserFollowAndRatingData,
 } from "./loading";
-import { useUserCacheStore } from "@/store/cache";
+import { GuestMenubar } from "./components/guest-menubar";
 
 // Type guard types. We can block users by returning "blocked" from the loader.
 // As such, if we want type safety, we need to define the types first and narrow.
@@ -42,6 +39,10 @@ interface Result {
 	};
 	userCollection: Game[];
 	isCreator: boolean;
+	userFollowAndRatingData: {
+		isFollowing: boolean;
+		rating: number | null;
+	};
 	session: Session;
 	playlistComments: NoteWithAuthor[];
 }
@@ -73,12 +74,18 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const playlistCommentsPromise = getPlaylistComments(playlistId);
 	const playlistWithGamesPromise = getPlaylistWithGamesAndFollowers(playlistId);
 	const userCollectionPromise = getUserCollection(session.user.id);
+	const userFollowAndRatingDataPromise = getUserFollowAndRatingData(
+		session.user.id,
+		playlistId,
+	);
 
-	const [playlistWithGames, userCollection, playlistComments] = await Promise.all([
-		playlistWithGamesPromise,
-		userCollectionPromise,
-		playlistCommentsPromise,
-	]);
+	const [playlistWithGames, userCollection, playlistComments, userFollowAndRatingData] =
+		await Promise.all([
+			playlistWithGamesPromise,
+			userCollectionPromise,
+			playlistCommentsPromise,
+			userFollowAndRatingDataPromise,
+		]);
 
 	const isCreator = playlistWithGames!.creatorId === session.user.id;
 
@@ -87,6 +94,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		userCollection,
 		blocked: false,
 		isCreator,
+		userFollowAndRatingData,
 		playlistComments,
 		session,
 	});
@@ -119,15 +127,21 @@ export default function PlaylistRoute() {
 		return <div>This Playlist is Private</div>;
 	}
 
-	const { playlistWithGames, userCollection, isCreator, session, playlistComments } =
-		result;
+	const {
+		playlistWithGames,
+		userCollection,
+		isCreator,
+		session,
+		playlistComments,
+		userFollowAndRatingData,
+	} = result;
 	const userCollectionGameIds = userCollection.map((c) => c.gameId);
 
 	return (
 		<>
 			<div className="flex flex-col gap-6">
 				<div className="flex gap-7">
-					{isCreator && (
+					{isCreator ? (
 						<PlaylistMenubar
 							isPrivate={playlistWithGames.isPrivate}
 							userCollection={userCollection}
@@ -138,6 +152,13 @@ export default function PlaylistRoute() {
 							setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
 							isEditing={isEditing}
 							setIsEditing={setIsEditing}
+						/>
+					) : (
+						<GuestMenubar
+							playlistId={playlistWithGames.id}
+							userId={session.user.id}
+							isFollowing={userFollowAndRatingData.isFollowing}
+							userPlaylistRating={userFollowAndRatingData.rating}
 						/>
 					)}
 					{playlistWithGames?.isPrivate && (

@@ -90,7 +90,7 @@ export function CollectionMenu({ userId, gameId }: CollectionMenuProps) {
 						toggleOnComponent={<StarFilledIcon className="mr-3 text-primary" />}
 						toggleOffComponent={<StarIcon className="mr-3" />}
 					>
-						<span>Mark as played</span>
+						<span>Mark as completed</span>
 					</CollectionDropdownToggleItem>
 					<DropdownMenuItemDestructive onClick={handleRemove}>
 						<TrashIcon className="mr-3" />
