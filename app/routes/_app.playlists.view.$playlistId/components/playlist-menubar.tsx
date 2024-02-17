@@ -1,31 +1,51 @@
 import {
+	Button,
+	Checkbox,
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogTrigger,
 	Menubar,
 	MenubarContent,
 	MenubarItem,
 	MenubarMenu,
 	MenubarTrigger,
+	ScrollArea,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
 } from "@/components";
 import { Game } from "@/types";
+import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
+import { useState } from "react";
 
 interface PlaylistMenubarProps {
 	isPrivate: boolean;
-	games: Game[];
+	userCollection: Game[];
 	playlistId: string;
+	playlistGames: number[];
 	userId: string;
 	setRenameDialogOpen: (renameDialogOpen: boolean) => void;
 	setDeletePlaylistDialogOpen: (deletePlaylistDialogOpen: boolean) => void;
+	isEditing: boolean;
+	setIsEditing: (isEditing: boolean) => void;
 }
 
 export function PlaylistMenubar({
 	isPrivate,
-	games,
+	userCollection,
+	playlistGames,
 	playlistId,
 	userId,
 	setRenameDialogOpen,
 	setDeletePlaylistDialogOpen,
+	isEditing,
+	setIsEditing,
 }: PlaylistMenubarProps) {
-	const addGameFetcher = useFetcher();
 	const markAsPrivateFetcher = useFetcher();
 
 	const handleTogglePrivate = () => {
@@ -35,7 +55,7 @@ export function PlaylistMenubar({
 		);
 	};
 	return (
-		<div className="flex justify-between">
+		<div className="flex gap-3">
 			<Menubar>
 				<MenubarMenu>
 					<MenubarTrigger>Menu</MenubarTrigger>
@@ -49,30 +69,100 @@ export function PlaylistMenubar({
 						</MenubarItem>
 					</MenubarContent>
 				</MenubarMenu>
-				<MenubarMenu>
-					<MenubarTrigger>Add Games</MenubarTrigger>
-					<MenubarContent>
-						{games.map((game) => (
-							<MenubarItem
-								key={game.id}
-								onClick={() =>
-									addGameFetcher.submit(
-										{
-											addedBy: userId,
-										},
-										{
-											action: `/api/playlists/${playlistId}/games/${game.gameId}`,
-											method: "POST",
-										},
-									)
-								}
-							>
-								{game.title}
-							</MenubarItem>
-						))}
-					</MenubarContent>
-				</MenubarMenu>
 			</Menubar>
+			<Button
+				variant={isEditing ? "default" : "outline"}
+				onClick={() => setIsEditing(!isEditing)}
+			>
+				Edit
+			</Button>
+			<AddGameToPlaylistDialog
+				userCollection={userCollection}
+				playlistGames={playlistGames}
+				userId={userId}
+				playlistId={playlistId}
+			/>
 		</div>
+	);
+}
+
+interface AddGameToPlaylistDialogProps {
+	userCollection: Game[];
+	playlistGames: number[];
+	userId: string;
+	playlistId: string;
+}
+
+function AddGameToPlaylistDialog({
+	userCollection,
+	playlistGames,
+	userId,
+	playlistId,
+}: AddGameToPlaylistDialogProps) {
+	const addGameFetcher = useFetcher();
+	const [open, setOpen] = useState<boolean>(false);
+	return (
+		<Dialog aria-label="Add game to playlist dialog" open={open} onOpenChange={setOpen}>
+			<DialogTrigger>
+				<Button variant={"outline"} aria-label="Add games button">
+					<PlusCircledIcon className="mr-3" aria-hidden="true" />
+					<span>Add Games</span>
+				</Button>
+			</DialogTrigger>
+			<DialogContent>
+				<addGameFetcher.Form
+					method="POST"
+					action={`/api/playlists/${playlistId}/games`}
+					aria-labelledby="addGameForm"
+					onSubmit={() => setOpen(false)}
+				>
+					<input type="hidden" name="addedBy" value={userId} />
+					<ScrollArea className="h-[50vh] w-full">
+						<Table aria-label="Games list">
+							<TableHeader>
+								<TableRow>
+									<TableHead>Title</TableHead>
+									<TableHead>Rating</TableHead>
+									<TableHead>Select</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{userCollection.map((game) => (
+									<AddGameTableRow
+										key={game.id}
+										game={game}
+										inPlaylist={playlistGames.includes(game.gameId)}
+									/>
+								))}
+							</TableBody>
+						</Table>
+					</ScrollArea>
+					<DialogFooter>
+						<Button aria-label="Submit button" type="submit">
+							Add
+						</Button>
+					</DialogFooter>
+				</addGameFetcher.Form>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+function AddGameTableRow({ game, inPlaylist }: { game: Game; inPlaylist: boolean }) {
+	const [checked, setChecked] = useState(inPlaylist);
+	return (
+		<TableRow key={game.id}>
+			<TableCell onClick={() => setChecked(!checked)}>{game.title}</TableCell>
+			<TableCell>{game.rating ?? 0}</TableCell>
+			<TableCell className="flex items-center">
+				<Checkbox
+					value={game.gameId}
+					name="gameIds"
+					aria-label={`Select game ${game.title}`}
+					checked={checked}
+					onCheckedChange={() => setChecked(!checked)}
+				/>
+			</TableCell>
+		</TableRow>
 	);
 }

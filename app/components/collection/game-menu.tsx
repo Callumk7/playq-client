@@ -8,6 +8,8 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuItem,
 	DropdownMenuCheckboxItem,
+	Checkbox,
+	DropdownMenuItemDestructive,
 } from "@/components";
 import { Playlist } from "@/types/playlists";
 import {
@@ -19,15 +21,20 @@ import {
 	TrashIcon,
 } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
+import { useCollectionControls } from "./hooks/controls";
+import { ReactNode } from "react";
 
 interface CollectionGameMenuProps {
 	gameId: number;
 	isPlayed: boolean;
 	isCompleted: boolean;
 	userId: string;
-	playlists: Playlist[];
+	playlists?: Playlist[];
 	gamePlaylists?: Playlist[];
 	handleOpenRateGameDialog: (gameId: number) => void;
+	selectMode?: boolean;
+	selectedGames?: number[];
+	setSelectedGames?: (games: number[]) => void;
 }
 
 export function CollectionGameMenu({
@@ -38,100 +45,111 @@ export function CollectionGameMenu({
 	playlists,
 	gamePlaylists,
 	handleOpenRateGameDialog,
+	selectMode,
+	selectedGames,
+	setSelectedGames,
 }: CollectionGameMenuProps) {
-	const deleteFetcher = useFetcher();
-	const playedFetcher = useFetcher();
-	const completedFetcher = useFetcher();
-	const handleRemove = () => {
-		deleteFetcher.submit(
-			{
-				gameId,
-				userId,
-			},
-			{
-				method: "delete",
-				action: "/api/collections",
-			},
-		);
-	};
+	const { handleRemove, handleMarkAsPlayed, handleMarkAsCompleted } =
+		useCollectionControls(userId, gameId);
 
-	const handleMarkAsPlayed = () => {
-		playedFetcher.submit(
-			{
-				gameId,
-				played: true,
-			},
-			{
-				method: "put",
-				action: `/api/collections/${userId}`,
-			},
-		);
-	};
-
-	const handleMarkAsCompleted = () => {
-		completedFetcher.submit(
-			{
-				gameId,
-				completed: true,
-			},
-			{
-				method: "put",
-				action: `/api/collections/${userId}`,
-			},
-		);
+	const handleToggleCheck = () => {
+		if (selectedGames && setSelectedGames) {
+			if (selectedGames.includes(gameId)) {
+				setSelectedGames(selectedGames.filter((g) => g !== gameId));
+			} else {
+				setSelectedGames([...selectedGames, gameId]);
+			}
+		}
 	};
 
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button variant={"outline"} size={"icon"}>
-					<HamburgerMenuIcon />
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent>
-				<DropdownMenuSub>
-					<DropdownMenuSubTrigger>
-						<PlusIcon className="mr-2" />
-						<span>Add to playlist</span>
-					</DropdownMenuSubTrigger>
-					<DropdownMenuSubContent>
-						{playlists.map((playlist) => (
-							<PlaylistSubMenuItem
-								key={playlist.id}
-								playlist={playlist}
-								gameId={gameId}
-								userId={userId}
-								gamePlaylists={gamePlaylists}
-							/>
-						))}
-					</DropdownMenuSubContent>
-				</DropdownMenuSub>
-				<DropdownMenuItem onClick={() => handleOpenRateGameDialog(gameId)}>
-					<MixIcon className="mr-2" />
-					<span>Rate game</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={handleMarkAsPlayed}>
-					{isPlayed ? (
-						<StarFilledIcon className="mr-2 text-primary" />
-					) : (
-						<StarIcon className="mr-2" />
+		<div className="flex gap-3 items-center">
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button variant={"outline"} size={"icon"}>
+						<HamburgerMenuIcon />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent>
+					{playlists && (
+						<PlaylistSubMenu
+							userId={userId}
+							gameId={gameId}
+							playlists={playlists}
+							gamePlaylists={gamePlaylists}
+						/>
 					)}
-					<span>Mark as played</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={handleMarkAsCompleted}>
-					{isCompleted ? (
-						<StarFilledIcon className="mr-2 text-primary" />
-					) : (
-						<StarIcon className="mr-2" />
-					)}
-					<span>Mark as completed</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={handleRemove}>
-					<TrashIcon className="mr-2" />
-					<span>Remove from collection</span>
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
+
+					<DropdownMenuItem onClick={() => handleOpenRateGameDialog(gameId)}>
+						<MixIcon className="mr-2" />
+						<span>Rate game</span>
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={handleMarkAsPlayed}>
+						{isPlayed ? (
+							<StarFilledIcon className="mr-2 text-primary" />
+						) : (
+							<StarIcon className="mr-2" />
+						)}
+						<span>Mark as played</span>
+					</DropdownMenuItem>
+
+					<DropdownMenuItem onClick={handleMarkAsCompleted}>
+						{isCompleted ? (
+							<StarFilledIcon className="mr-2 text-primary" />
+						) : (
+							<StarIcon className="mr-2" />
+						)}
+						<span>Mark as completed</span>
+					</DropdownMenuItem>
+
+					<DropdownMenuItemDestructive onClick={handleRemove}>
+						<TrashIcon className="mr-2" />
+						<span>Remove from collection</span>
+					</DropdownMenuItemDestructive>
+				</DropdownMenuContent>
+			</DropdownMenu>
+			{selectMode && selectedGames && (
+				<Checkbox
+					checked={selectedGames.includes(gameId)}
+					onCheckedChange={handleToggleCheck}
+					className="w-5 h-5"
+				/>
+			)}
+		</div>
+	);
+}
+
+interface PlaylistSubMenuProps {
+	userId: string;
+	gameId: number;
+	playlists: Playlist[];
+	gamePlaylists?: Playlist[];
+}
+
+function PlaylistSubMenu({
+	playlists,
+	userId,
+	gameId,
+	gamePlaylists,
+}: PlaylistSubMenuProps) {
+	return (
+		<DropdownMenuSub>
+			<DropdownMenuSubTrigger>
+				<PlusIcon className="mr-2" />
+				<span>Add to playlist</span>
+			</DropdownMenuSubTrigger>
+			<DropdownMenuSubContent>
+				{playlists.map((playlist) => (
+					<PlaylistSubMenuItem
+						key={playlist.id}
+						playlist={playlist}
+						gameId={gameId}
+						userId={userId}
+						gamePlaylists={gamePlaylists}
+					/>
+				))}
+			</DropdownMenuSubContent>
+		</DropdownMenuSub>
 	);
 }
 
@@ -150,8 +168,6 @@ function PlaylistSubMenuItem({
 }: PlaylistSubMenuItemProps) {
 	const addToPlaylistFetcher = useFetcher();
 
-	// This was just trying to validate the input, but it is kind of stupid
-	// because the submit method has no validation.
 	const gameInsert = {
 		addedBy: userId,
 	};
@@ -179,5 +195,27 @@ function PlaylistSubMenuItem({
 		>
 			{playlist.name}
 		</DropdownMenuCheckboxItem>
+	);
+}
+
+interface CollectionDropdownToggleItemProps {
+	onClick: () => void;
+	toggle: boolean;
+	toggleOnComponent: ReactNode;
+	toggleOffComponent: ReactNode;
+	children: ReactNode;
+}
+export function CollectionDropdownToggleItem({
+	onClick,
+	toggle,
+	toggleOnComponent,
+	toggleOffComponent,
+	children,
+}: CollectionDropdownToggleItemProps) {
+	return (
+		<DropdownMenuItem onClick={onClick}>
+			{toggle ? toggleOnComponent : toggleOffComponent}
+			{children}
+		</DropdownMenuItem>
 	);
 }

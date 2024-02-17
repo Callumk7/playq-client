@@ -78,6 +78,10 @@ export default function CollectionIndex() {
 	const [isRateGameDialogOpen, setIsRateGameDialogOpen] = useState<boolean>(false);
 	const [dialogGameId, setDialogGameId] = useState<number>(0);
 
+	// State for handling game selection
+	const [selectedGames, setSelectedGames] = useState<number[]>([]);
+	const [selectMode, setSelectMode] = useState<boolean>(false);
+
 	const handleOpenRateGameDialog = (gameId: number) => {
 		setDialogGameId(gameId);
 		setIsRateGameDialogOpen(true);
@@ -99,6 +103,9 @@ export default function CollectionIndex() {
 				userId={session.user.id}
 				setIsTableView={setIsTableView}
 				isTableView={isTableView}
+				selectMode={selectMode}
+				selectedGames={selectedGames}
+				setSelectMode={setSelectMode}
 			/>
 			<div className="my-6">
 				<CollectionProgress
@@ -121,6 +128,7 @@ export default function CollectionIndex() {
 							key={game.id}
 							coverId={game.cover.imageId}
 							gameId={game.gameId}
+							isSelected={selectedGames.includes(game.gameId)}
 						>
 							<CollectionGameMenu
 								gameId={game.gameId}
@@ -130,6 +138,9 @@ export default function CollectionIndex() {
 								playlists={userPlaylists}
 								gamePlaylists={game.playlists}
 								handleOpenRateGameDialog={handleOpenRateGameDialog}
+								selectedGames={selectedGames}
+								setSelectedGames={setSelectedGames}
+								selectMode={selectMode}
 							/>
 						</GameWithControls>
 					))}
@@ -156,13 +167,13 @@ function CollectionProgress({
 }) {
 	return (
 		<div className="flex w-full flex-col gap-4">
-			<div className="flex flex-col gap-1">
+			<div className="flex flex-col gap-2">
 				<Label>Played</Label>
-				<Progress value={playedGames} max={gameCount} />
+				<Progress value={playedGames} max={gameCount} className="h-2" />
 			</div>
-			<div className="flex flex-col gap-1">
+			<div className="flex flex-col gap-2">
 				<Label>Completed</Label>
-				<Progress value={completedGames} max={gameCount} />
+				<Progress value={completedGames} max={gameCount} className="h-2" />
 			</div>
 		</div>
 	);

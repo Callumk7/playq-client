@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { CreatePlaylistDialog } from "@/features/playlists";
 import { createServerClient, getSession } from "@/services";
 import { createBrowserClient } from "@supabase/ssr";
-import { useUserCacheStore } from "@/store/collection";
+import { useUserCacheStore } from "@/store/cache";
 import { getUserCollectionGameIds } from "@/model";
 import { Container, Navbar, Sidebar } from "@/components";
 import { Playlist, User, UserWithActivity } from "@/types";
@@ -60,9 +60,13 @@ export default function AppLayout() {
 	const setUserCollection = useUserCacheStore((state) => state.setUserCollection);
 	const setUserFriends = useUserCacheStore((state) => state.setUserFriends);
 	const setUserPlaylists = useUserCacheStore((state) => state.setUserPlaylists);
-	setUserCollection(userCollection);
-	setUserFriends(userFriends.map((friend) => friend.id));
-	setUserPlaylists(userPlaylists.map((playlist) => playlist.id));
+  
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Only run once on render
+useEffect(() => {
+    setUserCollection(userCollection);
+    setUserFriends(userFriends.map((friend) => friend.id));
+    setUserPlaylists(userPlaylists.map((playlist) => playlist.id));
+  }, [])
 
 	// supabase data requests
 	const supaFetcher = useFetcher();

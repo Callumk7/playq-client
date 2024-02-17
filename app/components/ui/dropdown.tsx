@@ -19,7 +19,7 @@ const DropdownMenuSubTrigger = forwardRef<
 	<DropdownMenuPrimitive.SubTrigger
 		ref={ref}
 		className={cn(
-			"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent",
+			"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
 			inset && "pl-8",
 			className,
 		)}
@@ -74,6 +74,24 @@ const DropdownMenuItem = forwardRef<
 		ref={ref}
 		className={cn(
 			"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			inset && "pl-8",
+			className,
+		)}
+		{...props}
+	/>
+));
+DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
+
+const DropdownMenuItemDestructive = forwardRef<
+	ElementRef<typeof DropdownMenuPrimitive.Item>,
+	ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
+		inset?: boolean;
+	}
+>(({ className, inset, ...props }, ref) => (
+	<DropdownMenuPrimitive.Item
+		ref={ref}
+		className={cn(
+			"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-destructive focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
 			inset && "pl-8",
 			className,
 		)}
@@ -171,6 +189,7 @@ export {
 	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuItemDestructive,
 	DropdownMenuCheckboxItem,
 	DropdownMenuRadioItem,
 	DropdownMenuLabel,

@@ -1,16 +1,9 @@
-import {
-	Button,
-	GameCover,
-	LibraryView,
-	RemoveFromCollectionButton,
-	SaveToCollectionButton,
-	Separator,
-} from "@/components";
+import { Button, GameCover, LibraryView, Separator } from "@/components";
 import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
-import { useUserCacheStore } from "@/store/collection";
 import { Game } from "@/types/games";
-import { PlaylistCommentsWithAuthor, PlaylistWithGames } from "@/types/playlists";
+import { NoteWithAuthor } from "@/types/notes";
+import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { Session } from "@supabase/supabase-js";
@@ -22,16 +15,19 @@ import { StatsSidebar } from "../res.playlist-sidebar.$userId";
 import { DeletePlaylistDialog } from "./components/delete-playlist-dialog";
 import { Comment } from "./components/pl-comment";
 import { PlaylistCommentForm } from "./components/pl-comment-form";
+import { PlaylistEntryControls } from "./components/playlist-entry-controls.tsx";
 import { PlaylistMenubar } from "./components/playlist-menubar";
 import { RenamePlaylistDialog } from "./components/rename-playlist-dialog";
 import {
 	getMinimumPlaylistData,
 	getPlaylistComments,
 	getPlaylistWithGamesAndFollowers,
+	getUserFollowAndRatingData,
 } from "./loading";
-import { NoteWithAuthor } from "@/types/notes";
+import { GuestMenubar } from "./components/guest-menubar";
 
-// Type guard types
+// Type guard types. We can block users by returning "blocked" from the loader.
+// As such, if we want type safety, we need to define the types first and narrow.
 interface Blocked {
 	blocked: true;
 }
@@ -41,8 +37,12 @@ interface Result {
 	playlistWithGames: PlaylistWithGames & {
 		followers: { userId: string }[];
 	};
-	usersGames: Game[];
+	userCollection: Game[];
 	isCreator: boolean;
+	userFollowAndRatingData: {
+		isFollowing: boolean;
+		rating: number | null;
+	};
 	session: Session;
 	playlistComments: NoteWithAuthor[];
 }
@@ -74,21 +74,27 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const playlistCommentsPromise = getPlaylistComments(playlistId);
 	const playlistWithGamesPromise = getPlaylistWithGamesAndFollowers(playlistId);
 	const userCollectionPromise = getUserCollection(session.user.id);
+	const userFollowAndRatingDataPromise = getUserFollowAndRatingData(
+		session.user.id,
+		playlistId,
+	);
 
-	const [playlistWithGames, userCollection, playlistComments] = await Promise.all([
-		playlistWithGamesPromise,
-		userCollectionPromise,
-		playlistCommentsPromise,
-	]);
+	const [playlistWithGames, userCollection, playlistComments, userFollowAndRatingData] =
+		await Promise.all([
+			playlistWithGamesPromise,
+			userCollectionPromise,
+			playlistCommentsPromise,
+			userFollowAndRatingDataPromise,
+		]);
 
-	const usersGames = userCollection.map((c) => c.game);
 	const isCreator = playlistWithGames!.creatorId === session.user.id;
 
 	return typedjson({
 		playlistWithGames,
-		usersGames,
+		userCollection,
 		blocked: false,
 		isCreator,
+		userFollowAndRatingData,
 		playlistComments,
 		session,
 	});
@@ -107,10 +113,10 @@ export default function PlaylistRoute() {
 		useState<boolean>(false);
 	const [isCommenting, setIsCommenting] = useState<boolean>(false);
 
-	// zustand store. We use these Ids to check to see if the game already
-	// exists in the user's collection.
-	const userCollection = useUserCacheStore((state) => state.userCollection);
+	const [isEditing, setIsEditing] = useState<boolean>(false);
 
+	// hmmm. I don't remember writing this. But I am sure there is a better solution to this
+	// than an effect. The component itself should handle this.
 	useEffect(() => {
 		if (isSubmitting && renameDialogOpen) {
 			setRenameDialogOpen(false);
@@ -121,20 +127,38 @@ export default function PlaylistRoute() {
 		return <div>This Playlist is Private</div>;
 	}
 
-	const { playlistWithGames, usersGames, isCreator, session, playlistComments } = result;
+	const {
+		playlistWithGames,
+		userCollection,
+		isCreator,
+		session,
+		playlistComments,
+		userFollowAndRatingData,
+	} = result;
+	const userCollectionGameIds = userCollection.map((c) => c.gameId);
 
 	return (
 		<>
 			<div className="flex flex-col gap-6">
 				<div className="flex gap-7">
-					{isCreator && (
+					{isCreator ? (
 						<PlaylistMenubar
 							isPrivate={playlistWithGames.isPrivate}
-							games={usersGames}
+							userCollection={userCollection}
+							playlistGames={playlistWithGames.games.map((game) => game.gameId)}
 							playlistId={playlistWithGames.id}
 							userId={playlistWithGames.creatorId}
 							setRenameDialogOpen={setRenameDialogOpen}
 							setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
+							isEditing={isEditing}
+							setIsEditing={setIsEditing}
+						/>
+					) : (
+						<GuestMenubar
+							playlistId={playlistWithGames.id}
+							userId={session.user.id}
+							isFollowing={userFollowAndRatingData.isFollowing}
+							userPlaylistRating={userFollowAndRatingData.rating}
 						/>
 					)}
 					{playlistWithGames?.isPrivate && (
@@ -145,23 +169,18 @@ export default function PlaylistRoute() {
 				</div>
 				<h1 className="mt-5 py-2 text-3xl font-semibold">{playlistWithGames?.name}</h1>
 				<Separator />
-				<div className="relative grid grid-cols-12 gap-10">
-					<div className="col-span-9 flex flex-col gap-5">
+				<div className="relative grid lg:grid-cols-12 gap-10">
+					<div className="lg:col-span-9 flex flex-col gap-5">
 						<LibraryView>
 							{playlistWithGames?.games.map((game) => (
 								<div key={game.game.id} className="flex flex-col gap-2">
 									<GameCover coverId={game.game.cover.imageId} gameId={game.gameId} />
-									{userCollection.includes(game.gameId) ? (
-										<RemoveFromCollectionButton
-											gameId={game.gameId}
-											userId={session.user.id}
-										/>
-									) : (
-										<SaveToCollectionButton
-											gameId={game.gameId}
-											userId={session.user.id}
-										/>
-									)}
+									<PlaylistEntryControls
+										inCollection={userCollectionGameIds.includes(game.gameId)}
+										gameId={game.gameId}
+										userId={session.user.id}
+										isEditing={isEditing}
+									/>
 								</div>
 							))}
 						</LibraryView>
@@ -188,7 +207,7 @@ export default function PlaylistRoute() {
 							))}
 						</div>
 					</div>
-					<div className="relative col-span-3">
+					<div className="relative lg:col-span-3">
 						<StatsSidebar
 							userId={session.user.id}
 							playlistId={playlistWithGames.id}

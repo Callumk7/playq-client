@@ -18,13 +18,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		const result = await zx.parseFormSafe(request, {
 			playlistName: z.string(),
 			userId: z.string(),
+			isPrivate: z.string().optional(),
 		});
 
 		if (!result.success) {
 			return json({ error: result.error }, { status: 400 });
 		}
 
-		const { playlistName, userId } = result.data;
+		const { playlistName, userId, isPrivate } = result.data;
+		const isPrivateBool = isPrivate === "on" ? true : false;
 		const newId = `pl_${uuidv4()}`;
 
 		const createdPlaylist = await db
@@ -33,6 +35,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				id: newId,
 				name: playlistName,
 				creatorId: userId,
+				isPrivate: isPrivateBool,
 			})
 			.returning();
 

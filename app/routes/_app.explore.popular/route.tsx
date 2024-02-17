@@ -15,7 +15,6 @@ import {
 	Progress,
 	Toggle,
 } from "@/components";
-import { createServerClient, getSession } from "@/services";
 import {
 	genresToStrings,
 	getAllGenres,
@@ -27,6 +26,7 @@ import {
 	getPopularGamesByPlaylist,
 } from "@/features/home/queries/popular-games";
 import { getUserCollectionGameIds } from "@/model";
+import { createServerClient, getSession } from "@/services";
 import { cn } from "@/util/cn";
 import {
 	CheckIcon,
@@ -55,7 +55,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const userCollectionGameidsPromise = getUserCollectionGameIds(session.user.id);
 	const allGenres = await getAllGenres();
 	const genreStrings = genresToStrings(allGenres);
-	genreStrings.forEach((s, i) => (genreStrings[i] = s.toLowerCase()));
+	genreStrings.forEach((s, i) => {
+		genreStrings[i] = s.toLowerCase();
+	});
 
 	// fetch gameIds in parallel
 	const [popularGamesByCollection, popularGamesByPlaylist, userCollectionGameIds] =
@@ -66,6 +68,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		]);
 
 	// I should create an explcit type for the return type of this function
+	// WARN: this actually has missing data because each list may (and wont) contain the same
+	// games. I need to either cache two lists, or change the logic so that only shared games are fetched
 	const processedData = await combinePopularGameData({
 		popularGamesByCollection,
 		popularGamesByPlaylist,

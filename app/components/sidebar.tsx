@@ -39,12 +39,10 @@ export function Sidebar({
 							variant={"outline"}
 							size={"sm"}
 							disabled={!hasSession}
+              className="w-full"
 						>
 							<span className="mr-3">Create new</span>
 							<PlusIcon />
-						</Button>
-						<Button size={"sm"} variant={"outline"}>
-							<HamburgerMenuIcon />
 						</Button>
 					</div>
 					<div className="flex flex-col gap-2 py-4">

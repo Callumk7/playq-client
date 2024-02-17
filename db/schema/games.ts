@@ -18,7 +18,7 @@ export const games = pgTable("games", {
 	title: text("title").notNull(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-	isUpdated: boolean("is_updated").default(false),
+	isUpdated: boolean("is_updated").default(false).notNull(),
 	follows: integer("follows").default(0).notNull(),
 	storyline: text("storyline"),
 	firstReleaseDate: timestamp("first_release_date"),
@@ -48,7 +48,7 @@ export const covers = pgTable("covers", {
 	imageId: text("image_id").notNull().unique(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-	isUpdated: boolean("is_updated").default(false),
+	isUpdated: boolean("is_updated").default(false).notNull(),
 });
 
 export const artworks = pgTable("artworks", {
@@ -57,7 +57,7 @@ export const artworks = pgTable("artworks", {
 	imageId: text("image_id").notNull().unique(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-	isUpdated: boolean("is_updated").default(false),
+	isUpdated: boolean("is_updated").default(false).notNull(),
 });
 
 export const artworksRelations = relations(artworks, ({ one }) => ({
@@ -73,7 +73,7 @@ export const screenshots = pgTable("screenshots", {
 	imageId: text("image_id").notNull().unique(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-	isUpdated: boolean("is_updated").default(false),
+	isUpdated: boolean("is_updated").default(false).notNull(),
 });
 
 export const screenshotsRelations = relations(screenshots, ({ one }) => ({
@@ -88,7 +88,7 @@ export const genres = pgTable("genres", {
 	name: text("name").notNull().unique(),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-	isUpdated: boolean("is_updated").default(false),
+	isUpdated: boolean("is_updated").default(false).notNull(),
 });
 
 export const genresRelations = relations(genres, ({ many }) => ({
@@ -102,7 +102,7 @@ export const genresToGames = pgTable(
 		gameId: integer("game_id").notNull(),
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 		updatedAt: timestamp("updated_at").notNull().defaultNow(),
-		isUpdated: boolean("is_updated").default(false),
+		isUpdated: boolean("is_updated").default(false).notNull(),
 	},
 
 	(t) => ({
@@ -128,7 +128,7 @@ export const usersToGames = pgTable(
 		gameId: integer("game_id").notNull(),
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 		updatedAt: timestamp("updated_at").notNull().defaultNow(),
-		isUpdated: boolean("is_updated").default(false),
+		isUpdated: boolean("is_updated").default(false).notNull(),
 		played: boolean("played").default(false).notNull(),
 		playerRating: integer("player_rating"),
 		completed: boolean("completed").default(false).notNull(),

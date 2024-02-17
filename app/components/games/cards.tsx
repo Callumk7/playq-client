@@ -1,7 +1,7 @@
 import { IGDBImage } from "@/types/igdb";
 import { cn } from "@/util/cn";
 import { Link } from "@remix-run/react";
-import { FC, HTMLAttributes, ReactElement, ReactNode } from "react";
+import { HTMLAttributes, ReactNode } from "react";
 
 interface GameCoverProps extends HTMLAttributes<HTMLDivElement> {
 	coverId: string;
@@ -42,7 +42,7 @@ export function DBImage({ imageId, size, className }: DBImageProps) {
 	return (
 		<img
 			src={`https://images.igdb.com/igdb/image/upload/t_${size}/${imageId}.jpg`}
-			alt="cover image"
+			alt="game cover art"
 			className={cn(className, "h-full w-full")}
 		/>
 	);
@@ -51,11 +51,12 @@ interface GameWithControlsProps {
 	children: ReactNode;
 	coverId: string;
 	gameId: number;
+  isSelected?: boolean;
 }
-export function GameWithControls({ children, coverId, gameId }: GameWithControlsProps) {
+export function GameWithControls({ children, coverId, gameId, isSelected }: GameWithControlsProps) {
 	return (
 		<div className="flex flex-col gap-1">
-			<GameCover coverId={coverId} gameId={gameId} />
+			<GameCover coverId={coverId} gameId={gameId} isSelected={isSelected} />
 			{children}
 		</div>
 	);
