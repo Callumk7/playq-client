@@ -24,7 +24,7 @@ export function CreatePlaylistForm({
 	}, [isSubmitting, dialogOpen, setDialogOpen]);
 
 	return (
-		<Form method="post" action="/playlists" className="flex flex-col gap-6">
+		<Form method="POST" action="/playlists" className="flex flex-col gap-6">
 			<div className="flex flex-row items-center space-x-3">
 				<Input
 					type="text"

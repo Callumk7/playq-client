@@ -18,7 +18,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		const result = await zx.parseFormSafe(request, {
 			playlistName: z.string(),
 			userId: z.string(),
-			isPrivate: z.string(),
+			isPrivate: z.string().optional(),
 		});
 
 		if (!result.success) {

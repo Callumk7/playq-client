@@ -147,8 +147,8 @@ export default function PlaylistRoute() {
 				</div>
 				<h1 className="mt-5 py-2 text-3xl font-semibold">{playlistWithGames?.name}</h1>
 				<Separator />
-				<div className="relative grid grid-cols-12 gap-10">
-					<div className="col-span-9 flex flex-col gap-5">
+				<div className="relative grid lg:grid-cols-12 gap-10">
+					<div className="lg:col-span-9 flex flex-col gap-5">
 						<LibraryView>
 							{playlistWithGames?.games.map((game) => (
 								<div key={game.game.id} className="flex flex-col gap-2">
@@ -185,7 +185,7 @@ export default function PlaylistRoute() {
 							))}
 						</div>
 					</div>
-					<div className="relative col-span-3">
+					<div className="relative lg:col-span-3">
 						<StatsSidebar
 							userId={session.user.id}
 							playlistId={playlistWithGames.id}

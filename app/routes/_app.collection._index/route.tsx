@@ -167,13 +167,13 @@ function CollectionProgress({
 }) {
 	return (
 		<div className="flex w-full flex-col gap-4">
-			<div className="flex flex-col gap-1">
+			<div className="flex flex-col gap-2">
 				<Label>Played</Label>
-				<Progress value={playedGames} max={gameCount} />
+				<Progress value={playedGames} max={gameCount} className="h-2" />
 			</div>
-			<div className="flex flex-col gap-1">
+			<div className="flex flex-col gap-2">
 				<Label>Completed</Label>
-				<Progress value={completedGames} max={gameCount} />
+				<Progress value={completedGames} max={gameCount} className="h-2" />
 			</div>
 		</div>
 	);
