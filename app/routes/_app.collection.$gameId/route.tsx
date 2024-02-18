@@ -42,7 +42,13 @@ export default function GamesRoute() {
 
 	return (
 		<main className="mt-10">
-			<DBImage imageId={game.artworks[0].imageId} size="1080p" className="rounded-2xl" />
+			{game.artworks[0] && (
+				<DBImage
+					imageId={game.artworks[0].imageId}
+					size="1080p"
+					className="rounded-2xl"
+				/>
+			)}
 			<div className="relative flex flex-col gap-5">
 				<h1 className="pt-4 text-6xl font-semibold">{game.title}</h1>
 				<GenreTags genres={game.genres.map((g) => g.genre.name)} />

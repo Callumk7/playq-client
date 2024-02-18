@@ -106,6 +106,7 @@ export default function CollectionIndex() {
 				selectMode={selectMode}
 				selectedGames={selectedGames}
 				setSelectMode={setSelectMode}
+				userPlaylists={userPlaylists}
 			/>
 			<div className="my-6">
 				<CollectionProgress
