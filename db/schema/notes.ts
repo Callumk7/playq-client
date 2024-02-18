@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, integer, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { games, usersToGames } from "./games";
 import { playlists } from "./playlists";
@@ -17,7 +17,7 @@ export const notes = pgTable("notes", {
 	authorId: text("author_id").notNull(),
 	location: locationEnum("location"),
 	collectionId: text("collection_id"),
-	gameId: text("game_id"),
+	gameId: integer("game_id"),
 	playlistId: text("playlist_id"),
 	profileId: text("profile_id"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),

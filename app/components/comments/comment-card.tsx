@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components";
-import { PlaylistComment, User } from "@/types";
+import { User } from "@/types";
 import { Note } from "@/types/notes";
 
 interface PlaylistCommentProps {

@@ -8,7 +8,7 @@ import { zx } from "zodix";
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
 	if (request.method === "POST") {
-		const playlistId = String(params.playlistId);
+		const gameId = Number(params.gameId);
 		const result = await zx.parseFormSafe(request, {
 			user_id: z.string(),
 			body: z.string(),
@@ -18,29 +18,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 			return json("failure", { status: 400 });
 		}
 
-		// TODO: remove this database
-		const newComment = await db
-			.insert(playlistComments)
+		const newNote = await db
+			.insert(notes)
 			.values({
-				id: `plc_${uuidv4()}`,
+				id: `note_${uuidv4()}`,
 				authorId: result.data.user_id,
-				playlistId: playlistId,
-				body: result.data.body,
+				gameId: gameId,
+				location: "game",
+				content: result.data.body,
 			})
 			.returning();
 
-		console.log("SUCCESS");
-		console.log(newComment[0].body);
-
-		const newNote = await db.insert(notes).values({
-			id: `note_${uuidv4()}`,
-			authorId: result.data.user_id,
-			playlistId: playlistId,
-			location: "playlist",
-			content: result.data.body,
-		}).returning();
-
-		return json({ newComment, newNote });
+		return json({ newNote });
 	}
 
 	return json("failure", { status: 400 });

@@ -10,7 +10,10 @@
 			"recommended": true,
 			"style": {
 				"noNonNullAssertion": "off"
-			}
+			},
+            "complexity": {
+                "noForEach": "warn"
+            }
 		}
 	},
 	"formatter": {

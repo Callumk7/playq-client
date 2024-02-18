@@ -1,8 +1,10 @@
-import { relations } from "drizzle-orm";
+import { avg, count, eq, isNotNull, relations } from "drizzle-orm";
 import {
+	QueryBuilder,
 	boolean,
 	integer,
 	pgTable,
+	pgView,
 	primaryKey,
 	text,
 	timestamp,
@@ -107,7 +109,7 @@ export const genresToGames = pgTable(
 
 	(t) => ({
 		pk: primaryKey({ columns: [t.genreId, t.gameId] }),
-	}),
+	})
 );
 
 export const genresToGamesRelations = relations(genresToGames, ({ one }) => ({
@@ -136,17 +138,20 @@ export const usersToGames = pgTable(
 	},
 	(t) => ({
 		pk: primaryKey({ columns: [t.userId, t.gameId] }),
-	}),
+	})
 );
 
-export const usersToGamesRelations = relations(usersToGames, ({ one, many }) => ({
-	user: one(users, {
-		fields: [usersToGames.userId],
-		references: [users.id],
-	}),
-	game: one(games, {
-		fields: [usersToGames.gameId],
-		references: [games.gameId],
-	}),
-	comments: many(notes),
-}));
+export const usersToGamesRelations = relations(
+	usersToGames,
+	({ one, many }) => ({
+		user: one(users, {
+			fields: [usersToGames.userId],
+			references: [users.id],
+		}),
+		game: one(games, {
+			fields: [usersToGames.gameId],
+			references: [games.gameId],
+		}),
+		comments: many(notes),
+	})
+);

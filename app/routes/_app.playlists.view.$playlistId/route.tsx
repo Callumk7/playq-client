@@ -1,4 +1,4 @@
-import { Button, GameCover, LibraryView, Separator } from "@/components";
+import { Button, GameCover, LibraryView, Separator, Comment } from "@/components";
 import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
 import { Game } from "@/types/games";
@@ -13,7 +13,6 @@ import { z } from "zod";
 import { zx } from "zodix";
 import { StatsSidebar } from "../res.playlist-sidebar.$userId";
 import { DeletePlaylistDialog } from "./components/delete-playlist-dialog";
-import { Comment } from "./components/pl-comment";
 import { PlaylistCommentForm } from "./components/pl-comment-form";
 import { PlaylistEntryControls } from "./components/playlist-entry-controls.tsx";
 import { PlaylistMenubar } from "./components/playlist-menubar";

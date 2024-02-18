@@ -9,6 +9,7 @@ import {
 import { getUserCollectionGameIds } from "@/model";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { getTopTenByRating } from "./loading";
 
 ///
 /// LOADER
@@ -39,11 +40,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		popularGamesByPlaylist,
 	});
 
-	return json({ processedData, userCollectionGameIds, session }, { headers });
+	const topTenGames = await getTopTenByRating();
+
+	return json(
+		{ processedData, userCollectionGameIds, topTenGames, session },
+		{ headers },
+	);
 };
 
 export default function AppIndex() {
-	const { processedData, userCollectionGameIds, session } =
+	const { processedData, userCollectionGameIds, topTenGames, session } =
 		useLoaderData<typeof loader>();
 	// This could be done on the server..
 	const maxCollectionCount = processedData.reduce(
@@ -55,7 +61,19 @@ export default function AppIndex() {
 		0,
 	);
 	return (
-		<Container>
+		<Container className="flex flex-col gap-24">
+			<LibraryView>
+				{topTenGames.map((game) => (
+					<div key={game.id} className="flex flex-col gap-3">
+						<GameCover coverId={game.cover.imageId} gameId={game.gameId} />
+						<div className="border p-3 rounded-md">
+							<span className="font-black text-lg">
+								{Math.floor(Number(game.avRating))}
+							</span>
+						</div>
+					</div>
+				))}
+			</LibraryView>
 			<LibraryView>
 				{processedData.map((game) => (
 					<div key={game.id} className="relative flex flex-col gap-3">
