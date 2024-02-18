@@ -109,7 +109,7 @@ export const genresToGames = pgTable(
 
 	(t) => ({
 		pk: primaryKey({ columns: [t.genreId, t.gameId] }),
-	})
+	}),
 );
 
 export const genresToGamesRelations = relations(genresToGames, ({ one }) => ({
@@ -135,23 +135,21 @@ export const usersToGames = pgTable(
 		playerRating: integer("player_rating"),
 		completed: boolean("completed").default(false).notNull(),
 		position: integer("position"),
+		pinned: boolean("pinned").notNull().default(false),
 	},
 	(t) => ({
 		pk: primaryKey({ columns: [t.userId, t.gameId] }),
-	})
+	}),
 );
 
-export const usersToGamesRelations = relations(
-	usersToGames,
-	({ one, many }) => ({
-		user: one(users, {
-			fields: [usersToGames.userId],
-			references: [users.id],
-		}),
-		game: one(games, {
-			fields: [usersToGames.gameId],
-			references: [games.gameId],
-		}),
-		comments: many(notes),
-	})
-);
+export const usersToGamesRelations = relations(usersToGames, ({ one, many }) => ({
+	user: one(users, {
+		fields: [usersToGames.userId],
+		references: [users.id],
+	}),
+	game: one(games, {
+		fields: [usersToGames.gameId],
+		references: [games.gameId],
+	}),
+	comments: many(notes),
+}));

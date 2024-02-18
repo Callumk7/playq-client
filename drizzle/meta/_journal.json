@@ -141,6 +141,13 @@
       "when": 1708269825753,
       "tag": "0019_amused_mephisto",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1708277334712,
+      "tag": "0020_lucky_boomerang",
+      "breakpoints": true
     }
   ]
 }
