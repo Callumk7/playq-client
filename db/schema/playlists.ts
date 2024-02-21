@@ -20,6 +20,7 @@ export const playlists = pgTable("playlists", {
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	isUpdated: boolean("is_updated").default(false).notNull(),
 	isPrivate: boolean("is_private").default(false).notNull(),
+	creatorHasPinned: boolean("creator_has_pinned").default(false).notNull(),
 });
 
 export const playlistsRelations = relations(playlists, ({ one, many }) => ({

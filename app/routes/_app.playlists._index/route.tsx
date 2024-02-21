@@ -9,7 +9,6 @@ import {
 	Button,
 } from "@/components";
 import { createServerClient, getSession } from "@/services";
-import { getCreatedAndFollowedPlaylists } from "@/features/playlists/lib/get-user-playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
 import {
@@ -23,9 +22,10 @@ import { CreatePlaylistDialog } from "@/features/playlists";
 import { useState } from "react";
 import { Link } from "@remix-run/react";
 import { PlaylistProgress } from "../res.playlist-sidebar.$userId";
-import { Playlist } from "@/types";
+import { PlaylistWithPinned } from "@/types";
 import { RenamePlaylistDialog } from "../_app.playlists.view.$playlistId/components/rename-playlist-dialog";
 import { DeletePlaylistDialog } from "../_app.playlists.view.$playlistId/components/delete-playlist-dialog";
+import { getCreatedAndFollowedPlaylists } from "./loading";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
@@ -42,6 +42,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	return typedjson({ allPlaylists, session });
 };
 
+///
+/// ROUTE
+///
 export default function PlaylistView() {
 	const { allPlaylists, session } = useTypedLoaderData<typeof loader>();
 	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -95,6 +98,7 @@ export default function PlaylistView() {
 												setRenameDialogOpen={setRenameDialogOpen}
 												setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
 												setPlaylistToEdit={setPlaylistToEdit}
+												isCreator={playlist.creatorId === session.user.id}
 											/>
 										</TableCell>
 									</TableRow>
@@ -124,7 +128,8 @@ export default function PlaylistView() {
 }
 
 interface PlaylistOptionsProps {
-	playlist: Playlist;
+	playlist: PlaylistWithPinned;
+	isCreator: boolean;
 	setRenameDialogOpen: (renameDialogOpen: boolean) => void;
 	setDeletePlaylistDialogOpen: (deletePlaylistDialogOpen: boolean) => void;
 	setPlaylistToEdit: (playlistToEdit: string) => void;
@@ -132,6 +137,7 @@ interface PlaylistOptionsProps {
 
 export function PlaylistOptions({
 	playlist,
+	isCreator,
 	setRenameDialogOpen,
 	setDeletePlaylistDialogOpen,
 	setPlaylistToEdit,
@@ -148,13 +154,17 @@ export function PlaylistOptions({
 
 	return (
 		<div className="flex gap-3">
-			<Button variant={"outline"} size={"icon"} onClick={handleDelete}>
-				<TrashIcon />
-			</Button>
-			<Button variant={"outline"} size={"icon"} onClick={handleEdit}>
-				<Pencil1Icon />
-			</Button>
-			<Button variant={"outline"} size={"icon"}>
+			{isCreator && (
+				<>
+					<Button variant={"outline"} size={"icon"} onClick={handleDelete}>
+						<TrashIcon />
+					</Button>
+					<Button variant={"outline"} size={"icon"} onClick={handleEdit}>
+						<Pencil1Icon />
+					</Button>
+				</>
+			)}
+			<Button variant={playlist.pinned ? "default" : "outline"} size={"icon"}>
 				<SewingPinIcon />
 			</Button>
 		</div>

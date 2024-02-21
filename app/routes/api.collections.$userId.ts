@@ -23,6 +23,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		completed: zx.BoolAsString.optional(),
 		starred: zx.BoolAsString.optional(),
 		rating: zx.NumAsString.optional(),
+		pinned: zx.BoolAsString.optional(),
 	});
 
 	// early return if the game is in the wrong format
@@ -46,6 +47,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 	}
 	if (result.data.rating) {
 		gameUpdate.playerRating = result.data.rating;
+	}
+	if (result.data.pinned) {
+		gameUpdate.pinned = result.data.pinned;
 	}
 
 	console.log(gameUpdate);

@@ -22,6 +22,7 @@ export * from "./ui/tag";
 export * from "./ui/toggle";
 export * from "./ui/tooltip";
 export * from "./ui/switch";
+export * from "./ui/collapsible";
 
 export * from "./ui/custom/slide-over";
 

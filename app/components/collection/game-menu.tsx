@@ -16,6 +16,7 @@ import {
 	HamburgerMenuIcon,
 	MixIcon,
 	PlusIcon,
+	SewingPinIcon,
 	StarFilledIcon,
 	StarIcon,
 	TrashIcon,
@@ -28,6 +29,7 @@ interface CollectionGameMenuProps {
 	gameId: number;
 	isPlayed: boolean;
 	isCompleted: boolean;
+	isPinned: boolean;
 	userId: string;
 	playlists?: Playlist[];
 	gamePlaylists?: Playlist[];
@@ -41,6 +43,7 @@ export function CollectionGameMenu({
 	gameId,
 	isPlayed,
 	isCompleted,
+	isPinned,
 	userId,
 	playlists,
 	gamePlaylists,
@@ -49,8 +52,8 @@ export function CollectionGameMenu({
 	selectedGames,
 	setSelectedGames,
 }: CollectionGameMenuProps) {
-	const { handleRemove, handleMarkAsPlayed, handleMarkAsCompleted } =
-		useCollectionControls(userId, gameId);
+	const { handleRemove, handleMarkAsPlayed, handleMarkAsCompleted, handleTogglePinned } =
+		useCollectionControls(userId, gameId, isPlayed, isCompleted, isPinned);
 
 	const handleToggleCheck = () => {
 		if (selectedGames && setSelectedGames) {
@@ -81,29 +84,34 @@ export function CollectionGameMenu({
 					)}
 
 					<DropdownMenuItem onClick={() => handleOpenRateGameDialog(gameId)}>
-						<MixIcon className="mr-2" />
+						<MixIcon className="mr-3" />
 						<span>Rate game</span>
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={handleMarkAsPlayed}>
 						{isPlayed ? (
-							<StarFilledIcon className="mr-2 text-primary" />
+							<StarFilledIcon className="mr-3 text-primary" />
 						) : (
-							<StarIcon className="mr-2" />
+							<StarIcon className="mr-3" />
 						)}
 						<span>Mark as played</span>
 					</DropdownMenuItem>
 
 					<DropdownMenuItem onClick={handleMarkAsCompleted}>
 						{isCompleted ? (
-							<StarFilledIcon className="mr-2 text-primary" />
+							<StarFilledIcon className="mr-3 text-primary" />
 						) : (
-							<StarIcon className="mr-2" />
+							<StarIcon className="mr-3" />
 						)}
 						<span>Mark as completed</span>
 					</DropdownMenuItem>
 
+					<DropdownMenuItem onClick={handleTogglePinned}>
+						<SewingPinIcon className={`mr-3 ${isPinned ? "text-primary" : ""}`} />
+						<span>Pin game</span>
+					</DropdownMenuItem>
+
 					<DropdownMenuItemDestructive onClick={handleRemove}>
-						<TrashIcon className="mr-2" />
+						<TrashIcon className="mr-3" />
 						<span>Remove from collection</span>
 					</DropdownMenuItemDestructive>
 				</DropdownMenuContent>

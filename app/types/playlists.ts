@@ -1,7 +1,12 @@
-import { followers, gamesOnPlaylists, playlistComments, playlists } from "db/schema/playlists";
+import {
+	followers,
+	gamesOnPlaylists,
+	playlistComments,
+	playlists,
+} from "db/schema/playlists";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-import { GameWithCover } from "./games";
+import { Game, GameWithCover } from "./games";
 import { User } from ".";
 
 export const playlistsSelectSchema = createSelectSchema(playlists);
@@ -36,10 +41,19 @@ export type PlaylistWithGames = Playlist & {
 	games: GamesOnPlaylistWithGameData[];
 };
 
+export type PlaylistWithGamesAndCreator = Playlist & {
+	games: GamesOnPlaylist[];
+	creator: User;
+};
+
 export type PlaylistWithFollowers = Playlist & {
 	followers: Follower[];
 };
 
 export type PlaylistCommentsWithAuthor = PlaylistComment & {
 	author: User;
-}
+};
+
+export type PlaylistWithPinned = Playlist & {
+	pinned: boolean;
+};

@@ -65,6 +65,7 @@ export const gameWithCollectionSchema = gamesSelectSchema.extend({
 	completed: z.boolean().nullable(),
 	position: z.number().nullable(),
 	dateAdded: z.date(),
+	pinned: z.boolean(),
 });
 
 export type GameWithCollection = z.infer<typeof gameWithCollectionSchema>;

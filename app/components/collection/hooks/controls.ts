@@ -1,9 +1,16 @@
 import { useFetcher } from "@remix-run/react";
 
-export const useCollectionControls = (userId: string, gameId: number) => {
+export const useCollectionControls = (
+	userId: string,
+	gameId: number,
+	played: boolean,
+	completed: boolean,
+	pinned: boolean,
+) => {
 	const deleteFetcher = useFetcher();
 	const playedFetcher = useFetcher();
 	const completedFetcher = useFetcher();
+	const togglePinFetcher = useFetcher();
 
 	const handleRemove = () => {
 		deleteFetcher.submit(
@@ -22,7 +29,7 @@ export const useCollectionControls = (userId: string, gameId: number) => {
 		playedFetcher.submit(
 			{
 				gameId,
-				played: true,
+				played: !played,
 			},
 			{
 				method: "put",
@@ -35,7 +42,20 @@ export const useCollectionControls = (userId: string, gameId: number) => {
 		completedFetcher.submit(
 			{
 				gameId,
-				completed: true,
+				completed: !completed,
+			},
+			{
+				method: "put",
+				action: `/api/collections/${userId}`,
+			},
+		);
+	};
+
+	const handleTogglePinned = () => {
+		togglePinFetcher.submit(
+			{
+				gameId,
+				pinned: !pinned,
 			},
 			{
 				method: "put",
@@ -48,5 +68,6 @@ export const useCollectionControls = (userId: string, gameId: number) => {
 		handleRemove,
 		handleMarkAsPlayed,
 		handleMarkAsCompleted,
+		handleTogglePinned,
 	};
 };

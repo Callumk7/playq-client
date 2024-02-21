@@ -148,6 +148,13 @@
       "when": 1708277334712,
       "tag": "0020_lucky_boomerang",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1708345348757,
+      "tag": "0021_lucky_harpoon",
+      "breakpoints": true
     }
   ]
 }

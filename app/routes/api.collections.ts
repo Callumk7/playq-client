@@ -6,6 +6,7 @@ import { usersToGames } from "db/schema/games";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { zx } from "zodix";
+import { StatusCodes, ReasonPhrases } from "http-status-codes";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	// This action needs to handle POST and DELETE requests for games
@@ -43,13 +44,22 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 			activityManager.addToCollection(userId, gameId);
 
-			return json({
-				success: savedGame,
-			});
+			return json(
+				{
+					success: savedGame,
+				},
+				{ status: StatusCodes.CREATED, statusText: ReasonPhrases.CREATED },
+			);
 		}
-		return json({
-			error: result.error,
-		});
+		return json(
+			{
+				error: result.error,
+			},
+			{
+				status: StatusCodes.BAD_REQUEST,
+				statusText: ReasonPhrases.BAD_REQUEST,
+			},
+		);
 	}
 
 	// DELETE /api/collections

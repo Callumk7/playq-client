@@ -60,13 +60,13 @@ export default function AppLayout() {
 	const setUserCollection = useUserCacheStore((state) => state.setUserCollection);
 	const setUserFriends = useUserCacheStore((state) => state.setUserFriends);
 	const setUserPlaylists = useUserCacheStore((state) => state.setUserPlaylists);
-  
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Only run once on render
-useEffect(() => {
-    setUserCollection(userCollection);
-    setUserFriends(userFriends.map((friend) => friend.id));
-    setUserPlaylists(userPlaylists.map((playlist) => playlist.id));
-  }, [])
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Only run once on render
+	useEffect(() => {
+		setUserCollection(userCollection);
+		setUserFriends(userFriends.map((friend) => friend.id));
+		setUserPlaylists(userPlaylists.map((playlist) => playlist.id));
+	}, []);
 
 	// supabase data requests
 	const supaFetcher = useFetcher();
@@ -99,6 +99,18 @@ useEffect(() => {
 		return () => subscription.unsubscribe();
 	}, [serverAccessToken, supabase, supaFetcher]);
 
+	const channelA = supabase
+		.channel("schema-db-changes")
+		.on(
+			"postgres_changes",
+			{
+				event: "*",
+				schema: "public",
+			},
+			(payload) => console.log(payload),
+		)
+		.subscribe();
+
 	return (
 		<>
 			<div className="h-full min-h-screen lg:flex-grow">
@@ -113,7 +125,7 @@ useEffect(() => {
 				</div>
 				<div className="h-full lg:pl-64">
 					<Navbar supabase={supabase} session={session} />
-					<Container>
+					<Container className="mt-20 md:mt-0">
 						<Outlet />
 					</Container>
 				</div>
