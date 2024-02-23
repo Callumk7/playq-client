@@ -99,18 +99,6 @@ export default function AppLayout() {
 		return () => subscription.unsubscribe();
 	}, [serverAccessToken, supabase, supaFetcher]);
 
-	const channelA = supabase
-		.channel("schema-db-changes")
-		.on(
-			"postgres_changes",
-			{
-				event: "*",
-				schema: "public",
-			},
-			(payload) => console.log(payload),
-		)
-		.subscribe();
-
 	return (
 		<>
 			<div className="h-full min-h-screen lg:flex-grow">

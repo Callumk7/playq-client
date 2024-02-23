@@ -26,7 +26,6 @@ export function GuestMenubar({
 				<MenubarMenu>
 					<MenubarTrigger>Menu</MenubarTrigger>
 					<MenubarContent>
-						<MenubarItem>one</MenubarItem>
 						<MenubarItem>{userPlaylistRating ?? 0}</MenubarItem>
 					</MenubarContent>
 				</MenubarMenu>

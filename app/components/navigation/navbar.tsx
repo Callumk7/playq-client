@@ -9,6 +9,7 @@ import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { NavLink, useNavigation } from "@remix-run/react";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
+import { NotificationBell } from "../notifications/bell";
 
 const links = [
 	{

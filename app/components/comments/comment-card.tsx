@@ -1,8 +1,9 @@
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@/components";
 import { User } from "@/types";
 import { Note } from "@/types/notes";
-import { TrashIcon } from "@radix-ui/react-icons";
+import { ChatBubbleIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
+import { IconButtonWithTooltip } from "../ui/custom/icon-with-tooltip";
 
 interface PlaylistCommentProps {
 	comment: Note;
@@ -10,7 +11,6 @@ interface PlaylistCommentProps {
 }
 
 export function Comment({ comment, author }: PlaylistCommentProps) {
-	const deleteFetcher = useFetcher();
 	return (
 		<Card className="relative">
 			<CardHeader>
@@ -18,20 +18,34 @@ export function Comment({ comment, author }: PlaylistCommentProps) {
 			</CardHeader>
 			<CardContent>
 				{comment.content}
-				<Button
-					className="absolute top-3 right-3"
-					variant={"destructive"}
-					size={"icon"}
-					onClick={() =>
-						deleteFetcher.submit(
-							{},
-							{ method: "DELETE", action: `/api/notes/${comment.id}` },
-						)
-					}
-				>
-					<TrashIcon />
-				</Button>
+				<CommentControls comment={comment} author={author} />
 			</CardContent>
 		</Card>
+	);
+}
+
+function CommentControls({ comment, author }: PlaylistCommentProps) {
+	const deleteFetcher = useFetcher();
+	return (
+		<div className="absolute top-3 right-3 flex gap-3">
+      <IconButtonWithTooltip tooltip="Reply">
+        <ChatBubbleIcon />
+      </IconButtonWithTooltip>
+      <IconButtonWithTooltip tooltip="Edit">
+        <Pencil1Icon />
+      </IconButtonWithTooltip>
+			<IconButtonWithTooltip
+        tooltip="Delete"
+				variant={"destructive"}
+				onClick={() =>
+					deleteFetcher.submit(
+						{},
+						{ method: "DELETE", action: `/api/notes/${comment.id}` },
+					)
+				}
+			>
+				<TrashIcon />
+			</IconButtonWithTooltip>
+		</div>
 	);
 }
