@@ -9,6 +9,7 @@ export const locationEnum = pgEnum("parent_type", [
 	"playlist",
 	"profile",
 	"game",
+	"note",
 ]);
 
 export const notes = pgTable("notes", {
@@ -19,6 +20,7 @@ export const notes = pgTable("notes", {
 	collectionId: text("collection_id"),
 	gameId: integer("game_id"),
 	playlistId: text("playlist_id"),
+	noteId: text("note_id"),
 	profileId: text("profile_id"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -48,4 +50,8 @@ export const notesRelations = relations(notes, ({ one }) => ({
 		fields: [notes.gameId],
 		references: [games.gameId],
 	}),
+	note: one(notes, {
+		fields: [notes.id],
+		references: [notes.noteId]
+	})
 }));

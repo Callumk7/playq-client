@@ -30,5 +30,23 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		}
 	}
 
+	if (request.method === "PATCH") {
+		const result = await zx.parseFormSafe(request, {
+			commentId: z.string(),
+			content: z.string(),
+		});
+
+		if (result.success) {
+			await db
+				.update(notes)
+				.set({
+					content: result.data.content,
+					isUpdated: true,
+					updatedAt: new Date(),
+				})
+				.where(eq(notes.id, result.data.commentId));
+		}
+	}
+
 	return json("Nothing Happened");
 };
