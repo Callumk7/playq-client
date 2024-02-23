@@ -3,7 +3,7 @@ import { User } from "@/types";
 import { Note } from "@/types/notes";
 import { ChatBubbleIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
-import { IconButtonWithTooltip } from "../ui/custom/icon-with-tooltip";
+import { ButtonWithTooltip } from "../ui/custom/button-with-tooltip";
 
 interface PlaylistCommentProps {
 	comment: Note;
@@ -28,13 +28,13 @@ function CommentControls({ comment, author }: PlaylistCommentProps) {
 	const deleteFetcher = useFetcher();
 	return (
 		<div className="absolute top-3 right-3 flex gap-3">
-      <IconButtonWithTooltip tooltip="Reply">
+      <ButtonWithTooltip tooltip="Reply">
         <ChatBubbleIcon />
-      </IconButtonWithTooltip>
-      <IconButtonWithTooltip tooltip="Edit">
+      </ButtonWithTooltip>
+      <ButtonWithTooltip tooltip="Edit">
         <Pencil1Icon />
-      </IconButtonWithTooltip>
-			<IconButtonWithTooltip
+      </ButtonWithTooltip>
+			<ButtonWithTooltip
         tooltip="Delete"
 				variant={"destructive"}
 				onClick={() =>
@@ -45,7 +45,7 @@ function CommentControls({ comment, author }: PlaylistCommentProps) {
 				}
 			>
 				<TrashIcon />
-			</IconButtonWithTooltip>
+			</ButtonWithTooltip>
 		</div>
 	);
 }

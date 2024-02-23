@@ -1,17 +1,17 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
 import { Button, ButtonProps } from "../button";
 
-interface IconButtonWithTooltipProps extends ButtonProps {
+interface ButtonWithTooltipProps extends ButtonProps {
 	tooltip: string;
 }
 
-export function IconButtonWithTooltip({
+export function ButtonWithTooltip({
 	children,
 	tooltip,
   variant = "outline",
   size = "icon",
   ...props
-}: IconButtonWithTooltipProps) {
+}: ButtonWithTooltipProps) {
   return (
     <Tooltip>
       <TooltipTrigger>
