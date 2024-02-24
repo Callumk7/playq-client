@@ -56,17 +56,12 @@ export function SavedToCollectionActivity({
 	const fetcher = useFetcher<typeof loader>();
 	// biome-ignore lint/correctness/useExhaustiveDependencies: only fetch once
 	useEffect(() => {
-		const delay = Math.random() * (5000 - 1000) + 1000; // generates random delay between 1000ms (1 second) and 5000ms (5 seconds)
-
-		const timeoutId = setTimeout(() => {
-			fetcher.submit(
-				{},
-				{ action: `/res/game/${activity.activity.gameId}`, method: "get" },
-			);
-		}, delay);
+		fetcher.submit(
+			{},
+			{ action: `/res/game/${activity.activity.gameId}`, method: "get" },
+		);
 
 		// It's important to return a cleanup function to clear the timeout when the component unmounts
-		return () => clearTimeout(timeoutId);
 	}, []);
 	const isLoading = fetcher.state === "submitting" || fetcher.state === "loading";
 	const isFetching = !fetcher.data;

@@ -6,14 +6,12 @@ import { CreatePlaylistDialog } from "@/features/playlists";
 import { createServerClient, getSession } from "@/services";
 import { createBrowserClient } from "@supabase/ssr";
 import { useUserCacheStore } from "@/store/cache";
-import { getUserCollectionGameIds } from "@/model";
+import { getFriendActivity, getUserCollectionGameIds, transformActivity } from "@/model";
 import { Container, Navbar, Sidebar } from "@/components";
 import { Playlist, User, UserWithActivity } from "@/types";
 import {
 	getCreatedAndFollowedPlaylists,
-	getFriendActivity,
 	getUserFriends,
-	transformActivity,
 } from "./loader";
 
 export const meta: MetaFunction = () => {

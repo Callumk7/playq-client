@@ -28,8 +28,8 @@ class ActivityManager extends EventEmitter {
 		this.emit("col_remove", userId, gameId, Date.now());
 	}
 
-	leaveComment(userId: string, commentId: string) {
-		this.emit("comment_add", userId, commentId, Date.now());
+	leaveComment(userId: string, noteId: string) {
+		this.emit("comment_add", userId, noteId, Date.now());
 	}
 
 	markGameAsPlayed(userId: string, gameId: number) {
@@ -185,17 +185,17 @@ activityManager.on(
 
 activityManager.on(
 	"comment_add",
-	(userId: string, commentId: string, timestamp: string) => {
+	(userId: string, noteId: string, timestamp: string) => {
 		db.insert(activity)
 			.values({
 				id: `act_${uuidv4()}`,
 				userId: userId,
-				commentId: commentId,
+				noteId: noteId,
 				type: "comment_add",
 			})
 			.then(() =>
 				console.log(
-					`comment_add logged; user: ${userId}, comment: ${commentId}, at: ${timestamp}`,
+					`comment_add logged; user: ${userId}, note: ${noteId}, at: ${timestamp}`,
 				),
 			);
 	},
