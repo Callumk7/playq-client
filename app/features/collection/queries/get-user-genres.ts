@@ -30,15 +30,20 @@ export const getUserGenres = async (userId: string) => {
 
 	const gameIds = userGames.map((entry) => entry.gameId);
 
-	const userGenresQueryArray = await db
-		.selectDistinctOn([genresToGames.genreId])
-		.from(genresToGames)
-		.where(inArray(genresToGames.gameId, gameIds))
-		.rightJoin(genres, eq(genresToGames.genreId, genres.id));
+	// inArray requires atleast one value. new users will have no gameIds
+	if (gameIds.length > 0) {
+		const userGenresQueryArray = await db
+			.selectDistinctOn([genresToGames.genreId])
+			.from(genresToGames)
+			.where(inArray(genresToGames.gameId, gameIds))
+			.rightJoin(genres, eq(genresToGames.genreId, genres.id));
 
-	const userGenres = userGenresQueryArray
-		.filter((q) => q.genres !== null)
-		.map((q) => q.genres);
+		const userGenres = userGenresQueryArray
+			.filter((q) => q.genres !== null)
+			.map((q) => q.genres);
 
-	return userGenres;
+		return userGenres;
+	}
+
+	return [];
 };

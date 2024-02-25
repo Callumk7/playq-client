@@ -8,7 +8,12 @@ import { getFriendActivity, transformActivity } from "@/model";
 import {
 	AddedGameToPlaylistActivity,
 	AddedToCollectionActivity,
+	GameCompletedActivity,
+	GamePlayedActivity,
+	GameRatedActivity,
 	PlaylistCreatedActivity,
+	PlaylistFollowedActivity,
+	RemovedGameFromCollectionActivity,
 	RemovedGameFromPlaylistActivity,
 } from "@/components/activity/feed";
 
@@ -82,22 +87,16 @@ function ActivityFeedCard({ activity }: ActivityFeedCardProps) {
 
 		case "pl_follow":
 			content = (
-				<div>
-					<p>{activity.username}</p>
-					<p>Followed</p>
-					<p>{activity.activity.playlist?.name}</p>
-				</div>
+				<PlaylistFollowedActivity user={activity} playlist={activity.activity.playlist} />
 			);
 			break;
 
 		case "col_remove":
 			content = (
-				<div>
-					<p>{activity.username}</p>
-					<p>Removed</p>
-					<p>{activity.activity.game?.title}</p>
-					<p>From their collection</p>
-				</div>
+				<RemovedGameFromCollectionActivity
+					user={activity}
+					game={activity.activity.game}
+				/>
 			);
 			break;
 
@@ -112,32 +111,20 @@ function ActivityFeedCard({ activity }: ActivityFeedCardProps) {
 			break;
 
 		case "game_played":
-			content = (
-				<div>
-					<p>{activity.username}</p>
-					<p>Played</p>
-					<p>{activity.activity.game?.title}</p>
-				</div>
-			);
+			content = <GamePlayedActivity user={activity} game={activity.activity.game} />;
 			break;
 
 		case "game_completed":
-			content = (
-				<div>
-					<p>{activity.username}</p>
-					<p>Completed</p>
-					<p>{activity.activity.game?.title}</p>
-				</div>
-			);
+			content = <GameCompletedActivity user={activity} game={activity.activity.game} />;
 			break;
 
 		case "game_rated":
 			content = (
-				<div>
-					<p>{activity.username}</p>
-					<p>Rated</p>
-					<p>{activity.activity.game?.title}</p>
-				</div>
+				<GameRatedActivity
+					user={activity}
+					game={activity.activity.game}
+					rating={activity.activity.rating}
+				/>
 			);
 			break;
 

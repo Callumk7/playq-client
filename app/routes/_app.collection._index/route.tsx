@@ -21,7 +21,6 @@ import { getUserGenres } from "@/features/collection/queries/get-user-genres";
 import { getUserPlaylists } from "@/features/playlists";
 import { CollectionTableView } from "./components/collection-table-view";
 import { CollectionMenubar } from "./components/collection-menubar";
-import { redis } from "@/services/redis/client";
 
 ///
 /// LOADER FUNCTION

@@ -7,6 +7,7 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useRouteError,
 } from "@remix-run/react";
 import { Providers } from "./components/providers";
 
@@ -42,5 +43,23 @@ export default function App() {
 				</body>
 			</html>
 		</Providers>
+	);
+}
+
+export function ErrorBoundary() {
+	const error = useRouteError();
+	console.error(error);
+	return (
+		<html lang="en">
+			<head>
+				<title>Oh no!</title>
+				<Meta />
+				<Links />
+			</head>
+			<body>
+				<h1>SOMETHING HAS GONE TERRIBLY WRONG</h1>
+				<Scripts />
+			</body>
+		</html>
 	);
 }

@@ -9,7 +9,7 @@ import {
 } from "db/schema/games";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import { playlistsSelectSchema } from "./playlists";
+import { GamesOnPlaylistWithPlaylist, playlistsSelectSchema } from "./playlists";
 
 export const gamesInsertSchema = createInsertSchema(games);
 export const gamesSelectSchema = createSelectSchema(games);
@@ -37,7 +37,7 @@ export type Cover = z.infer<typeof coversSelectSchema>;
 export type Artwork = z.infer<typeof artworksSelectSchema>;
 export type Screenshot = z.infer<typeof screenshotsSelectSchema>;
 export type Genre = z.infer<typeof genresSelectSchema>;
-export type GenreToGames = z.infer<typeof genresSelectSchema>;
+export type GenreToGames = z.infer<typeof genresToGamesSelectSchema>;
 export type UsersToGames = z.infer<typeof selectUsersToGamesSchema>;
 
 export type InsertGame = z.infer<typeof gamesInsertSchema>;
@@ -69,3 +69,19 @@ export const gameWithCollectionSchema = gamesSelectSchema.extend({
 });
 
 export type GameWithCollection = z.infer<typeof gameWithCollectionSchema>;
+
+export type GenreToGamesWithGenre = GenreToGames & {
+	genre: Genre;
+};
+
+export type GameWithFullDetails = Game & {
+	cover: Cover;
+	playlists: GamesOnPlaylistWithPlaylist[];
+	screenshots: Screenshot[];
+	artworks: Artwork[];
+	genres: GenreToGamesWithGenre[];
+};
+
+export type UserCollectionWithFullDetails = UsersToGames & {
+	game: GameWithFullDetails;
+};
