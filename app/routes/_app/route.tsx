@@ -9,10 +9,7 @@ import { useUserCacheStore } from "@/store/cache";
 import { getFriendActivity, getUserCollectionGameIds, transformActivity } from "@/model";
 import { Container, Navbar, Sidebar } from "@/components";
 import { Playlist, User, UserWithActivity } from "@/types";
-import {
-	getCreatedAndFollowedPlaylists,
-	getUserFriends,
-} from "./loader";
+import { getCreatedAndFollowedPlaylists, getUserFriends } from "./loader";
 
 export const meta: MetaFunction = () => {
 	return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
@@ -75,6 +72,7 @@ export default function AppLayout() {
 	);
 
 	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+	const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
 	const serverAccessToken = session?.access_token;
 
@@ -100,7 +98,11 @@ export default function AppLayout() {
 	return (
 		<>
 			<div className="h-full min-h-screen lg:flex-grow">
-				<div className="fixed hidden h-full min-h-screen w-64 lg:block">
+				<div
+					className={`fixed hidden h-full min-h-screen w-64 ${
+						sidebarOpen ? "lg:block" : ""
+					}`}
+				>
 					<Sidebar
 						userId={session!.user.id}
 						playlists={userPlaylists}
@@ -109,8 +111,13 @@ export default function AppLayout() {
 						activityFeed={activityFeed}
 					/>
 				</div>
-				<div className="h-full lg:pl-64">
-					<Navbar supabase={supabase} session={session} />
+				<div className={`h-full ${sidebarOpen ? "lg:pl-64" : ""}`}>
+					<Navbar
+						supabase={supabase}
+						session={session}
+						sidebarOpen={sidebarOpen}
+						setSidebarOpen={setSidebarOpen}
+					/>
 					<Container className="mt-20 md:mt-0">
 						<Outlet />
 					</Container>
