@@ -41,6 +41,10 @@ export type PlaylistWithGames = Playlist & {
 	games: GamesOnPlaylistWithGameData[];
 };
 
+export type PlaylistWithCreator = Playlist & {
+	creator: User;
+};
+
 export type PlaylistWithGamesAndCreator = Playlist & {
 	games: GamesOnPlaylist[];
 	creator: User;
@@ -60,4 +64,4 @@ export type PlaylistWithPinned = Playlist & {
 
 export type GamesOnPlaylistWithPlaylist = GamesOnPlaylist & {
 	playlist: Playlist;
-}
+};

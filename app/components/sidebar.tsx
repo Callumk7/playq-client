@@ -1,10 +1,9 @@
 import { PlaylistContextMenu } from "@/features/playlists/components/playlist-context-menu";
-import { Playlist } from "@/types/playlists";
+import { PlaylistWithCreator } from "@/types/playlists";
 import { UserWithActivityFeedEntry } from "@/types/users";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { Button, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from ".";
-import { SavedToCollectionActivity } from "@/routes/res.game.$gameId";
 import {
 	AddedGameToPlaylistActivity,
 	AddedToCollectionActivity,
@@ -13,7 +12,7 @@ import {
 
 interface SidebarProps {
 	userId: string;
-	playlists: Playlist[];
+	playlists: PlaylistWithCreator[];
 	setDialogOpen: (open: boolean) => void;
 	hasSession: boolean;
 	activityFeed: UserWithActivityFeedEntry[];
@@ -71,7 +70,7 @@ export function Sidebar({
 }
 
 interface SidebarPlaylistEntryProps {
-	playlist: Playlist;
+	playlist: PlaylistWithCreator;
 	isCreator: boolean;
 }
 
@@ -82,8 +81,12 @@ function SidebarPlaylistEntry({ playlist, isCreator }: SidebarPlaylistEntryProps
 				to={`playlists/view/${playlist.id}`}
 				className="flex items-center gap-2 rounded-md p-4 hover:bg-background-hover"
 			>
-				{isCreator && <div className="h-2 w-2 rounded-full bg-primary" />}
-				<span className="text-sm font-bold">{playlist.name}</span>
+				<div className="flex flex-col gap-1">
+					<span className="text-sm font-bold">{playlist.name}</span>
+					<span className="text-sm font-light text-gray-400">
+						{playlist.creator.username}
+					</span>
+				</div>
 			</Link>
 		</PlaylistContextMenu>
 	);
