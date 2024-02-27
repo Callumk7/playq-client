@@ -78,16 +78,12 @@ export default function CollectionIndex() {
 	const [isRateGameDialogOpen, setIsRateGameDialogOpen] = useState<boolean>(false);
 	const [dialogGameId, setDialogGameId] = useState<number>(0);
 
-	// State for handling game selection
-	const [selectedGames, setSelectedGames] = useState<number[]>([]);
-	const [selectMode, setSelectMode] = useState<boolean>(false);
-
 	const handleOpenRateGameDialog = (gameId: number) => {
 		setDialogGameId(gameId);
 		setIsRateGameDialogOpen(true);
 	};
 
-	const [isTableView, setIsTableView] = useState<boolean>(false);
+	const isTableView = useFilterStore((state) => state.isTableView);
 
 	return (
 		<>
@@ -99,15 +95,7 @@ export default function CollectionIndex() {
 					handleToggleAllGenres={handleToggleAllGenres}
 				/>
 			</div>
-			<CollectionMenubar
-				userId={session.user.id}
-				setIsTableView={setIsTableView}
-				isTableView={isTableView}
-				selectMode={selectMode}
-				selectedGames={selectedGames}
-				setSelectMode={setSelectMode}
-				userPlaylists={userPlaylists}
-			/>
+			<CollectionMenubar userId={session.user.id} userPlaylists={userPlaylists} />
 			<div className="my-6">
 				<CollectionProgress
 					gameCount={gameCount}
@@ -129,7 +117,6 @@ export default function CollectionIndex() {
 							key={game.id}
 							coverId={game.cover.imageId}
 							gameId={game.gameId}
-							isSelected={selectedGames.includes(game.gameId)}
 						>
 							<CollectionGameMenu
 								gameId={game.gameId}
@@ -140,9 +127,6 @@ export default function CollectionIndex() {
 								playlists={userPlaylists}
 								gamePlaylists={game.playlists}
 								handleOpenRateGameDialog={handleOpenRateGameDialog}
-								selectedGames={selectedGames}
-								setSelectedGames={setSelectedGames}
-								selectMode={selectMode}
 							/>
 						</GameWithControls>
 					))}

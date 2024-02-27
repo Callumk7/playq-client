@@ -9,7 +9,7 @@ import {
 } from "@/components";
 import { useFilterStore } from "@/store/filters";
 import { GameWithCollection, Playlist } from "@/types";
-import { CheckIcon } from "@radix-ui/react-icons";
+import { CheckIcon, DrawingPinIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 
 interface CollectionTableViewProps {
@@ -41,13 +41,7 @@ export function CollectionTableView({
 							className="cursor-pointer"
 							onClick={() => store.handleToggleSortRating()}
 						>
-							Rating
-						</TableHead>
-						<TableHead
-							className="cursor-pointer"
-							onClick={() => store.handleToggleSortAggRatingCount()}
-						>
-							Rating Count
+							Aggregated Rating
 						</TableHead>
 						<TableHead
 							className="cursor-pointer"
@@ -57,12 +51,6 @@ export function CollectionTableView({
 						</TableHead>
 						<TableHead>Played?</TableHead>
 						<TableHead>Completed?</TableHead>
-						<TableHead
-							className="cursor-pointer"
-							onClick={() => store.handleToggleSortFollows()}
-						>
-							Followers
-						</TableHead>
 						<TableHead
 							className="cursor-pointer"
 							onClick={() => store.handleToggleSortReleaseDate()}
@@ -81,15 +69,16 @@ export function CollectionTableView({
 				<TableBody>
 					{sortedGames.map((game) => (
 						<TableRow key={game.id}>
-							<TableCell className="font-semibold">
-								<Link to={`/collection/${game.gameId}`}>{game.title}</Link>
+							<TableCell className="font-semibold flex items-center">
+								<DrawingPinIcon className={game.pinned ? "text-primary" : ""} />
+								<Link to={`/collection/${game.gameId}`} className="ml-3">
+									<span>{game.title}</span>
+								</Link>
 							</TableCell>
 							<TableCell>{game.rating}</TableCell>
-							<TableCell>{game.aggregatedRatingCount}</TableCell>
 							<TableCell>{game.playerRating}</TableCell>
 							<TableCell>{game.played && <CheckIcon />}</TableCell>
 							<TableCell>{game.completed && <CheckIcon />}</TableCell>
-							<TableCell>{game.externalFollows}</TableCell>
 							<TableCell>
 								{game.firstReleaseDate ? game.firstReleaseDate.toDateString() : "unknown"}
 							</TableCell>
@@ -103,6 +92,7 @@ export function CollectionTableView({
 									playlists={userPlaylists}
 									gamePlaylists={game.playlists}
 									handleOpenRateGameDialog={handleOpenRateGameDialog}
+									isPinned={game.pinned}
 								/>
 							</TableCell>
 						</TableRow>

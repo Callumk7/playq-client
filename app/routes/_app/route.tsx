@@ -99,8 +99,8 @@ export default function AppLayout() {
 		<>
 			<div className="h-full min-h-screen lg:flex-grow">
 				<div
-					className={`fixed hidden h-full min-h-screen w-64 ${
-						sidebarOpen ? "lg:block" : ""
+					className={`fixed hidden lg:inline h-full min-h-screen w-64 transition-opacity ease-in ${
+						sidebarOpen ? "visible opacity-100" : "invisible opacity-0"
 					}`}
 				>
 					<Sidebar
@@ -118,7 +118,7 @@ export default function AppLayout() {
 						sidebarOpen={sidebarOpen}
 						setSidebarOpen={setSidebarOpen}
 					/>
-					<Container className="my-20 md:mt-0">
+					<Container className="py-20 md:pt-0">
 						<Outlet />
 					</Container>
 				</div>

@@ -6,6 +6,9 @@ interface FilterStore {
 	genreFilter: string[];
 	searchTerm: string;
 	sortOption: SortOption;
+	selectModeOn: boolean;
+	selectedGames: number[];
+	isTableView: boolean;
 	filterOnPlayed: boolean;
 	filterOnUnPlayed: boolean;
 	filterOnCompleted: boolean;
@@ -16,6 +19,7 @@ interface FilterStore {
 	setGenreFilter: (genreFilter: string[]) => void;
 	setSearchTerm: (searchTerm: string) => void;
 	setSortOption: (sortOption: SortOption) => void;
+	setSelectedGames: (selectedGames: number[]) => void;
 	handleToggleFilterOnPlayed: () => void;
 	handleToggleFilterOnUnPlayed: () => void;
 	handleToggleFilterOnCompleted: () => void;
@@ -29,6 +33,9 @@ interface FilterStore {
 	setFilterOnCompleted: (filter: boolean) => void;
 	setFilterOnUnCompleted: (filter: boolean) => void;
 	setFilterOnRated: (filter: boolean) => void;
+	setFilterOnUnRated: (filter: boolean) => void;
+	setIsTableView: (isTableView: boolean) => void;
+	setSelectModeOn: (selectMode: boolean) => void;
 	handleGenreToggled: (genre: string) => void;
 	handleToggleAllGenres: (genres: string[]) => void;
 	handleToggleSortName: () => void;
@@ -39,6 +46,7 @@ interface FilterStore {
 	handleToggleSortAggRatingCount: () => void;
 	handleToggleSortFollows: () => void;
 	handleToggleSortRating: () => void;
+	handleToggleView: () => void;
 }
 
 export const useFilterStore = create<FilterStore>()(
@@ -46,6 +54,9 @@ export const useFilterStore = create<FilterStore>()(
 		genreFilter: [],
 		searchTerm: "",
 		sortOption: "ratingDesc",
+		isTableView: false,
+		selectModeOn: false,
+		selectedGames: [],
 		filterOnPlayed: false,
 		filterOnUnPlayed: false,
 		filterOnCompleted: false,
@@ -56,6 +67,7 @@ export const useFilterStore = create<FilterStore>()(
 		setGenreFilter: (genreFilter) => set({ genreFilter }),
 		setSearchTerm: (searchTerm) => set({ searchTerm }),
 		setSortOption: (sortOption) => set({ sortOption }),
+		setSelectedGames: (selectedGames) => set({ selectedGames }),
 		handleToggleFilterOnPlayed: () =>
 			set((state) => ({
 				filterOnPlayed: !state.filterOnPlayed,
@@ -76,10 +88,12 @@ export const useFilterStore = create<FilterStore>()(
 			set((state) => ({ filterOnStarred: !state.filterOnStarred })),
 		setFilterOnStarred: (filter) => set({ filterOnStarred: filter }),
 		setFilterOnRated: (filter) => set({ filterOnRated: filter }),
+		setFilterOnUnRated: (filter) => set({ filterOnUnrated: filter }),
 		setFilterOnPlayed: (filter) => set({ filterOnPlayed: filter }),
 		setFilterOnUnPlayed: (filter) => set({ filterOnUnPlayed: filter }),
 		setFilterOnCompleted: (filter) => set({ filterOnCompleted: filter }),
 		setFilterOnUnCompleted: (filter) => set({ filterOnUnCompleted: filter }),
+		setSelectModeOn: (selectMode) => set({ selectModeOn: selectMode }),
 		handleGenreToggled: (genre) =>
 			set((state) => ({
 				genreFilter: state.genreFilter.includes(genre)
@@ -141,5 +155,7 @@ export const useFilterStore = create<FilterStore>()(
 					? { sortOption: "followersDesc" }
 					: { sortOption: "followersAsc" },
 			),
+		setIsTableView: (isTableView) => set({ isTableView }),
+		handleToggleView: () => set((state) => ({ isTableView: !state.isTableView })),
 	})),
 );

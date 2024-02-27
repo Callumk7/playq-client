@@ -24,6 +24,7 @@ import {
 import { useFetcher } from "@remix-run/react";
 import { useCollectionControls } from "./hooks/controls";
 import { ReactNode } from "react";
+import { useFilterStore } from "@/store/filters";
 
 interface CollectionGameMenuProps {
 	gameId: number;
@@ -34,9 +35,6 @@ interface CollectionGameMenuProps {
 	playlists?: Playlist[];
 	gamePlaylists?: Playlist[];
 	handleOpenRateGameDialog: (gameId: number) => void;
-	selectMode?: boolean;
-	selectedGames?: number[];
-	setSelectedGames?: (games: number[]) => void;
 }
 
 export function CollectionGameMenu({
@@ -48,12 +46,13 @@ export function CollectionGameMenu({
 	playlists,
 	gamePlaylists,
 	handleOpenRateGameDialog,
-	selectMode,
-	selectedGames,
-	setSelectedGames,
 }: CollectionGameMenuProps) {
 	const { handleRemove, handleMarkAsPlayed, handleMarkAsCompleted, handleTogglePinned } =
 		useCollectionControls(userId, gameId, isPlayed, isCompleted, isPinned);
+
+	const selectModeOn = useFilterStore((state) => state.selectModeOn);
+	const selectedGames = useFilterStore((state) => state.selectedGames);
+	const setSelectedGames = useFilterStore((state) => state.setSelectedGames);
 
 	const handleToggleCheck = () => {
 		if (selectedGames && setSelectedGames) {
@@ -116,7 +115,7 @@ export function CollectionGameMenu({
 					</DropdownMenuItemDestructive>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			{selectMode && selectedGames && (
+			{selectModeOn && selectedGames && (
 				<Checkbox
 					checked={selectedGames.includes(gameId)}
 					onCheckedChange={handleToggleCheck}

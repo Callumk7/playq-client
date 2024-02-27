@@ -27,6 +27,7 @@ interface SortableGame {
 	firstReleaseDate: Date | null;
 	playerRating: number | null;
 	dateAdded: Date;
+	pinned: boolean;
 }
 
 export const useSort = <G extends SortableGame>(games: G[]) => {
@@ -42,7 +43,8 @@ const applySorting = <G extends SortableGame>(
 	games: G[],
 	sortOption: SortOption,
 ): G[] => {
-	const sortedGames = [...games];
+	const pinnedGames = games.filter((game) => game.pinned);
+	const sortedGames = games.filter((game) => !game.pinned);
 	switch (sortOption) {
 		case "nameAsc":
 			sortedGames.sort((a, b) =>
@@ -296,5 +298,5 @@ const applySorting = <G extends SortableGame>(
 		default:
 			break;
 	}
-	return sortedGames;
+	return [...pinnedGames, ...sortedGames];
 };

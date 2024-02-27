@@ -68,6 +68,7 @@ export function Navbar({ supabase, session, sidebarOpen, setSidebarOpen }: Navba
 					variant={"outline"}
 					size={"icon"}
 					onClick={() => setSidebarOpen(!sidebarOpen)}
+					className="hidden md:inline-flex"
 				>
 					{sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
 				</Button>

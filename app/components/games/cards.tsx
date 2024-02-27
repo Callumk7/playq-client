@@ -1,3 +1,4 @@
+import { useFilterStore } from "@/store/filters";
 import { IGDBImage } from "@/types/igdb";
 import { cn } from "@/util/cn";
 import { Link } from "@remix-run/react";
@@ -51,9 +52,10 @@ interface GameWithControlsProps {
 	children: ReactNode;
 	coverId: string;
 	gameId: number;
-  isSelected?: boolean;
 }
-export function GameWithControls({ children, coverId, gameId, isSelected }: GameWithControlsProps) {
+export function GameWithControls({ children, coverId, gameId }: GameWithControlsProps) {
+	const selectedGames = useFilterStore((state) => state.selectedGames);
+	const isSelected = selectedGames.includes(gameId);
 	return (
 		<div className="flex flex-col gap-1">
 			<GameCover coverId={coverId} gameId={gameId} isSelected={isSelected} />

@@ -30,14 +30,16 @@ export function RateGameDialog({
 					className="flex flex-col gap-3"
 					method="put"
 					action={`/api/collections/${userId}`}
+					autoFocus={false}
 				>
-					<Input
-						className="py-2 text-center border-none w-12"
-						value={rating}
-						onChange={(e) => setRating(Number(e.target.value))}
-					/>
+					<div className="text-5xl font-bold w-full text-center">{rating}</div>
 					<input type="hidden" name="gameId" value={gameId} />
-					<Slider name="rating" value={[rating]} onValueChange={(v) => setRating(v[0])} />
+					<Slider
+						name="rating"
+						value={[rating]}
+						onValueChange={(v) => setRating(v[0])}
+						autoFocus
+					/>
 					<Button
 						type="submit"
 						onClick={() => setIsRateDialogOpen(false)}
