@@ -36,19 +36,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		gameId: result.data.gameId,
 	};
 
-	if (result.data.played) {
+	if (result.data.played !== undefined) {
 		gameUpdate.played = result.data.played;
 	}
-	if (result.data.completed) {
+	if (result.data.completed !== undefined) {
 		gameUpdate.completed = result.data.completed;
 	}
-	if (result.data.starred) {
+	if (result.data.starred !== undefined) {
 		console.log("Game Starring not yet implemented on the database...");
 	}
 	if (result.data.rating) {
 		gameUpdate.playerRating = result.data.rating;
 	}
-	if (result.data.pinned) {
+	if (result.data.pinned !== undefined) {
 		gameUpdate.pinned = result.data.pinned;
 	}
 
