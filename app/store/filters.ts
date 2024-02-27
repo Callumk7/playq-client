@@ -9,6 +9,7 @@ interface FilterStore {
 	selectModeOn: boolean;
 	selectedGames: number[];
 	isTableView: boolean;
+	hideProgress: boolean;
 	filterOnPlayed: boolean;
 	filterOnUnPlayed: boolean;
 	filterOnCompleted: boolean;
@@ -20,6 +21,7 @@ interface FilterStore {
 	setSearchTerm: (searchTerm: string) => void;
 	setSortOption: (sortOption: SortOption) => void;
 	setSelectedGames: (selectedGames: number[]) => void;
+	setHideProgress: (hideProgress: boolean) => void;
 	handleToggleFilterOnPlayed: () => void;
 	handleToggleFilterOnUnPlayed: () => void;
 	handleToggleFilterOnCompleted: () => void;
@@ -47,6 +49,7 @@ interface FilterStore {
 	handleToggleSortFollows: () => void;
 	handleToggleSortRating: () => void;
 	handleToggleView: () => void;
+	handleToggleHideProgress: () => void;
 }
 
 export const useFilterStore = create<FilterStore>()(
@@ -55,6 +58,7 @@ export const useFilterStore = create<FilterStore>()(
 		searchTerm: "",
 		sortOption: "ratingDesc",
 		isTableView: false,
+		hideProgress: false,
 		selectModeOn: false,
 		selectedGames: [],
 		filterOnPlayed: false,
@@ -68,6 +72,7 @@ export const useFilterStore = create<FilterStore>()(
 		setSearchTerm: (searchTerm) => set({ searchTerm }),
 		setSortOption: (sortOption) => set({ sortOption }),
 		setSelectedGames: (selectedGames) => set({ selectedGames }),
+		setHideProgress: (hideProgress) => set({ hideProgress }),
 		handleToggleFilterOnPlayed: () =>
 			set((state) => ({
 				filterOnPlayed: !state.filterOnPlayed,
@@ -157,5 +162,7 @@ export const useFilterStore = create<FilterStore>()(
 			),
 		setIsTableView: (isTableView) => set({ isTableView }),
 		handleToggleView: () => set((state) => ({ isTableView: !state.isTableView })),
+		handleToggleHideProgress: () =>
+			set((state) => ({ hideProgress: !state.hideProgress })),
 	})),
 );

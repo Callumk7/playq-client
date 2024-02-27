@@ -54,6 +54,7 @@ export function CollectionGameMenu({
 	const selectedGames = useFilterStore((state) => state.selectedGames);
 	const setSelectedGames = useFilterStore((state) => state.setSelectedGames);
 
+	// should this be in the useCollectionControls hook?
 	const handleToggleCheck = () => {
 		if (selectedGames && setSelectedGames) {
 			if (selectedGames.includes(gameId)) {

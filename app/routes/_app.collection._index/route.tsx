@@ -73,6 +73,7 @@ export default function CollectionIndex() {
 	const genreFilter = useFilterStore((state) => state.genreFilter);
 	const handleGenreToggled = useFilterStore((state) => state.handleGenreToggled);
 	const handleToggleAllGenres = useFilterStore((state) => state.handleToggleAllGenres);
+	const hideProgress = useFilterStore((state) => state.hideProgress);
 
 	// State for handling the rate game dialog
 	const [isRateGameDialogOpen, setIsRateGameDialogOpen] = useState<boolean>(false);
@@ -97,11 +98,13 @@ export default function CollectionIndex() {
 			</div>
 			<CollectionMenubar userId={session.user.id} userPlaylists={userPlaylists} />
 			<div className="my-6">
-				<CollectionProgress
-					gameCount={gameCount}
-					playedGames={playedGames}
-					completedGames={completedGames}
-				/>
+				{!hideProgress && (
+					<CollectionProgress
+						gameCount={gameCount}
+						playedGames={playedGames}
+						completedGames={completedGames}
+					/>
+				)}
 			</div>
 			{isTableView ? (
 				<CollectionTableView

@@ -17,6 +17,7 @@ import {
 	ArrowDownIcon,
 	ArrowUpIcon,
 	CardStackIcon,
+	Cross1Icon,
 	GroupIcon,
 	StarFilledIcon,
 	TableIcon,
@@ -129,6 +130,13 @@ function SortAndView() {
 					<TableIcon className="mr-3" />
 					<span>Table View</span>
 				</MenubarItem>
+				<MenubarSeparator />
+				<MenubarCheckboxItem
+					checked={store.hideProgress}
+					onClick={store.handleToggleHideProgress}
+				>
+					Hide progress bars
+				</MenubarCheckboxItem>
 			</MenubarContent>
 		</MenubarMenu>
 	);
@@ -300,6 +308,10 @@ function Select({ userPlaylists, userId }: SelectProps) {
 				<MenubarItem disabled={!store.selectModeOn} onClick={handleBulkDelete}>
 					<TrashIcon className="mr-3" />
 					<span>Delete</span>
+				</MenubarItem>
+				<MenubarItem onClick={() => store.setSelectedGames([])}>
+					<Cross1Icon className="mr-3" />
+					<span>Clear Selected</span>
 				</MenubarItem>
 			</MenubarContent>
 		</MenubarMenu>

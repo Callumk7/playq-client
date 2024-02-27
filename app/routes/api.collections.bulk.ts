@@ -1,4 +1,3 @@
-import { WORKER_URL } from "@/constants";
 import { activityManager } from "@/services/events/events.server";
 import { InsertUsersToGames, UsersToGames } from "@/types";
 import { ActionFunctionArgs, json } from "@remix-run/node";
@@ -70,6 +69,57 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			return json({
 				success: removedGames,
 			});
+		}
+		return json({
+			error: result.error,
+		});
+	}
+
+	// PATCH /api/collections
+	if (request.method === "PATCH") {
+		const result = await zx.parseFormSafe(request, {
+			gameIds: z.array(zx.NumAsString),
+			userId: z.string(),
+			update: z.string(),
+		});
+
+		if (result.success) {
+			const { gameIds, userId, update } = result.data;
+			const played = update === "played";
+			const completed = update === "completed";
+			if (played) {
+				for (const id of gameIds) {
+					await db
+						.update(usersToGames)
+						.set({
+							played: true,
+						})
+						.where(
+							and(
+								eq(usersToGames.userId, userId),
+								eq(usersToGames.gameId, id),
+							),
+						);
+					activityManager.markGameAsPlayed(userId, id);
+				}
+			} else if (completed) {
+				for (const id of gameIds) {
+					await db
+						.update(usersToGames)
+						.set({
+							completed: true,
+						})
+						.where(
+							and(
+								eq(usersToGames.userId, userId),
+								eq(usersToGames.gameId, id),
+							),
+						);
+					activityManager.markGameAsCompleted(userId, id);
+				}
+			}
+
+			return json({ success: true });
 		}
 		return json({
 			error: result.error,
