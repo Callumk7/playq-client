@@ -11,13 +11,7 @@ import {
 import { createServerClient, getSession } from "@/services";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
-import {
-	HamburgerMenuIcon,
-	Pencil1Icon,
-	PlusIcon,
-	SewingPinIcon,
-	TrashIcon,
-} from "@radix-ui/react-icons";
+import { Pencil1Icon, PlusIcon, SewingPinIcon, TrashIcon } from "@radix-ui/react-icons";
 import { CreatePlaylistDialog } from "@/features/playlists";
 import { useState } from "react";
 import { Link } from "@remix-run/react";
@@ -60,9 +54,6 @@ export default function PlaylistView() {
 					<Button onClick={() => setDialogOpen(true)} variant={"outline"} size={"sm"}>
 						<span className="mr-3">Create new</span>
 						<PlusIcon />
-					</Button>
-					<Button size={"sm"} variant={"outline"}>
-						<HamburgerMenuIcon />
 					</Button>
 				</div>
 				<div className="mt-7">

@@ -1,4 +1,4 @@
-import { Playlist, PlaylistWithGamesAndCreator, PlaylistWithPinned } from "@/types";
+import { PlaylistWithGamesAndCreator } from "@/types";
 import { db } from "db";
 import { followers, playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";

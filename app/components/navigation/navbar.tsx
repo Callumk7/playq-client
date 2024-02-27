@@ -63,26 +63,28 @@ export function Navbar({ supabase, session, sidebarOpen, setSidebarOpen }: Navba
 
 	return (
 		<nav className="top-0 z-50 fixed md:relative flex w-full flex-row items-start md:items-center justify-between bg-background/80 px-6 py-4 backdrop-blur">
-			<Button
-				variant={"outline"}
-				size={"icon"}
-				onClick={() => setSidebarOpen(!sidebarOpen)}
-			>
-				{sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-			</Button>
-			<Collapsible
-				className="block md:hidden"
-				open={isMenuOpen}
-				onOpenChange={setIsMenuOpen}
-			>
-				<CollapsibleTrigger className="data-[state=open]:text-foreground/50 mt-2">
-					<HamburgerMenuIcon className="w-6 h-6" />
-				</CollapsibleTrigger>
-				<CollapsibleContent>
-					<div className="mt-4 flex flex-col gap-3">{linksMarkup}</div>
-				</CollapsibleContent>
-			</Collapsible>
-			<div className="md:flex hidden flex-row justify-start gap-4">{linksMarkup}</div>
+			<div className="flex gap-6">
+				<Button
+					variant={"outline"}
+					size={"icon"}
+					onClick={() => setSidebarOpen(!sidebarOpen)}
+				>
+					{sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+				</Button>
+				<Collapsible
+					className="block md:hidden"
+					open={isMenuOpen}
+					onOpenChange={setIsMenuOpen}
+				>
+					<CollapsibleTrigger className="data-[state=open]:text-foreground/50 mt-2">
+						<HamburgerMenuIcon className="w-6 h-6" />
+					</CollapsibleTrigger>
+					<CollapsibleContent>
+						<div className="mt-4 flex flex-col gap-3">{linksMarkup}</div>
+					</CollapsibleContent>
+				</Collapsible>
+				<div className="md:flex hidden flex-row justify-start gap-4">{linksMarkup}</div>
+			</div>
 			<Login supabase={supabase} session={session} />
 		</nav>
 	);

@@ -118,7 +118,7 @@ export default function AppLayout() {
 						sidebarOpen={sidebarOpen}
 						setSidebarOpen={setSidebarOpen}
 					/>
-					<Container className="mt-20 md:mt-0">
+					<Container className="my-20 md:mt-0">
 						<Outlet />
 					</Container>
 				</div>
