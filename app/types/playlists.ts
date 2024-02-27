@@ -57,3 +57,7 @@ export type PlaylistCommentsWithAuthor = PlaylistComment & {
 export type PlaylistWithPinned = Playlist & {
 	pinned: boolean;
 };
+
+export type GamesOnPlaylistWithPlaylist = GamesOnPlaylist & {
+	playlist: Playlist;
+}

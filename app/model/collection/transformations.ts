@@ -1,8 +1,9 @@
-import { GameWithCollection, gameWithCollectionSchema } from "@/types/games";
+import {
+	GameWithCollection,
+	UserCollectionWithFullDetails,
+	gameWithCollectionSchema,
+} from "@/types/games";
 import { ZodError } from "zod";
-import { getUserGameCollection } from "./database-queries";
-
-type PromiseType<T> = T extends Promise<infer U> ? U : T;
 
 /**
  * This function transforms data returned from the database into
@@ -11,7 +12,7 @@ type PromiseType<T> = T extends Promise<infer U> ? U : T;
  * that need different parts from the server.
  * */
 export const transformCollectionIntoGames = (
-	collection: PromiseType<ReturnType<typeof getUserGameCollection>>,
+	collection: UserCollectionWithFullDetails[],
 ) => {
 	const games: GameWithCollection[] = collection.map((c) => ({
 		...c,
@@ -24,6 +25,7 @@ export const transformCollectionIntoGames = (
 
 	// validate at runtime
 	try {
+		// biome-ignore lint/complexity/noForEach: simple one-liner
 		games.forEach((g) => gameWithCollectionSchema.parse(g));
 		return games;
 	} catch (e) {

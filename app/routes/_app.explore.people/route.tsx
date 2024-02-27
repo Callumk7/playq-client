@@ -9,7 +9,7 @@ import {
 } from "@/components";
 import { createServerClient, getSession } from "@/services";
 import { useUserCacheStore } from "@/store/cache";
-import { User, UserWithFriends } from "@/types";
+import { User } from "@/types";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "db";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";

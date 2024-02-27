@@ -1,3 +1,4 @@
+import { UserCollectionWithFullDetails } from "@/types";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { eq } from "drizzle-orm";
@@ -16,7 +17,9 @@ export const getUserCollection = async (userId: string) => {
 	return userCollection;
 };
 
-export const getUserGamesWithDetails = async (userId: string) => {
+export const getUserGamesWithDetails = async (
+	userId: string,
+): Promise<UserCollectionWithFullDetails[]> => {
 	const userCollection = await db.query.usersToGames.findMany({
 		where: eq(usersToGames.userId, userId),
 		with: {
@@ -28,13 +31,13 @@ export const getUserGamesWithDetails = async (userId: string) => {
 							playlist: true,
 						},
 					},
+					screenshots: true,
+					artworks: true,
 					genres: {
 						with: {
 							genre: true,
 						},
 					},
-					screenshots: true,
-					artworks: true,
 				},
 			},
 		},

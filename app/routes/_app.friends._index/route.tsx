@@ -1,7 +1,7 @@
 import { Card, Container } from "@/components";
 import { Button } from "@/components/ui/button";
 import { createServerClient, getSession } from "@/services";
-import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { friends } from "db/schema/users";
@@ -28,26 +28,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	});
 
 	return json({ userFriends }, { headers });
-};
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-	const { supabase } = createServerClient(request);
-	const session = await getSession(supabase);
-
-	const formData = await request.formData();
-	const friendId = String(formData.get("friend_id"));
-
-	const newFriend = await db.insert(friends).values({
-		userId: session!.user.id,
-		friendId: friendId,
-	});
-
-	const newConnection = await db.insert(friends).values({
-		userId: friendId,
-		friendId: session!.user.id,
-	});
-
-	return { newFriend, newConnection };
 };
 
 export default function FriendsRoute() {

@@ -1,15 +1,21 @@
-import { Container, GameCover, Label, LibraryView, Progress } from "@/components";
+import { Card, Container } from "@/components";
 import { createServerClient, getSession } from "@/services";
-import { SaveToCollectionButton } from "@/features/explore";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { UserWithActivityFeedEntry } from "@/types";
+import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
+import { ReactNode } from "react";
+import { getFriendActivity, transformActivity } from "@/model";
 import {
-	combinePopularGameData,
-	getPopularGamesByCollection,
-	getPopularGamesByPlaylist,
-} from "@/features/home/queries/popular-games";
-import { getUserCollectionGameIds } from "@/model";
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { getTopTenByRating } from "./loading";
+	AddedGameToPlaylistActivity,
+	AddedToCollectionActivity,
+	GameCompletedActivity,
+	GamePlayedActivity,
+	GameRatedActivity,
+	PlaylistCreatedActivity,
+	PlaylistFollowedActivity,
+	RemovedGameFromCollectionActivity,
+	RemovedGameFromPlaylistActivity,
+} from "@/components/activity/feed";
 
 ///
 /// LOADER
@@ -22,107 +28,110 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		return redirect("/login");
 	}
 
-	const popularGamesByPlaylistPromise = getPopularGamesByPlaylist();
-	const popularGamesByCollectionPromise = getPopularGamesByCollection();
-	const userCollectionGameidsPromise = getUserCollectionGameIds(session.user.id);
+	const activity = await getFriendActivity(session.user.id);
+	const feed = transformActivity(activity);
 
-	// fetch gameIds in parallel
-	const [popularGamesByCollection, popularGamesByPlaylist, userCollectionGameIds] =
-		await Promise.all([
-			popularGamesByCollectionPromise,
-			popularGamesByPlaylistPromise,
-			userCollectionGameidsPromise,
-		]);
-
-	// I should create an explcit type for the return type of this function
-	const processedData = await combinePopularGameData({
-		popularGamesByCollection,
-		popularGamesByPlaylist,
-	});
-
-	const topTenGames = await getTopTenByRating();
-
-	return json(
-		{ processedData, userCollectionGameIds, topTenGames, session },
-		{ headers },
-	);
+	return typedjson({ session, feed }, { headers });
 };
 
 export default function AppIndex() {
-	const { processedData, userCollectionGameIds, topTenGames, session } =
-		useLoaderData<typeof loader>();
-	// This could be done on the server..
-	const maxCollectionCount = processedData.reduce(
-		(max, game) => Math.max(max, game.collectionCount),
-		0,
-	);
-	const maxPlaylistCount = processedData.reduce(
-		(max, game) => Math.max(max, game.playlistCount),
-		0,
-	);
+	const { feed } = useTypedLoaderData<typeof loader>();
 	return (
-		<Container className="flex flex-col gap-24">
-			<LibraryView>
-				{topTenGames.map((game) => (
-					<div key={game.id} className="flex flex-col gap-3">
-						<GameCover coverId={game.cover.imageId} gameId={game.gameId} />
-						<div className="border p-3 rounded-md">
-							<span className="font-black text-lg">
-								{Math.floor(Number(game.avRating))}
-							</span>
-						</div>
-					</div>
-				))}
-			</LibraryView>
-			<LibraryView>
-				{processedData.map((game) => (
-					<div key={game.id} className="relative flex flex-col gap-3">
-						{!userCollectionGameIds.includes(game.gameId) && (
-							<div className="absolute right-3 top-3 z-20">
-								<SaveToCollectionButton
-									variant="outline"
-									gameId={game.gameId}
-									userId={session.user.id}
-								/>
-							</div>
-						)}
-						<GameCover coverId={game.cover.imageId} gameId={game.gameId} />
-						<ExploreGameDataRow
-							collectionCount={game.collectionCount}
-							maxCollectionCount={maxCollectionCount}
-							playlistCount={game.playlistCount}
-							maxPlaylistCount={maxPlaylistCount}
-						/>
-					</div>
-				))}
-			</LibraryView>
+		<Container className="flex flex-col gap-10">
+			{feed.map((a) => (
+				<ActivityFeedCard activity={a} />
+			))}
 		</Container>
 	);
 }
 
-interface ExploreGameDataRowProps {
-	collectionCount: number;
-	maxCollectionCount: number;
-	playlistCount: number;
-	maxPlaylistCount: number;
+interface ActivityFeedCardProps {
+	activity: UserWithActivityFeedEntry;
 }
+function ActivityFeedCard({ activity }: ActivityFeedCardProps) {
+	const type = activity.activity.type;
 
-function ExploreGameDataRow({
-	collectionCount,
-	playlistCount,
-	maxCollectionCount,
-	maxPlaylistCount,
-}: ExploreGameDataRowProps) {
-	return (
-		<div className="flex flex-col gap-2 rounded-md border p-3">
-			<div className="flex w-full flex-col gap-1">
-				<Label>Collection Popularity</Label>
-				<Progress value={collectionCount} max={maxCollectionCount} className="h-2" />
-			</div>
-			<div className="flex w-full flex-col gap-1">
-				<Label>Playlist Popularity</Label>
-				<Progress value={playlistCount} max={maxPlaylistCount} className="h-2" />
-			</div>
-		</div>
-	);
+	let content: ReactNode = null;
+	switch (type) {
+		case "pl_create":
+			content = (
+				<PlaylistCreatedActivity user={activity} playlist={activity.activity.playlist} />
+			);
+			break;
+
+		case "col_add":
+			content = (
+				<AddedToCollectionActivity user={activity} game={activity.activity.game} />
+			);
+			break;
+
+		case "pl_add_game":
+			content = (
+				<AddedGameToPlaylistActivity
+					user={activity}
+					game={activity.activity.game}
+					playlist={activity.activity.playlist}
+				/>
+			);
+			break;
+
+		case "pl_remove_game":
+			content = (
+				<RemovedGameFromPlaylistActivity
+					user={activity}
+					game={activity.activity.game}
+					playlist={activity.activity.playlist}
+				/>
+			);
+			break;
+
+		case "pl_follow":
+			content = (
+				<PlaylistFollowedActivity user={activity} playlist={activity.activity.playlist} />
+			);
+			break;
+
+		case "col_remove":
+			content = (
+				<RemovedGameFromCollectionActivity
+					user={activity}
+					game={activity.activity.game}
+				/>
+			);
+			break;
+
+		// TODO: this needs to be more granular
+		case "comment_add":
+			content = (
+				<div>
+					<p>{activity.username}</p>
+					<p>Added a comment</p>
+				</div>
+			);
+			break;
+
+		case "game_played":
+			content = <GamePlayedActivity user={activity} game={activity.activity.game} />;
+			break;
+
+		case "game_completed":
+			content = <GameCompletedActivity user={activity} game={activity.activity.game} />;
+			break;
+
+		case "game_rated":
+			content = (
+				<GameRatedActivity
+					user={activity}
+					game={activity.activity.game}
+					rating={activity.activity.rating}
+				/>
+			);
+			break;
+
+		default:
+			return <div>something went wrong</div>;
+	}
+
+	const Feed: ReactNode = <Card className="p-3">{content}</Card>;
+	return Feed;
 }

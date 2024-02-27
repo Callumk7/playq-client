@@ -1,10 +1,15 @@
 import { PlaylistContextMenu } from "@/features/playlists/components/playlist-context-menu";
 import { Playlist } from "@/types/playlists";
 import { UserWithActivityFeedEntry } from "@/types/users";
-import { HamburgerMenuIcon, PlusIcon } from "@radix-ui/react-icons";
+import { PlusIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { Button, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from ".";
 import { SavedToCollectionActivity } from "@/routes/res.game.$gameId";
+import {
+	AddedGameToPlaylistActivity,
+	AddedToCollectionActivity,
+	PlaylistCreatedActivity,
+} from "./activity/feed";
 
 interface SidebarProps {
 	userId: string;
@@ -39,7 +44,7 @@ export function Sidebar({
 							variant={"outline"}
 							size={"sm"}
 							disabled={!hasSession}
-              className="w-full"
+							className="w-full"
 						>
 							<span className="mr-3">Create new</span>
 							<PlusIcon />
@@ -89,12 +94,15 @@ interface ActivityFeedProps {
 }
 function ActivityFeed({ activityFeed }: ActivityFeedProps) {
 	return (
-		<div className="flex w-full flex-col gap-5">
+		<div className="flex w-full flex-col gap-5 divide-y text-sm">
 			{activityFeed.map((activity) =>
 				activity.activity.type === "col_add" ? (
-					<SavedToCollectionActivity activity={activity} />
+					<AddedToCollectionActivity user={activity} game={activity.activity.game} />
 				) : activity.activity.type === "pl_create" ? (
-					<PlaylistCreateActivity activity={activity} />
+					<PlaylistCreatedActivity
+						user={activity}
+						playlist={activity.activity.playlist}
+					/>
 				) : activity.activity.type === "game_rated" ? (
 					<GameRatedActivity activity={activity} />
 				) : activity.activity.type === "comment_add" ? (
@@ -102,17 +110,16 @@ function ActivityFeed({ activityFeed }: ActivityFeedProps) {
 				) : activity.activity.type === "pl_follow" ? (
 					<PlaylistFollowedActivity activity={activity} />
 				) : activity.activity.type === "pl_add_game" ? (
-					<PlaylistAddGameActivity activity={activity} />
+					<AddedGameToPlaylistActivity
+						user={activity}
+						game={activity.activity.game}
+						playlist={activity.activity.playlist}
+					/>
 				) : null,
 			)}
 		</div>
 	);
 }
-
-function PlaylistCreateActivity({ activity }: { activity: UserWithActivityFeedEntry }) {
-	return <div>playlist created work in progress</div>;
-}
-
 function GameRatedActivity({ activity }: { activity: UserWithActivityFeedEntry }) {
 	return <div>playlist created work in progress</div>;
 }
@@ -121,9 +128,5 @@ function CommentLeftActivity({ activity }: { activity: UserWithActivityFeedEntry
 }
 
 function PlaylistFollowedActivity({ activity }: { activity: UserWithActivityFeedEntry }) {
-	return <div>playlist created work in progress</div>;
-}
-
-function PlaylistAddGameActivity({ activity }: { activity: UserWithActivityFeedEntry }) {
 	return <div>playlist created work in progress</div>;
 }

@@ -22,15 +22,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		});
 	}
 
-	// use the URL for shared state.
+	// get all genres, for search and filtering options
+	const allGenres = await getAllGenres();
+	const genreNames = allGenres.map((g) => g.name);
+
+	// search parameters are shared through the url of the request
 	const url = new URL(request.url);
 	const search = url.searchParams.get("search");
 	const genreSearch = url.searchParams.getAll("genres");
 	const rating = Number(url.searchParams.get("rating") ?? 80);
 	const follows = Number(url.searchParams.get("follows") ?? 50);
 
+	// for drizzle
 	const conditions = [gt(games.externalFollows, follows), gt(games.rating, rating)];
-
+	// conditional conditions
 	if (search) conditions.push(ilike(games.title, `%${search}%`));
 	if (genreSearch.length > 0) conditions.push(inArray(genres.name, genreSearch));
 
@@ -39,8 +44,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const gameIds = await getUserCollectionGameIds(session.user.id);
 	const resultsMarkedAsSaved = markInternalResultsAsSaved(searchResults, gameIds);
 
-	const allGenres = await getAllGenres();
-	const genreNames = allGenres.map((g) => g.name);
+	// we need to handle the case where we have no results in our database, and we need to use IGDB
+	if (!searchResults.length) {
+		// perform a search on IGDB.. although we need to figure out how to handle the shape of the response
+	}
 
 	return typedjson({ resultsMarkedAsSaved, session, genreNames });
 };

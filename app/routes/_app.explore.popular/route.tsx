@@ -38,6 +38,7 @@ import {
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useState } from "react";
+import { getTopTenByRating } from "./loading";
 
 ///
 /// LOADER
@@ -75,14 +76,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		popularGamesByPlaylist,
 	});
 
+	const topTenGames = await getTopTenByRating();
+
 	return json(
-		{ processedData, userCollectionGameIds, session, genreStrings },
+		{ processedData, userCollectionGameIds, session, genreStrings, topTenGames },
 		{ headers },
 	);
 };
 
 export default function PopularExplore() {
-	const { processedData, userCollectionGameIds, session, genreStrings } =
+	const { processedData, userCollectionGameIds, session, genreStrings, topTenGames } =
 		useLoaderData<typeof loader>();
 	// This could be done on the server..
 	const maxCollectionCount = processedData.reduce(
@@ -115,6 +118,18 @@ export default function PopularExplore() {
 				</Toggle>
 				<GenreComboBox genres={genreStrings} />
 			</div>
+			<LibraryView>
+				{topTenGames.map((game) => (
+					<div key={game.id} className="flex flex-col gap-3">
+						<GameCover coverId={game.cover.imageId} gameId={game.gameId} />
+						<div className="border p-3 rounded-md">
+							<span className="font-black text-lg">
+								{Math.floor(Number(game.avRating))}
+							</span>
+						</div>
+					</div>
+				))}
+			</LibraryView>
 			<LibraryView>
 				{processedData.map((game) => (
 					<div key={game.id} className="relative flex flex-col gap-3">
@@ -167,6 +182,7 @@ function ExploreGameDataRow({
 		</div>
 	);
 }
+
 function GenreComboBox({ genres }: { genres: string[] }) {
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState("");
