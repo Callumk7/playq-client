@@ -1,10 +1,9 @@
 import { avg, count, eq, isNotNull, relations } from "drizzle-orm";
 import {
-	QueryBuilder,
 	boolean,
 	integer,
+	pgEnum,
 	pgTable,
-	pgView,
 	primaryKey,
 	text,
 	timestamp,
@@ -123,6 +122,12 @@ export const genresToGamesRelations = relations(genresToGames, ({ one }) => ({
 	}),
 }));
 
+export const playedStatusEnum = pgEnum("played_status", [
+	"not_started",
+	"played",
+	"completed",
+]);
+
 export const usersToGames = pgTable(
 	"users_to_games",
 	{
@@ -136,6 +141,7 @@ export const usersToGames = pgTable(
 		completed: boolean("completed").default(false).notNull(),
 		position: integer("position"),
 		pinned: boolean("pinned").notNull().default(false),
+		status: playedStatusEnum("played_status").notNull().default("not_started"),
 	},
 	(t) => ({
 		pk: primaryKey({ columns: [t.userId, t.gameId] }),

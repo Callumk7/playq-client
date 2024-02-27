@@ -169,6 +169,13 @@
       "when": 1708764841976,
       "tag": "0023_flimsy_mauler",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "5",
+      "when": 1709030823975,
+      "tag": "0024_damp_lorna_dane",
+      "breakpoints": true
     }
   ]
 }
