@@ -42,7 +42,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 			),
 		);
 
-	console.log(collectionData);
 	if (collectionData.length > 0) {
 		return collectionData[0];
 	}

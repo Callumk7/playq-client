@@ -18,12 +18,14 @@ import { PlaylistEntryControls } from "./components/playlist-entry-controls.tsx"
 import { PlaylistMenubar } from "./components/playlist-menubar";
 import { RenamePlaylistDialog } from "./components/rename-playlist-dialog";
 import {
+	getAggregatedPlaylistRating,
 	getMinimumPlaylistData,
 	getPlaylistComments,
 	getPlaylistWithGamesAndFollowers,
 	getUserFollowAndRatingData,
 } from "./loading";
 import { GuestMenubar } from "./components/guest-menubar";
+import { FollowerSidebar } from "./components/followers-sidebar";
 
 // Type guard types. We can block users by returning "blocked" from the loader.
 // As such, if we want type safety, we need to define the types first and narrow.
@@ -44,6 +46,7 @@ interface Result {
 	};
 	session: Session;
 	playlistComments: NoteWithAuthor[];
+	aggregatedRating: { id: string; aggRating: number; count: number };
 }
 
 ///
@@ -77,14 +80,21 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		session.user.id,
 		playlistId,
 	);
+	const aggregatedRatingPromise = getAggregatedPlaylistRating(playlistId);
 
-	const [playlistWithGames, userCollection, playlistComments, userFollowAndRatingData] =
-		await Promise.all([
-			playlistWithGamesPromise,
-			userCollectionPromise,
-			playlistCommentsPromise,
-			userFollowAndRatingDataPromise,
-		]);
+	const [
+		playlistWithGames,
+		userCollection,
+		playlistComments,
+		userFollowAndRatingData,
+		aggregatedRating,
+	] = await Promise.all([
+		playlistWithGamesPromise,
+		userCollectionPromise,
+		playlistCommentsPromise,
+		userFollowAndRatingDataPromise,
+		aggregatedRatingPromise,
+	]);
 
 	const isCreator = playlistWithGames!.creatorId === session.user.id;
 
@@ -96,6 +106,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		userFollowAndRatingData,
 		playlistComments,
 		session,
+		aggregatedRating,
 	});
 };
 
@@ -133,6 +144,7 @@ export default function PlaylistRoute() {
 		session,
 		playlistComments,
 		userFollowAndRatingData,
+		aggregatedRating,
 	} = result;
 	const userCollectionGameIds = userCollection.map((c) => c.gameId);
 
@@ -207,12 +219,18 @@ export default function PlaylistRoute() {
 						</div>
 					</div>
 					<div className="relative lg:col-span-3">
-						<StatsSidebar
-							userId={session.user.id}
-							playlistId={playlistWithGames.id}
-							max={playlistWithGames.games.length}
-							followerCount={playlistWithGames.followers.length}
-						/>
+						<div className="h-full flex flex-col gap-8">
+							<StatsSidebar
+								userId={session.user.id}
+								playlistId={playlistWithGames.id}
+								max={playlistWithGames.games.length}
+								followerCount={playlistWithGames.followers.length}
+							/>
+							<FollowerSidebar
+								followers={aggregatedRating.count}
+								rating={Math.floor(aggregatedRating.aggRating)}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>

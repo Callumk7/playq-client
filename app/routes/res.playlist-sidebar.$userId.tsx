@@ -1,7 +1,6 @@
 import {
 	Card,
 	CardHeader,
-	CardTitle,
 	CardContent,
 	Progress,
 	Label,
@@ -39,12 +38,7 @@ interface StatsSidebarProps {
 	max: number;
 	followerCount: number;
 }
-export function StatsSidebar({
-	userId,
-	playlistId,
-	max,
-	followerCount,
-}: StatsSidebarProps) {
+export function StatsSidebar({ userId, playlistId, max }: StatsSidebarProps) {
 	const fetcher = useFetcher<typeof loader>();
 	// biome-ignore lint/correctness/useExhaustiveDependencies: Only run the effect on mount
 	useEffect(() => {
@@ -54,52 +48,30 @@ export function StatsSidebar({
 		);
 	}, []);
 	return (
-		<div className="h-full flex flex-col gap-8">
-			<Card>
-				<CardHeader>
-					<CardSubTitle>Progress</CardSubTitle>
-				</CardHeader>
-				<CardContent>
-					<div className="flex flex-col gap-5">
-						<div className="flex flex-col gap-1">
-							<Label>In your Collection</Label>
-							<Progress
-								value={fetcher.data ? fetcher.data.inCollectionCount : 0}
-								max={max}
-							/>
-						</div>
-						<div className="flex flex-col gap-1">
-							<Label>Played</Label>
-							<Progress value={fetcher.data ? fetcher.data.playedCount : 0} max={max} />
-						</div>
-						<div className="flex flex-col gap-1">
-							<Label>Completed</Label>
-							<Progress
-								value={fetcher.data ? fetcher.data.completedCount : 0}
-								max={max}
-							/>
-						</div>
+		<Card>
+			<CardHeader>
+				<CardSubTitle>Progress</CardSubTitle>
+			</CardHeader>
+			<CardContent>
+				<div className="flex flex-col gap-5">
+					<div className="flex flex-col gap-1">
+						<Label>In your Collection</Label>
+						<Progress
+							value={fetcher.data ? fetcher.data.inCollectionCount : 0}
+							max={max}
+						/>
 					</div>
-				</CardContent>
-			</Card>
-			<Card>
-				<CardHeader>
-					<CardSubTitle>Playlist Stats</CardSubTitle>
-				</CardHeader>
-				<CardContent>
-					<div className="flex flex-col gap-5">
-						<div className="flex justify-between">
-							<p className="font-semibold">Followers:</p>
-							<p>{followerCount}</p>
-						</div>
-						<div className="flex justify-between">
-							<p className="font-semibold">Rating:</p>
-							<p>59</p>
-						</div>
+					<div className="flex flex-col gap-1">
+						<Label>Played</Label>
+						<Progress value={fetcher.data ? fetcher.data.playedCount : 0} max={max} />
 					</div>
-				</CardContent>
-			</Card>
-		</div>
+					<div className="flex flex-col gap-1">
+						<Label>Completed</Label>
+						<Progress value={fetcher.data ? fetcher.data.completedCount : 0} max={max} />
+					</div>
+				</div>
+			</CardContent>
+		</Card>
 	);
 }
 

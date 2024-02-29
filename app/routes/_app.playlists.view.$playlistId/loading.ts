@@ -1,8 +1,7 @@
-import { Follower } from "@/types";
 import { db } from "db";
 import { notes } from "db/schema/notes";
 import { followers, playlists } from "db/schema/playlists";
-import { and, eq } from "drizzle-orm";
+import { and, avg, count, eq } from "drizzle-orm";
 
 export const getMinimumPlaylistData = async (playlistId: string) => {
 	const minimumPlaylistData = await db
@@ -71,4 +70,22 @@ export const getUserFollowAndRatingData = async (
 		isFollowing: false,
 		rating: null,
 	};
+};
+
+export const getAggregatedPlaylistRating = async (playlistId: string) => {
+	const queryResult = await db
+		.select({
+			id: followers.playlistId,
+			aggRating: avg(followers.rating),
+			count: count(followers.playlistId),
+		})
+		.from(followers)
+		.where(eq(followers.playlistId, playlistId))
+		.groupBy(followers.playlistId);
+
+	if (queryResult[0]) {
+		return queryResult[0];
+	}
+
+	return { id: playlistId, aggRating: 0, count: 0 };
 };
