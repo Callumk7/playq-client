@@ -71,10 +71,9 @@ export function Sidebar({
 
 interface SidebarPlaylistEntryProps {
 	playlist: PlaylistWithCreator;
-	isCreator: boolean;
 }
 
-function SidebarPlaylistEntry({ playlist, isCreator }: SidebarPlaylistEntryProps) {
+function SidebarPlaylistEntry({ playlist }: SidebarPlaylistEntryProps) {
 	return (
 		<PlaylistContextMenu>
 			<Link

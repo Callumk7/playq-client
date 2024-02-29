@@ -32,3 +32,4 @@ export * from "./sidebar";
 export * from "./collection";
 export * from "./comments";
 export * from "./games";
+export * from "./playlists";

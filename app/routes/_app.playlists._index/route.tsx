@@ -1,24 +1,24 @@
 import {
+	Button,
 	Card,
+	CreatePlaylistDialog,
 	Table,
-	TableHeader,
-	TableRow,
-	TableHead,
 	TableBody,
 	TableCell,
-	Button,
+	TableHead,
+	TableHeader,
+	TableRow,
 } from "@/components";
 import { createServerClient, getSession } from "@/services";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
-import { Pencil1Icon, PlusIcon, SewingPinIcon, TrashIcon } from "@radix-ui/react-icons";
-import { CreatePlaylistDialog } from "@/features/playlists";
-import { useState } from "react";
-import { Link } from "@remix-run/react";
-import { PlaylistProgress } from "../res.playlist-sidebar.$userId";
 import { PlaylistWithPinned } from "@/types";
-import { RenamePlaylistDialog } from "../_app.playlists.view.$playlistId/components/rename-playlist-dialog";
+import { Pencil1Icon, PlusIcon, SewingPinIcon, TrashIcon } from "@radix-ui/react-icons";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { Link } from "@remix-run/react";
+import { useState } from "react";
+import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { DeletePlaylistDialog } from "../_app.playlists.view.$playlistId/components/delete-playlist-dialog";
+import { RenamePlaylistDialog } from "../_app.playlists.view.$playlistId/components/rename-playlist-dialog";
+import { PlaylistProgress } from "../res.playlist-sidebar.$userId";
 import { getCreatedAndFollowedPlaylists } from "./loading";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

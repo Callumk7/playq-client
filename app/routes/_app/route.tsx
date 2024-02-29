@@ -1,14 +1,13 @@
-import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
-import { Outlet, useFetcher } from "@remix-run/react";
-import { useEffect, useState } from "react";
-import { CreatePlaylistDialog } from "@/features/playlists";
-import { createServerClient, getSession } from "@/services";
-import { createBrowserClient } from "@supabase/ssr";
-import { useUserCacheStore } from "@/store/cache";
+import { Container, CreatePlaylistDialog, Navbar, Sidebar } from "@/components";
 import { getFriendActivity, getUserCollectionGameIds, transformActivity } from "@/model";
-import { Container, Navbar, Sidebar } from "@/components";
-import { Playlist, User, UserWithActivity } from "@/types";
+import { createServerClient, getSession } from "@/services";
+import { useUserCacheStore } from "@/store/cache";
+import { Playlist, PlaylistWithCreator, User, UserWithActivity } from "@/types";
+import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
+import { Outlet, useFetcher } from "@remix-run/react";
+import { createBrowserClient } from "@supabase/ssr";
+import { useEffect, useState } from "react";
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { getCreatedAndFollowedPlaylists, getUserFriends } from "./loader";
 
 export const meta: MetaFunction = () => {
@@ -27,7 +26,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
 	const session = await getSession(supabase);
 
-	let userPlaylists: Playlist[] = [];
+	let userPlaylists: PlaylistWithCreator[] = [];
 	let userFriends: User[] = [];
 	let userCollection: number[] = [];
 	let friendActivity: UserWithActivity[] = [];

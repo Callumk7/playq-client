@@ -9,15 +9,6 @@ export const getCreatedAndFollowedPlaylists = async (userId: string) => {
 		where: eq(playlists.creatorId, userId),
 		with: {
 			creator: true,
-			games: {
-				with: {
-					game: {
-						with: {
-							cover: true,
-						},
-					},
-				},
-			},
 		},
 	});
 
