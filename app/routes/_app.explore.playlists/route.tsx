@@ -1,9 +1,20 @@
-import { Input, Label } from "@/components";
+import {
+	Button,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+	Input,
+	Label,
+} from "@/components";
 import { createServerClient, getSession } from "@/services";
 import { PlaylistCard } from "@/features/playlists/components/playlist-card";
 import { getDiscoverablePlaylists } from "@/features/playlists/lib/get-discoverable-playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
+import { useState } from "react";
+import { cap } from "@/util/capitalise";
+import { ChevronDownIcon, PersonIcon, StarFilledIcon } from "@radix-ui/react-icons";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
@@ -26,6 +37,7 @@ export default function ExplorePlaylists() {
 	return (
 		<main className="flex flex-col gap-4">
 			<div className="flex gap-5">
+				<SortBox />
 				<form>
 					<Label>
 						<span>Search</span>
@@ -45,5 +57,28 @@ export default function ExplorePlaylists() {
 				))}
 			</div>
 		</main>
+	);
+}
+
+function SortBox() {
+	const [sortOrder, setSortOrder] = useState<"rating" | "follows">("rating");
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button className="w-28">
+					<span className="mr-3">{cap(sortOrder)}</span> <ChevronDownIcon />
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				<DropdownMenuItem onClick={() => setSortOrder("follows")}>
+					<PersonIcon className="mr-3" />
+					<span>Follows</span>
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => setSortOrder("rating")}>
+					<StarFilledIcon className="mr-3" />
+					<span>Rating</span>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }

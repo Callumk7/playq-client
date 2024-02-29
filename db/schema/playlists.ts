@@ -33,6 +33,7 @@ export const playlistsRelations = relations(playlists, ({ one, many }) => ({
 	comments: many(playlistComments),
 	activity: many(activity),
 	notes: many(notes),
+	tags: many(tagsToPlaylists),
 }));
 
 export const followers = pgTable(
@@ -107,4 +108,35 @@ export const playlistCommentsRelations = relations(playlistComments, ({ one, man
 		references: [users.id],
 	}),
 	activity: many(activity),
+}));
+
+export const tags = pgTable("tags", {
+	id: text("id").primaryKey().notNull(),
+	name: text("name").notNull(),
+});
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+	playlists: many(tagsToPlaylists),
+}));
+
+export const tagsToPlaylists = pgTable(
+	"tags_to_playlists",
+	{
+		tagId: text("tag_id").notNull(),
+		playlistId: text("playlist_id").notNull(),
+	},
+	(t) => ({
+		pk: primaryKey({ columns: [t.tagId, t.playlistId] }),
+	}),
+);
+
+export const tagsToPlaylistsRelations = relations(tagsToPlaylists, ({ one }) => ({
+	tag: one(tags, {
+		fields: [tagsToPlaylists.tagId],
+		references: [tags.id],
+	}),
+	playlist: one(playlists, {
+		fields: [tagsToPlaylists.playlistId],
+		references: [playlists.id],
+	}),
 }));
