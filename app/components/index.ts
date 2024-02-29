@@ -33,3 +33,4 @@ export * from "./collection";
 export * from "./comments";
 export * from "./games";
 export * from "./playlists";
+export * from "./activity";

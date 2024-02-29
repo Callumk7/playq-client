@@ -1,13 +1,13 @@
 import {
 	Button,
 	Card,
-	CreatePlaylistDialog,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
+    usePlaylistDialogOpen,
 } from "@/components";
 import { createServerClient, getSession } from "@/services";
 import { PlaylistWithPinned } from "@/types";
@@ -41,7 +41,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 ///
 export default function PlaylistView() {
 	const { allPlaylists, session } = useTypedLoaderData<typeof loader>();
-	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const { setPlaylistDialogOpen } = usePlaylistDialogOpen();
 	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
 	const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] =
 		useState<boolean>(false);
@@ -51,7 +51,7 @@ export default function PlaylistView() {
 		<>
 			<main className="mt-10">
 				<div className="mt-5 flex gap-5">
-					<Button onClick={() => setDialogOpen(true)} variant={"outline"} size={"sm"}>
+					<Button onClick={() => setPlaylistDialogOpen(true)} variant={"outline"} size={"sm"}>
 						<span className="mr-3">Create new</span>
 						<PlusIcon />
 					</Button>
@@ -99,11 +99,6 @@ export default function PlaylistView() {
 					</Card>
 				</div>
 			</main>
-			<CreatePlaylistDialog
-				userId={session.user.id}
-				dialogOpen={dialogOpen}
-				setDialogOpen={setDialogOpen}
-			/>
 			<RenamePlaylistDialog
 				renameDialogOpen={renameDialogOpen}
 				setRenameDialogOpen={setRenameDialogOpen}

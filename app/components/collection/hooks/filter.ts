@@ -1,4 +1,4 @@
-import { useFilterStore } from "@/store/filters";
+import { useCollectionStore } from "@/store/collection";
 import { Genre } from "@/types/games";
 
 interface WithGenres {
@@ -14,7 +14,7 @@ interface WithUserData {
 export const useFilter = <G extends WithGenres & WithUserData>(games: G[]) => {
 	let output = [...games];
 
-	const store = useFilterStore();
+	const store = useCollectionStore();
 
 	output = output.filter((game) => {
 		if (game.genres.length === 0) {
@@ -23,7 +23,7 @@ export const useFilter = <G extends WithGenres & WithUserData>(games: G[]) => {
 
 		if (
 			store.genreFilter.every((filterGenre) =>
-				game.genres.some((gameGenre) => gameGenre.name === filterGenre),
+				game.genres.some((gameGenre) => gameGenre.name === filterGenre)
 			)
 		) {
 			return true;

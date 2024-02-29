@@ -2,7 +2,7 @@ import { SortOption } from "@/components";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-interface FilterStore {
+interface UserCollectionStore {
 	genreFilter: string[];
 	searchTerm: string;
 	sortOption: SortOption;
@@ -52,7 +52,7 @@ interface FilterStore {
 	handleToggleHideProgress: () => void;
 }
 
-export const useFilterStore = create<FilterStore>()(
+export const useCollectionStore = create<UserCollectionStore>()(
 	devtools((set) => ({
 		genreFilter: [],
 		searchTerm: "",

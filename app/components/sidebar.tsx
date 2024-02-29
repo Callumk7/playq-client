@@ -3,7 +3,7 @@ import { PlaylistWithCreator } from "@/types/playlists";
 import { UserWithActivityFeedEntry } from "@/types/users";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
-import { Button, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from ".";
+import { Button, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger, usePlaylistDialogOpen } from ".";
 import {
 	AddedGameToPlaylistActivity,
 	AddedToCollectionActivity,
@@ -13,7 +13,6 @@ import {
 interface SidebarProps {
 	userId: string;
 	playlists: PlaylistWithCreator[];
-	setDialogOpen: (open: boolean) => void;
 	hasSession: boolean;
 	activityFeed: UserWithActivityFeedEntry[];
 }
@@ -21,10 +20,10 @@ interface SidebarProps {
 export function Sidebar({
 	userId,
 	playlists,
-	setDialogOpen,
 	hasSession,
 	activityFeed,
 }: SidebarProps) {
+  const { setPlaylistDialogOpen } = usePlaylistDialogOpen();
 	return (
 		<div className="h-screen w-full border px-5 py-3">
 			<Tabs defaultValue="playlists">
@@ -39,7 +38,7 @@ export function Sidebar({
 				<TabsContent value="playlists">
 					<div className="mt-5 flex gap-5">
 						<Button
-							onClick={() => setDialogOpen(true)}
+							onClick={() => setPlaylistDialogOpen(true)}
 							variant={"outline"}
 							size={"sm"}
 							disabled={!hasSession}

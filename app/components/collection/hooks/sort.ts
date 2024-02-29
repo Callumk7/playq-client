@@ -1,4 +1,4 @@
-import { useFilterStore } from "@/store/filters";
+import { useCollectionStore } from "@/store/collection";
 
 export type SortOption =
 	| "nameAsc"
@@ -31,7 +31,7 @@ interface SortableGame {
 }
 
 export const useSort = <G extends SortableGame>(games: G[]) => {
-	const sortOption = useFilterStore((state) => state.sortOption);
+	const sortOption = useCollectionStore((state) => state.sortOption);
 	const sortedGames = applySorting(games, sortOption);
 
 	return {
@@ -41,20 +41,20 @@ export const useSort = <G extends SortableGame>(games: G[]) => {
 
 const applySorting = <G extends SortableGame>(
 	games: G[],
-	sortOption: SortOption,
+	sortOption: SortOption
 ): G[] => {
 	const pinnedGames = games.filter((game) => game.pinned);
 	const sortedGames = games.filter((game) => !game.pinned);
 	switch (sortOption) {
 		case "nameAsc":
 			sortedGames.sort((a, b) =>
-				a.title.toUpperCase().localeCompare(b.title.toUpperCase()),
+				a.title.toUpperCase().localeCompare(b.title.toUpperCase())
 			);
 			break;
 
 		case "nameDesc":
 			sortedGames.sort((a, b) =>
-				b.title.toUpperCase().localeCompare(a.title.toUpperCase()),
+				b.title.toUpperCase().localeCompare(a.title.toUpperCase())
 			);
 			break;
 
@@ -288,11 +288,15 @@ const applySorting = <G extends SortableGame>(
 		// TODO: date added is not working correctly.
 		// BUG: date added is not working correctly.
 		case "dateAddedAsc": {
-			sortedGames.sort((a, b) => b.dateAdded.getDate() - a.dateAdded.getDate());
+			sortedGames.sort(
+				(a, b) => b.dateAdded.getDate() - a.dateAdded.getDate()
+			);
 			break;
 		}
 		case "dateAddedDesc": {
-			sortedGames.sort((a, b) => a.dateAdded.getDate() - b.dateAdded.getDate());
+			sortedGames.sort(
+				(a, b) => a.dateAdded.getDate() - b.dateAdded.getDate()
+			);
 			break;
 		}
 		default:
