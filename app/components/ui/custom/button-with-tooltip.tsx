@@ -8,18 +8,18 @@ interface ButtonWithTooltipProps extends ButtonProps {
 export function ButtonWithTooltip({
 	children,
 	tooltip,
-  variant = "outline",
-  size = "icon",
-  ...props
+	variant = "outline",
+	size = "icon",
+	...props
 }: ButtonWithTooltipProps) {
-  return (
-    <Tooltip>
-      <TooltipTrigger>
-        <Button {...props} variant={variant} size={size}>
-          {children}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>{tooltip}</TooltipContent>
-    </Tooltip>
-  )
+	return (
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<Button {...props} variant={variant} size={size}>
+					{children}
+				</Button>
+			</TooltipTrigger>
+			<TooltipContent>{tooltip}</TooltipContent>
+		</Tooltip>
+	);
 }
