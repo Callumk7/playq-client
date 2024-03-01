@@ -89,3 +89,8 @@ export type PlaylistWithPinned = Playlist & {
 export type GamesOnPlaylistWithPlaylist = GamesOnPlaylist & {
 	playlist: Playlist;
 };
+
+export type PlaylistWithStuffAndCount = PlaylistWithGamesAndCreator & {
+	followerCount: number | undefined;
+	aggRating: string | null | undefined;
+};

@@ -15,6 +15,13 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { PlaylistCard } from "./components/playlist-card";
+import {
+	getHighestRatedPlaylists,
+	getPlaylistData,
+	getPlaylistWithDiscoveryData,
+	getPopularPlaylists,
+} from "./loader";
+import { PlaylistTableView } from "./components/table-view";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
@@ -26,18 +33,27 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		});
 	}
 
-	const discoverablePlaylists = await getDiscoverablePlaylists(session.user.id);
+	// Like with popular games, we need a function to get top playlists by followers
+	const popularPlaylistIds = await getPopularPlaylists(50);
+	const playlistIds = popularPlaylistIds.map((pl) => pl.playlistId);
 
-	return typedjson({ discoverablePlaylists, session });
+	const playlistData = await getPlaylistWithDiscoveryData(playlistIds);
+
+	const discoverablePlaylists = await getDiscoverablePlaylists(session.user.id, 10);
+	discoverablePlaylists.sort((a, b) => b.followers.length - a.followers.length);
+
+	return typedjson({ playlistData, session });
 };
 
 export default function ExplorePlaylists() {
-	const { discoverablePlaylists, session } = useTypedLoaderData<typeof loader>();
+	const { playlistData, session } = useTypedLoaderData<typeof loader>();
+	const [isTableView, setIsTableView] = useState<boolean>(true);
 
 	return (
 		<main className="flex flex-col gap-4">
 			<div className="flex gap-5">
 				<SortBox />
+				<LimitSelect />
 				<form>
 					<Label>
 						<span>Search</span>
@@ -45,17 +61,21 @@ export default function ExplorePlaylists() {
 					</Label>
 				</form>
 			</div>
-			<div className="grid gap-3">
-				{discoverablePlaylists.map((playlist) => (
-					<PlaylistCard
-						playlist={playlist}
-						userId={session.user.id}
-						key={playlist.id}
-						games={playlist.games.slice(0, 4).map((g) => g.game)}
-						creator={playlist.creator}
-					/>
-				))}
-			</div>
+			{isTableView ? (
+				<PlaylistTableView playlists={playlistData} />
+			) : (
+				<div className="grid gap-3">
+					{playlistData.map((playlist) => (
+						<PlaylistCard
+							playlist={playlist}
+							userId={session.user.id}
+							key={playlist.id}
+							games={playlist.games.slice(0, 4).map((g) => g.game)}
+							creator={playlist.creator}
+						/>
+					))}
+				</div>
+			)}
 		</main>
 	);
 }
@@ -78,6 +98,21 @@ function SortBox() {
 					<StarFilledIcon className="mr-3" />
 					<span>Rating</span>
 				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+}
+
+function LimitSelect() {
+	const [value, setValue] = useState(10);
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger>{value}</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				<DropdownMenuItem onClick={() => setValue(5)}>5</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => setValue(10)}>10</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => setValue(15)}>15</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => setValue(20)}>20</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
