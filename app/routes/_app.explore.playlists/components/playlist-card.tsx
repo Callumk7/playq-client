@@ -1,8 +1,8 @@
-import { DBImage } from "@/features/library/components/game-cover";
+import { DBImage } from "@/components";
+import { FollowPlaylistButton } from "@/features/playlists/components/follow-playlist-button";
 import { PlaylistGenres } from "@/routes/res.playlist-genres";
 import { PlaylistWithFollowers } from "@/types/playlists";
 import { Link } from "@remix-run/react";
-import { FollowPlaylistButton } from "./follow-playlist-button";
 
 interface PlaylistCardProps {
 	playlist: PlaylistWithFollowers;

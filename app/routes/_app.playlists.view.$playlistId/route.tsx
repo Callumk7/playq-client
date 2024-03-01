@@ -3,7 +3,7 @@ import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
 import { Game } from "@/types/games";
 import { NoteWithAuthor } from "@/types/notes";
-import { PlaylistWithGames } from "@/types/playlists";
+import { PlaylistWithGames, Tag } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { Session } from "@supabase/supabase-js";
@@ -19,6 +19,7 @@ import { PlaylistMenubar } from "./components/playlist-menubar";
 import { RenamePlaylistDialog } from "./components/rename-playlist-dialog";
 import {
 	getAggregatedPlaylistRating,
+	getAllTags,
 	getMinimumPlaylistData,
 	getPlaylistComments,
 	getPlaylistWithGamesAndFollowers,
@@ -47,6 +48,7 @@ interface Result {
 	session: Session;
 	playlistComments: NoteWithAuthor[];
 	aggregatedRating: { id: string; aggRating: number; count: number };
+	allTags: Tag[];
 }
 
 ///
@@ -81,6 +83,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		playlistId,
 	);
 	const aggregatedRatingPromise = getAggregatedPlaylistRating(playlistId);
+	const allTagsPromise = getAllTags();
 
 	const [
 		playlistWithGames,
@@ -88,12 +91,14 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		playlistComments,
 		userFollowAndRatingData,
 		aggregatedRating,
+		allTags,
 	] = await Promise.all([
 		playlistWithGamesPromise,
 		userCollectionPromise,
 		playlistCommentsPromise,
 		userFollowAndRatingDataPromise,
 		aggregatedRatingPromise,
+		allTagsPromise,
 	]);
 
 	const isCreator = playlistWithGames!.creatorId === session.user.id;
@@ -107,6 +112,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		playlistComments,
 		session,
 		aggregatedRating,
+		allTags,
 	});
 };
 
@@ -145,6 +151,7 @@ export default function PlaylistRoute() {
 		playlistComments,
 		userFollowAndRatingData,
 		aggregatedRating,
+		allTags,
 	} = result;
 	const userCollectionGameIds = userCollection.map((c) => c.gameId);
 
@@ -163,6 +170,7 @@ export default function PlaylistRoute() {
 							setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
 							isEditing={isEditing}
 							setIsEditing={setIsEditing}
+							tags={allTags}
 						/>
 					) : (
 						<GuestMenubar

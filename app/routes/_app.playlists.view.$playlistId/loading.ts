@@ -1,6 +1,6 @@
 import { db } from "db";
 import { notes } from "db/schema/notes";
-import { followers, playlists } from "db/schema/playlists";
+import { followers, playlists, tags } from "db/schema/playlists";
 import { and, avg, count, eq } from "drizzle-orm";
 
 export const getMinimumPlaylistData = async (playlistId: string) => {
@@ -88,4 +88,9 @@ export const getAggregatedPlaylistRating = async (playlistId: string) => {
 	}
 
 	return { id: playlistId, aggRating: 0, count: 0 };
+};
+
+export const getAllTags = async () => {
+	const allTags = await db.select().from(tags);
+	return allTags;
 };

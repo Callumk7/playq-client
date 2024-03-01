@@ -1,13 +1,15 @@
 import {
 	Button,
 	Card,
+	GenreTags,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
-    usePlaylistDialogOpen,
+	TagArray,
+	usePlaylistDialogOpen,
 } from "@/components";
 import { createServerClient, getSession } from "@/services";
 import { PlaylistWithPinned } from "@/types";
@@ -41,7 +43,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 ///
 export default function PlaylistView() {
 	const { allPlaylists, session } = useTypedLoaderData<typeof loader>();
-  const { setPlaylistDialogOpen } = usePlaylistDialogOpen();
+	const { setPlaylistDialogOpen } = usePlaylistDialogOpen();
 	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
 	const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] =
 		useState<boolean>(false);
@@ -51,7 +53,11 @@ export default function PlaylistView() {
 		<>
 			<main className="mt-10">
 				<div className="mt-5 flex gap-5">
-					<Button onClick={() => setPlaylistDialogOpen(true)} variant={"outline"} size={"sm"}>
+					<Button
+						onClick={() => setPlaylistDialogOpen(true)}
+						variant={"outline"}
+						size={"sm"}
+					>
 						<span className="mr-3">Create new</span>
 						<PlusIcon />
 					</Button>
@@ -64,6 +70,7 @@ export default function PlaylistView() {
 									<TableHead>Name</TableHead>
 									<TableHead>Creator</TableHead>
 									<TableHead>Games</TableHead>
+									<TableHead>Tags</TableHead>
 									<TableHead>Progress</TableHead>
 									<TableHead>Options</TableHead>
 								</TableRow>
@@ -76,6 +83,9 @@ export default function PlaylistView() {
 										</TableCell>
 										<TableCell>{playlist.creator.username}</TableCell>
 										<TableCell>{playlist.games.length}</TableCell>
+										<TableCell>
+											<TagArray tags={playlist.tags.map((tag) => tag.tag.name)} />
+										</TableCell>
 										<TableCell>
 											<PlaylistProgress
 												userId={session.user.id}

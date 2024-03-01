@@ -33,6 +33,18 @@ export function Tag({ children, className, variant, size }: TagProps) {
 	return <div className={cn(tagVariants({ variant, size, className }))}>{children}</div>;
 }
 
+export function TagArray({ tags }: { tags: string[] }) {
+	return (
+		<div className="flex flex-wrap gap-2 self-start">
+			{tags.map((tag) => (
+				<Tag variant={"default"} key={tag}>
+					{tag}
+				</Tag>
+			))}
+		</div>
+	);
+}
+
 export const TagToggle = forwardRef<
 	ElementRef<typeof TogglePrimitive.Root>,
 	ComponentPropsWithoutRef<typeof TogglePrimitive.Root> & VariantProps<typeof tagVariants>

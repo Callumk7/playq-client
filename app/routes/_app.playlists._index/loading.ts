@@ -1,4 +1,4 @@
-import { PlaylistWithGamesAndCreator } from "@/types";
+import { PlaylistWithGamesAndCreatorAndTags } from "@/types";
 import { db } from "db";
 import { followers, playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
@@ -9,6 +9,11 @@ export const getCreatedAndFollowedPlaylists = async (userId: string) => {
 		with: {
 			creator: true,
 			games: true,
+			tags: {
+				with: {
+					tag: true,
+				},
+			},
 		},
 	});
 
@@ -20,6 +25,11 @@ export const getCreatedAndFollowedPlaylists = async (userId: string) => {
 					with: {
 						creator: true,
 						games: true,
+						tags: {
+							with: {
+								tag: true,
+							},
+						},
 					},
 				},
 			},
@@ -50,7 +60,7 @@ export const getCreatedAndFollowedPlaylists = async (userId: string) => {
 
 const markPlaylistWithPinned = (
 	userId: string,
-	playlist: PlaylistWithGamesAndCreator,
+	playlist: PlaylistWithGamesAndCreatorAndTags,
 ) => {
 	const playlistWithPinned = { ...playlist, pinned: false };
 	if (userId === playlist.creatorId && playlist.creatorHasPinned) {

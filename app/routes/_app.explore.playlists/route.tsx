@@ -7,14 +7,14 @@ import {
 	Input,
 	Label,
 } from "@/components";
+import { getDiscoverablePlaylists } from "@/model";
 import { createServerClient, getSession } from "@/services";
-import { PlaylistCard } from "@/features/playlists/components/playlist-card";
-import { getDiscoverablePlaylists } from "@/features/playlists/lib/get-discoverable-playlists";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
-import { useState } from "react";
 import { cap } from "@/util/capitalise";
 import { ChevronDownIcon, PersonIcon, StarFilledIcon } from "@radix-ui/react-icons";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { useState } from "react";
+import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
+import { PlaylistCard } from "./components/playlist-card";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
