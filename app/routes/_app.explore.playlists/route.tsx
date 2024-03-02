@@ -3,12 +3,20 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components";
 import { PaginationAndLimit } from "@/components/explore/pagination";
 import { createServerClient, getSession } from "@/services";
 import { cap } from "@/util/capitalise";
-import { ChevronDownIcon, PersonIcon, StarFilledIcon } from "@radix-ui/react-icons";
+import {
+	CardStackIcon,
+	ChevronDownIcon,
+	PersonIcon,
+	StarFilledIcon,
+	TableIcon,
+} from "@radix-ui/react-icons";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
@@ -71,13 +79,19 @@ export default function ExplorePlaylists() {
 
 	return (
 		<main className="flex flex-col gap-4">
-			<PaginationAndLimit
-				limit={limit}
-				offset={offset}
-				setLimit={setLimit}
-				setOffset={setOffset}
-			/>
-			<SortBox sortOrder={sortOrder} setSortOrder={setSortOrder} />
+			<div className="flex justify-between">
+				<PaginationAndLimit
+					limit={limit}
+					offset={offset}
+					setLimit={setLimit}
+					setOffset={setOffset}
+				/>
+				<SortAndViewBox
+					sortOrder={sortOrder}
+					setSortOrder={setSortOrder}
+					setIsTableView={setIsTableView}
+				/>
+			</div>
 			{isTableView ? (
 				<PlaylistTableView playlists={sortedItems} />
 			) : (
@@ -103,19 +117,25 @@ export default function ExplorePlaylists() {
 	);
 }
 
-interface SortBoxProps {
+interface SortAndViewBoxProps {
 	sortOrder: "rating" | "follows";
 	setSortOrder: (sortOrder: "rating" | "follows") => void;
+	setIsTableView: (view: boolean) => void;
 }
-function SortBox({ sortOrder, setSortOrder }: SortBoxProps) {
+function SortAndViewBox({
+	sortOrder,
+	setSortOrder,
+	setIsTableView,
+}: SortAndViewBoxProps) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button className="w-28">
+				<Button className="w-28" variant={"outline"}>
 					<span className="mr-3">{cap(sortOrder)}</span> <ChevronDownIcon />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
+				<DropdownMenuLabel>Sort</DropdownMenuLabel>
 				<DropdownMenuItem onClick={() => setSortOrder("follows")}>
 					<PersonIcon className="mr-3" />
 					<span>Follows</span>
@@ -123,6 +143,16 @@ function SortBox({ sortOrder, setSortOrder }: SortBoxProps) {
 				<DropdownMenuItem onClick={() => setSortOrder("rating")}>
 					<StarFilledIcon className="mr-3" />
 					<span>Rating</span>
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
+				<DropdownMenuLabel>View</DropdownMenuLabel>
+				<DropdownMenuItem onClick={() => setIsTableView(true)}>
+					<TableIcon className="mr-3" />
+					<span>Table</span>
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => setIsTableView(false)}>
+					<CardStackIcon className="mr-3" />
+					<span>Card</span>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

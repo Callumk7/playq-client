@@ -6,7 +6,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components";
-import { Playlist, PlaylistWithStuffAndCount } from "@/types";
+import { PlaylistWithStuffAndCount } from "@/types";
+import { Link } from "@remix-run/react";
 
 interface PlaylistTableViewProps {
 	playlists: PlaylistWithStuffAndCount[];
@@ -22,16 +23,18 @@ export function PlaylistTableView({ playlists }: PlaylistTableViewProps) {
 					<TableHead>Followers</TableHead>
 					<TableHead>Games</TableHead>
 					<TableHead>Tags</TableHead>
+          <TableHead>Controls</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
 				{playlists.map((playlist) => (
 					<TableRow key={playlist.id}>
-						<TableCell>{playlist.name}</TableCell>
+						<TableCell><Link to={`/playlists/view/${playlist.id}`}>{playlist.name}</Link></TableCell>
 						<TableCell>{Math.floor(playlist.aggRating)}</TableCell>
 						<TableCell>{playlist.followerCount}</TableCell>
 						<TableCell>12</TableCell>
 						<TableCell>tags</TableCell>
+            <TableCell>controls</TableCell>
 					</TableRow>
 				))}
 			</TableBody>
