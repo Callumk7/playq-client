@@ -1,8 +1,11 @@
 import { db } from "db";
 import { followers, playlists } from "db/schema/playlists";
-import { and, avg, count, desc, eq, inArray, isNotNull } from "drizzle-orm";
+import { and, avg, count, countDistinct, desc, inArray, isNotNull } from "drizzle-orm";
 
-export const getPopularPlaylists = async (limit: number) => {
+// I think the aggregation here is causing the offset and limit to break. I can use this
+// as an opportunity to maybe cache the top 200-500 most popular playlists, and then use
+// those to create a cached list to interact with.
+export const getPopularPlaylists = async (limit: number, offset = 0) => {
 	const popularPlaylists = await db
 		.select({
 			playlistId: followers.playlistId,
@@ -11,7 +14,8 @@ export const getPopularPlaylists = async (limit: number) => {
 		.from(followers)
 		.groupBy(followers.playlistId)
 		.orderBy(desc(count(followers.playlistId)))
-		.limit(limit);
+		.limit(limit)
+		.offset(offset);
 
 	return popularPlaylists;
 };

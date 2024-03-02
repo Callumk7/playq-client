@@ -4,10 +4,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-	Input,
-	Label,
 } from "@/components";
-import { getDiscoverablePlaylists } from "@/model";
 import { createServerClient, getSession } from "@/services";
 import { cap } from "@/util/capitalise";
 import { ChevronDownIcon, PersonIcon, StarFilledIcon } from "@radix-ui/react-icons";
@@ -15,13 +12,10 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { PlaylistCard } from "./components/playlist-card";
-import {
-	getHighestRatedPlaylists,
-	getPlaylistData,
-	getPlaylistWithDiscoveryData,
-	getPopularPlaylists,
-} from "./loader";
+import { getPlaylistWithDiscoveryData, getPopularPlaylists } from "./loader";
 import { PlaylistTableView } from "./components/table-view";
+import { useFetcher } from "@remix-run/react";
+import { PaginationAndLimit } from "@/components/explore/pagination";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
@@ -33,34 +27,36 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		});
 	}
 
+	const url = new URL(request.url);
+	const searchParams = url.searchParams;
+	const offset = Number(searchParams.get("offset"));
+	let limit: number;
+	if (searchParams.get("limit")) {
+		limit = Number(searchParams.get("limit"));
+	} else {
+		limit = 50;
+	}
+
 	// Like with popular games, we need a function to get top playlists by followers
-	const popularPlaylistIds = await getPopularPlaylists(50);
+	const popularPlaylistIds = await getPopularPlaylists(limit, offset);
 	const playlistIds = popularPlaylistIds.map((pl) => pl.playlistId);
 
 	const playlistData = await getPlaylistWithDiscoveryData(playlistIds);
-
-	const discoverablePlaylists = await getDiscoverablePlaylists(session.user.id, 10);
-	discoverablePlaylists.sort((a, b) => b.followers.length - a.followers.length);
+	playlistData.sort((a, b) => b.followerCount - a.followerCount);
 
 	return typedjson({ playlistData, session });
 };
 
 export default function ExplorePlaylists() {
 	const { playlistData, session } = useTypedLoaderData<typeof loader>();
+
 	const [isTableView, setIsTableView] = useState<boolean>(true);
+
+	const searchFetcher = useFetcher<typeof loader>();
 
 	return (
 		<main className="flex flex-col gap-4">
-			<div className="flex gap-5">
-				<SortBox />
-				<LimitSelect />
-				<form>
-					<Label>
-						<span>Search</span>
-						<Input type="text" name="search" />
-					</Label>
-				</form>
-			</div>
+			<PaginationAndLimit />
 			{isTableView ? (
 				<PlaylistTableView playlists={playlistData} />
 			) : (
@@ -98,21 +94,6 @@ function SortBox() {
 					<StarFilledIcon className="mr-3" />
 					<span>Rating</span>
 				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
-}
-
-function LimitSelect() {
-	const [value, setValue] = useState(10);
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger>{value}</DropdownMenuTrigger>
-			<DropdownMenuContent>
-				<DropdownMenuItem onClick={() => setValue(5)}>5</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => setValue(10)}>10</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => setValue(15)}>15</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => setValue(20)}>20</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
