@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { boolean, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 import { usersToGames } from "./games";
-import { followers } from "./playlists";
+import { followers, playlists } from "./playlists";
 import { activity } from "./activity";
 import { notes } from "./notes";
 
@@ -26,6 +26,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 	friendsOf: many(friends, {
 		relationName: "user",
 	}),
+	playlists: many(playlists),
 	playlistFollows: many(followers),
 	activity: many(activity),
 	commentsMade: many(notes, {

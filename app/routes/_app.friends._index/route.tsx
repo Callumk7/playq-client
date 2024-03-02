@@ -23,7 +23,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const userFriends = await db.query.friends.findMany({
 		where: eq(friends.userId, session.user.id),
 		with: {
-			friend: true,
+			friend: {
+				with: {
+					games: true,
+					playlistFollows: true,
+					playlists: true,
+				},
+			},
 		},
 	});
 
@@ -39,9 +45,18 @@ export default function FriendsRoute() {
 				<Card key={f.friendId}>
 					<div className="flex justify-between">
 						<Link to={`/friends/${f.friendId}`}>{f.friend.username}</Link>
-						<Card>
-							<Button>Delete</Button>
-						</Card>
+						<div>
+							game count:
+							{f.friend.games.length}
+						</div>
+						<div>
+							playlist count:
+							{f.friend.playlists.length}
+						</div>
+						<div>
+							follows count:
+							{f.friend.playlistFollows.length}
+						</div>
 					</div>
 				</Card>
 			))}

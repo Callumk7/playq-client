@@ -10,8 +10,8 @@ import {
 	Button,
 	Slider,
 	Label,
+	FollowPlaylistButton,
 } from "@/components";
-import { FollowPlaylistButton } from "@/features/playlists/components/follow-playlist-button";
 import { MixerHorizontalIcon } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
 import { useState } from "react";
@@ -33,14 +33,6 @@ export function GuestMenubar({
 	const fetcher = useFetcher();
 	return (
 		<div className="flex items-center gap-4">
-			<Menubar>
-				<MenubarMenu>
-					<MenubarTrigger>Menu</MenubarTrigger>
-					<MenubarContent>
-						<MenubarItem>{userPlaylistRating ?? 0}</MenubarItem>
-					</MenubarContent>
-				</MenubarMenu>
-			</Menubar>
 			<Popover>
 				<PopoverTrigger asChild>
 					<Button variant={"outline"} size={"icon"}>
