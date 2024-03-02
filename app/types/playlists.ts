@@ -91,6 +91,6 @@ export type GamesOnPlaylistWithPlaylist = GamesOnPlaylist & {
 };
 
 export type PlaylistWithStuffAndCount = PlaylistWithGamesAndCreator & {
-	followerCount: number | undefined;
-	aggRating: string | null | undefined;
+	followerCount: number;
+	aggRating: number;
 };

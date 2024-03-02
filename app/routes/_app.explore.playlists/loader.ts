@@ -1,3 +1,4 @@
+import { Providers } from "@/components/providers";
 import { db } from "db";
 import { followers, playlists } from "db/schema/playlists";
 import { and, avg, count, countDistinct, desc, inArray, isNotNull } from "drizzle-orm";
@@ -97,12 +98,34 @@ export const getPlaylistWithDiscoveryData = async (playlistIds: string[]) => {
 	]);
 
 	const aggregatedPlaylists = playlistData.map((pl) => {
+		let aggRating = ratingData.find((p) => p.playlistId === pl.id)?.avgRating;
+		let followerCount = followerData.find((p) => p.playlistId === pl.id)?.count;
+		if (!aggRating) {
+			aggRating = "0";
+		}
+		if (!followerCount) {
+			followerCount = 0;
+		}
 		return {
 			...pl,
-			followerCount: followerData.find((p) => p.playlistId === pl.id)?.count,
-			aggRating: ratingData.find((p) => p.playlistId === pl.id)?.avgRating,
+			followerCount: followerCount,
+			aggRating: Number(aggRating),
 		};
 	});
 
 	return aggregatedPlaylists;
+};
+
+export const sortByFollowers = (playlists: { followerCount: number | undefined }[]) => {
+	playlists.sort((a, b) => {
+		let aCount = 0;
+		let bCount = 0;
+		if (a.followerCount) {
+			aCount = a.followerCount;
+		}
+		if (b.followerCount) {
+			bCount = b.followerCount;
+		}
+		return bCount - aCount;
+	});
 };

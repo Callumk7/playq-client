@@ -28,7 +28,7 @@ export function PlaylistTableView({ playlists }: PlaylistTableViewProps) {
 				{playlists.map((playlist) => (
 					<TableRow key={playlist.id}>
 						<TableCell>{playlist.name}</TableCell>
-						<TableCell>{Math.floor(Number(playlist.aggRating))}</TableCell>
+						<TableCell>{Math.floor(playlist.aggRating)}</TableCell>
 						<TableCell>{playlist.followerCount}</TableCell>
 						<TableCell>12</TableCell>
 						<TableCell>tags</TableCell>

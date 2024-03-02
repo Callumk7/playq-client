@@ -1,11 +1,11 @@
 import { DBImage } from "@/components";
 import { FollowPlaylistButton } from "@/features/playlists/components/follow-playlist-button";
 import { PlaylistGenres } from "@/routes/res.playlist-genres";
-import { PlaylistWithFollowers } from "@/types/playlists";
+import { PlaylistWithFollowers, PlaylistWithStuffAndCount } from "@/types/playlists";
 import { Link } from "@remix-run/react";
 
 interface PlaylistCardProps {
-	playlist: PlaylistWithFollowers;
+	playlist: PlaylistWithStuffAndCount;
 	games: {
 		id: string;
 		gameId: number;
@@ -20,8 +20,7 @@ interface PlaylistCardProps {
 	userId: string;
 }
 
-export function PlaylistCard({ playlist, userId, games, creator }: PlaylistCardProps) {
-	const isFollowedByUser = playlist.followers.some((f) => f.userId === userId);
+export function PlaylistCard({ playlist, games, creator }: PlaylistCardProps) {
 	return (
 		<Link
 			to={`/playlists/view/${playlist.id}`}
@@ -31,13 +30,6 @@ export function PlaylistCard({ playlist, userId, games, creator }: PlaylistCardP
 				<h1 className="text-2xl font-semibold">{playlist.name}</h1>
 				<p className="overflow-clip text-sm text-primary">{creator.username}</p>
 				<PlaylistGenres gameIds={games.map((game) => game.gameId)} />
-				<div className="absolute bottom-4 right-4">
-					<FollowPlaylistButton
-						isFollowedByUser={isFollowedByUser}
-						userId={userId}
-						playlistId={playlist.id}
-					/>
-				</div>
 			</div>
 			<div className="grid h-fit w-1/2 grid-cols-4 overflow-hidden rounded-lg">
 				{games.map((game) => (

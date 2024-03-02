@@ -10,10 +10,19 @@ import {
 import { useState } from "react";
 import { useSearchParams } from "@remix-run/react";
 
-export function PaginationAndLimit() {
+interface PaginationAndLimitProps {
+	limit: string;
+	offset: number;
+	setLimit: (limit: string) => void;
+	setOffset: (offset: number) => void;
+}
+export function PaginationAndLimit({
+	limit,
+	offset,
+	setLimit,
+	setOffset,
+}: PaginationAndLimitProps) {
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [limit, setLimit] = useState("50");
-	const [offset, setOffset] = useState(0);
 
 	const handleValueChange = (v: string) => {
 		const params = new URLSearchParams();

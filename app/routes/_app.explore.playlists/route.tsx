@@ -5,6 +5,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components";
+import { PaginationAndLimit } from "@/components/explore/pagination";
 import { createServerClient, getSession } from "@/services";
 import { cap } from "@/util/capitalise";
 import { ChevronDownIcon, PersonIcon, StarFilledIcon } from "@radix-ui/react-icons";
@@ -12,11 +13,17 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { PlaylistCard } from "./components/playlist-card";
-import { getPlaylistWithDiscoveryData, getPopularPlaylists } from "./loader";
 import { PlaylistTableView } from "./components/table-view";
-import { useFetcher } from "@remix-run/react";
-import { PaginationAndLimit } from "@/components/explore/pagination";
+import {
+	getPlaylistWithDiscoveryData,
+	getPopularPlaylists,
+	sortByFollowers,
+} from "./loader";
+import { applySorting } from "./util";
 
+///
+/// LOADER
+///
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);
 	const session = await getSession(supabase);
@@ -27,6 +34,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		});
 	}
 
+	// Parse the URL searchParams
 	const url = new URL(request.url);
 	const searchParams = url.searchParams;
 	const offset = Number(searchParams.get("offset"));
@@ -42,26 +50,39 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const playlistIds = popularPlaylistIds.map((pl) => pl.playlistId);
 
 	const playlistData = await getPlaylistWithDiscoveryData(playlistIds);
-	playlistData.sort((a, b) => b.followerCount - a.followerCount);
+	sortByFollowers(playlistData);
 
 	return typedjson({ playlistData, session });
 };
 
+///
+/// ROUTE
+///
 export default function ExplorePlaylists() {
 	const { playlistData, session } = useTypedLoaderData<typeof loader>();
 
+	const [limit, setLimit] = useState("50");
+	const [offset, setOffset] = useState(0);
+
 	const [isTableView, setIsTableView] = useState<boolean>(true);
 
-	const searchFetcher = useFetcher<typeof loader>();
+	const [sortOrder, setSortOrder] = useState<"rating" | "follows">("follows");
+	const sortedItems = applySorting(playlistData, sortOrder);
 
 	return (
 		<main className="flex flex-col gap-4">
-			<PaginationAndLimit />
+			<PaginationAndLimit
+				limit={limit}
+				offset={offset}
+				setLimit={setLimit}
+				setOffset={setOffset}
+			/>
+			<SortBox sortOrder={sortOrder} setSortOrder={setSortOrder} />
 			{isTableView ? (
-				<PlaylistTableView playlists={playlistData} />
+				<PlaylistTableView playlists={sortedItems} />
 			) : (
 				<div className="grid gap-3">
-					{playlistData.map((playlist) => (
+					{sortedItems.map((playlist) => (
 						<PlaylistCard
 							playlist={playlist}
 							userId={session.user.id}
@@ -72,12 +93,21 @@ export default function ExplorePlaylists() {
 					))}
 				</div>
 			)}
+			<PaginationAndLimit
+				limit={limit}
+				offset={offset}
+				setLimit={setLimit}
+				setOffset={setOffset}
+			/>
 		</main>
 	);
 }
 
-function SortBox() {
-	const [sortOrder, setSortOrder] = useState<"rating" | "follows">("rating");
+interface SortBoxProps {
+	sortOrder: "rating" | "follows";
+	setSortOrder: (sortOrder: "rating" | "follows") => void;
+}
+function SortBox({ sortOrder, setSortOrder }: SortBoxProps) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
