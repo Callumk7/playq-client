@@ -1,7 +1,8 @@
 import { UserWithActivity, UserWithActivityFeedEntry } from "@/types";
 import { db } from "db";
+import { activity } from "db/schema/activity";
 import { friends } from "db/schema/users";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 export const getFriendActivity = async (userId: string) => {
 	const userFriendsWithActivity = await db.query.friends
@@ -17,6 +18,8 @@ export const getFriendActivity = async (userId: string) => {
 								note: true,
 								user: true,
 							},
+							orderBy: desc(activity.timestamp),
+							limit: 15,
 						},
 					},
 				},
@@ -41,6 +44,10 @@ export const transformActivity = (
 		friend.activity.map((activity) => {
 			return { ...friend, activity };
 		}),
+	);
+
+	activityFeed.sort(
+		(a, b) => b.activity.timestamp.valueOf() - a.activity.timestamp.valueOf(),
 	);
 
 	return activityFeed;
