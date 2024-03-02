@@ -93,7 +93,7 @@ export default function ExplorePlaylists() {
 				/>
 			</div>
 			{isTableView ? (
-				<PlaylistTableView playlists={sortedItems} />
+				<PlaylistTableView userId={session.user.id} playlists={sortedItems} />
 			) : (
 				<div className="grid gap-3">
 					{sortedItems.map((playlist) => (

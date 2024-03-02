@@ -4,6 +4,7 @@ import { devtools } from "zustand/middleware";
 interface UserCacheStore {
 	userCollection: number[];
 	userPlaylists: string[];
+	followedPlaylists: string[];
 	userFriends: string[];
 	setUserCollection: (userCollection: number[]) => void;
 	appendToUserCollection: (gameId: number) => void;
@@ -14,6 +15,9 @@ interface UserCacheStore {
 	setUserPlaylists: (userPlaylists: string[]) => void;
 	appendToUserPlaylists: (playlistId: string) => void;
 	removeFromUserPlaylists: (playlistId: string) => void;
+	setFollwedPlaylists: (followedPlaylists: string[]) => void;
+	appendToFollowedPlaylists: (playlistId: string) => void;
+	removeFromFollowedPlaylists: (playlistId: string) => void;
 }
 
 export const useUserCacheStore = create<UserCacheStore>()(
@@ -21,10 +25,8 @@ export const useUserCacheStore = create<UserCacheStore>()(
 		userCollection: [],
 		userFriends: [],
 		userPlaylists: [],
-		setUserCollection: (userCollection) => {
-			console.log("setting user collection");
-			return set({ userCollection });
-		},
+		followedPlaylists: [],
+		setUserCollection: (userCollection) => set({ userCollection }),
 		appendToUserCollection: (gameId) =>
 			set((state) => ({ userCollection: [...state.userCollection, gameId] })),
 		removeFromUserCollection: (gameId) =>
@@ -38,15 +40,23 @@ export const useUserCacheStore = create<UserCacheStore>()(
 			set((state) => ({
 				userFriends: [...state.userFriends].filter((id) => id !== friendId),
 			})),
-		setUserPlaylists: (userPlaylists) => {
-			console.log("setting user playlists");
-			return set({ userPlaylists });
-		},
+		setUserPlaylists: (userPlaylists) => set({ userPlaylists }),
 		appendToUserPlaylists: (playlistid) =>
 			set((state) => ({ userPlaylists: [...state.userPlaylists, playlistid] })),
 		removeFromUserPlaylists: (playlistid) =>
 			set((state) => ({
 				userPlaylists: [...state.userPlaylists].filter((id) => id !== playlistid),
+			})),
+		setFollwedPlaylists: (followedPlaylists) => set({ followedPlaylists }),
+		appendToFollowedPlaylists: (playlistid) =>
+			set((state) => ({
+				followedPlaylists: [...state.followedPlaylists, playlistid],
+			})),
+		removeFromFollowedPlaylists: (playlistid) =>
+			set((state) => ({
+				followedPlaylists: [...state.followedPlaylists].filter(
+					(id) => id !== playlistid,
+				),
 			})),
 	})),
 );

@@ -1,9 +1,4 @@
 import {
-	Menubar,
-	MenubarMenu,
-	MenubarTrigger,
-	MenubarContent,
-	MenubarItem,
 	Popover,
 	PopoverTrigger,
 	PopoverContent,
@@ -41,22 +36,23 @@ export function GuestMenubar({
 				</PopoverTrigger>
 				<PopoverContent>
 					<div className="grid gap-4">
-						<div className="space-y-2">
-							<h4 className="font-medium leading-none">Rate Playlist</h4>
-							<p className="text-sm text-muted-foreground">How good is this list?</p>
-						</div>
+						<h4 className="font-medium leading-none">Rate Playlist</h4>
 						<fetcher.Form action={`/api/playlists/${playlistId}/ratings`} method="POST">
-							<Label htmlFor="rating">Rating: {rating}</Label>
-							<Slider
-								value={[rating]}
-								onValueChange={(v) => setRating(v[0])}
-								name="rating"
-								id="rating"
-							/>
-							<input type="hidden" value={userId} name="user_id" />
-							<Button variant={"outline"} size={"sm"} type="submit">
-								Submit
-							</Button>
+							<div className="flex flex-col gap-4">
+								<div className="flex flex-col gap-2">
+									<Label htmlFor="rating">Rating: {rating}</Label>
+									<Slider
+										value={[rating]}
+										onValueChange={(v) => setRating(v[0])}
+										name="rating"
+										id="rating"
+									/>
+								</div>
+								<input type="hidden" value={userId} name="user_id" />
+								<Button variant={"outline"} size={"sm"} type="submit">
+									Submit
+								</Button>
+							</div>
 						</fetcher.Form>
 					</div>
 				</PopoverContent>
