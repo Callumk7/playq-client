@@ -8,7 +8,7 @@ import {
 } from "db/schema/playlists";
 import { createSelectSchema, createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-import { Game, GameWithCover } from "./games";
+import { Game, GameWithCover, UsersToGames } from "./games";
 import { User } from ".";
 
 export const playlistsSelectSchema = createSelectSchema(playlists);
@@ -93,4 +93,10 @@ export type GamesOnPlaylistWithPlaylist = GamesOnPlaylist & {
 export type PlaylistWithStuffAndCount = PlaylistWithGamesAndCreator & {
 	followerCount: number;
 	aggRating: number;
+};
+
+export type PlaylistWithGamesTagsFollows = Playlist & {
+	games: GamesOnPlaylist[];
+	tags: TagToPlaylist[];
+	followers: Follower[];
 };

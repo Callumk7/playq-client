@@ -1,7 +1,6 @@
 import {
 	Button,
 	Card,
-	GenreTags,
 	Table,
 	TableBody,
 	TableCell,
