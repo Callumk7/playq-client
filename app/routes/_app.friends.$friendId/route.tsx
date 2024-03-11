@@ -36,7 +36,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const friendId = params.friendId!;
 
 	// friend's playlists
-	const friendCollectionPromise = getFriendsCollection(friendId);
+	const friendCollectionPromise = getFriendsCollection(friendId, 12);
 	const friendsPlaylistsPromise = getFriendsPlaylists(friendId);
 	const friendProfilePromise = db.query.users.findFirst({
 		where: eq(users.id, friendId),
@@ -85,7 +85,7 @@ export default function FriendsRoute() {
 							<CardTitle>Top Rated Games</CardTitle>
 						</CardHeader>
 						<CardContent>
-							<div className="grid grid-cols-2 gap-2">
+							<div className="grid grid-cols-3 gap-2">
 								{friendCollection.map((game) => (
 									<GameCover
 										key={game.gameId}

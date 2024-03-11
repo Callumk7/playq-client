@@ -8,7 +8,7 @@ import { getUserCollectionGameIds } from "@/model";
 import { useExploreStore } from "@/store/explore";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { games, genres } from "db/schema/games";
-import { ilike, inArray, gt } from "drizzle-orm";
+import { ilike, inArray, gt, arrayContains, eq } from "drizzle-orm";
 import { redirect, typedjson } from "remix-typedjson";
 import { getSearchResultsFromDb } from "./loader";
 
@@ -37,7 +37,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const conditions = [gt(games.externalFollows, follows), gt(games.rating, rating)];
 	// conditional conditions
 	if (search) conditions.push(ilike(games.title, `%${search}%`));
-	if (genreSearch.length > 0) conditions.push(inArray(genres.name, genreSearch));
+	if (genreSearch.length > 0) {
+		for (const genre of genreSearch) {
+			conditions.push(eq(genres.name, genre));
+		}
+	}
 
 	const searchResults = await getSearchResultsFromDb(conditions);
 	// this mutates the shape of the result
@@ -84,6 +88,9 @@ export default function ExploreRoute() {
 							<Slider name="follows" defaultValue={[5]} />
 						</>
 					)}
+					{store.genreFilter.map((genre) => (
+						<input key={genre} type="hidden" name="genres" value={genre} />
+					))}
 				</fetcher.Form>
 				<LibraryView>
 					{data.resultsMarkedAsSaved.map((result) => (
