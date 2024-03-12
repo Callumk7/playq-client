@@ -1,4 +1,4 @@
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { forwardRef } from "react";

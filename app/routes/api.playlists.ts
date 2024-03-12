@@ -1,7 +1,7 @@
 import { WORKER_URL } from "@/constants";
 import { activityManager } from "@/services/events/events.server";
 import { InsertActivity } from "@/types/activity";
-import { uuidv4 } from "@/util/generate-uuid";
+import { uuidv4 } from "callum-util";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { playlists } from "db/schema/playlists";

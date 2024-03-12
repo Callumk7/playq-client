@@ -1,4 +1,4 @@
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { forwardRef } from "react";
 

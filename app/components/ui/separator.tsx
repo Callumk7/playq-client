@@ -1,4 +1,4 @@
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import { forwardRef } from "react";
 

@@ -1,4 +1,4 @@
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { forwardRef } from "react";
 

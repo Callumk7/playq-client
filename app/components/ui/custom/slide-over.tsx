@@ -1,7 +1,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ComponentPropsWithoutRef, ElementRef, HTMLAttributes, forwardRef } from "react";
-import { cn } from "@/util/cn";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import { cn } from "callum-util";
 
 const SlideOver = DialogPrimitive.Root;
 const SlideOverPortal = DialogPrimitive.Portal;

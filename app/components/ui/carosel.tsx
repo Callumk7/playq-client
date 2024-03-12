@@ -1,4 +1,4 @@
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
 import {
 	ComponentProps,

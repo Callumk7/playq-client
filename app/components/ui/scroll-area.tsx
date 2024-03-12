@@ -1,4 +1,4 @@
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 import { forwardRef } from "react";
 

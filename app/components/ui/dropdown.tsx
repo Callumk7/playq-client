@@ -1,4 +1,4 @@
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import {
 	CaretRightIcon,
