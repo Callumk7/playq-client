@@ -1,5 +1,5 @@
 import { IGDBImage } from "@/types/igdb";
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 import { Link } from "@remix-run/react";
 import { HTMLAttributes } from "react";
 

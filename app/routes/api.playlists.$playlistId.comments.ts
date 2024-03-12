@@ -1,5 +1,5 @@
 import { activityManager } from "@/services/events/events.server";
-import { uuidv4 } from "@/util/generate-uuid";
+import { uuidv4 } from "callum-util";
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { notes } from "db/schema/notes";

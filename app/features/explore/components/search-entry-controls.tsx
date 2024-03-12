@@ -1,5 +1,5 @@
 import { RemoveFromCollectionButton, SaveToCollectionButton } from "@/components";
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 
 interface SearchEntryControlsProps {
 	gameId: number;

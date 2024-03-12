@@ -1,6 +1,13 @@
 import { getCompleteGame } from "@/model/games";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { Button, Comment, DBImage, GenreTags, Separator } from "@/components";
+import {
+	Button,
+	Comment,
+	DBImage,
+	GenreTags,
+	SaveToCollectionButton,
+	Separator,
+} from "@/components";
 import { GameViewMenubar } from "./components/game-view-menubar";
 import { createServerClient, getSession } from "@/services";
 import { getUserPlaylists } from "@/features/playlists";
@@ -8,6 +15,9 @@ import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
 import { useState } from "react";
 import { GameCommentForm } from "./components/game-comment-form";
 import { getGameComments } from "./loading";
+import { db } from "db";
+import { usersToGames } from "db/schema/games";
+import { and, eq } from "drizzle-orm";
 
 ///
 /// LOADER
@@ -23,20 +33,28 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 	const gameId = Number(params.gameId);
 
-	// TODO: make these parallel
-	const game = await getCompleteGame(gameId);
-	const gameComments = await getGameComments(gameId);
-	const userPlaylists = await getUserPlaylists(session.user.id);
+	const gamePromise = getCompleteGame(gameId);
+	const gameCommentsPromise = getGameComments(gameId);
+	const userPlaylistsPromise = getUserPlaylists(session.user.id);
+	const collectionDetails = await db.query.usersToGames.findFirst({
+		where: and(eq(usersToGames.userId, session.user.id), eq(usersToGames.gameId, gameId)),
+	});
+
+	const [game, gameComments, userPlaylists] = await Promise.all([
+		gamePromise,
+		gameCommentsPromise,
+		userPlaylistsPromise,
+	]);
 
 	if (!game) {
 		return redirect("/");
 	}
 
-	return typedjson({ game, userPlaylists, gameComments, session });
+	return typedjson({ game, userPlaylists, gameComments, session, collectionDetails });
 };
 
 export default function GamesRoute() {
-	const { game, userPlaylists, gameComments, session } =
+	const { game, userPlaylists, gameComments, session, collectionDetails } =
 		useTypedLoaderData<typeof loader>();
 	const [isCommenting, setIsCommenting] = useState<boolean>(false);
 
@@ -53,7 +71,16 @@ export default function GamesRoute() {
 				<h1 className="pt-4 text-6xl font-semibold">{game.title}</h1>
 				<GenreTags genres={game.genres.map((g) => g.genre.name)} />
 				<div className="mt-7">
-					<GameViewMenubar gameId={game.gameId} userPlaylists={userPlaylists} />
+					{collectionDetails ? (
+						<GameViewMenubar
+							gameId={game.gameId}
+							userPlaylists={userPlaylists}
+							collectionDetails={collectionDetails}
+							userId={session.user.id}
+						/>
+					) : (
+						<SaveToCollectionButton gameId={game.gameId} userId={session.user.id} />
+					)}
 				</div>
 				<Separator />
 				<div className="flex gap-5 items-center">

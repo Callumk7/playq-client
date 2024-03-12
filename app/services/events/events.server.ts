@@ -1,4 +1,4 @@
-import { uuidv4 } from "@/util/generate-uuid";
+import { uuidv4 } from "callum-util";
 import { db } from "db";
 import { activity } from "db/schema/activity";
 import { EventEmitter } from "node:events";

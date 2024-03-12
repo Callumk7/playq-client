@@ -27,7 +27,7 @@ import {
 } from "@/features/home/queries/popular-games";
 import { getUserCollectionGameIds } from "@/model";
 import { createServerClient, getSession } from "@/services";
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 import {
 	CheckIcon,
 	ChevronDownIcon,

@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import * as ProgressPrimitive from "@radix-ui/react-progress";
-import { cn } from "@/util/cn";
+import { cn } from "callum-util";
 
 const Progress = forwardRef<
 	React.ElementRef<typeof ProgressPrimitive.Root>,

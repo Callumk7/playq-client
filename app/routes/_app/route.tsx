@@ -122,7 +122,7 @@ export default function AppLayout() {
 					}`}
 				>
 					<Sidebar
-						userId={session!.user.id}
+						userId={session.user.id}
 						playlists={userPlaylists}
 						hasSession={session ? true : false}
 						activityFeed={activityFeed}

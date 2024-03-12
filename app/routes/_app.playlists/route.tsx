@@ -1,5 +1,5 @@
 import { Outlet } from "@remix-run/react";
-import { uuidv4 } from "@/util/generate-uuid";
+import { uuidv4 } from "callum-util";
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { db } from "db";
 import { playlists } from "db/schema/playlists";

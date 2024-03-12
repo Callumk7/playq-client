@@ -27,8 +27,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function FriendsRoute() {
 	return (
-		<Container className="flex flex-col gap-5">
-			<Outlet />
-		</Container>
+    <div>
+      <Outlet />
+    </div>
 	);
 }

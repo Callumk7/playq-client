@@ -9,7 +9,7 @@ import {
 } from "@/components";
 import { PaginationAndLimit } from "@/components/explore/pagination";
 import { createServerClient, getSession } from "@/services";
-import { cap } from "@/util/capitalise";
+import { cap } from "callum-util";
 import {
 	CardStackIcon,
 	ChevronDownIcon,
