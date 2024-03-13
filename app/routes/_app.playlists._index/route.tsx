@@ -1,6 +1,8 @@
 import {
 	Button,
 	Card,
+	DeletePlaylistDialog,
+	RenamePlaylistDialog,
 	Table,
 	TableBody,
 	TableCell,
@@ -17,8 +19,6 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
-import { DeletePlaylistDialog } from "../_app.playlists.view.$playlistId/components/delete-playlist-dialog";
-import { RenamePlaylistDialog } from "../_app.playlists.view.$playlistId/components/rename-playlist-dialog";
 import { PlaylistProgress } from "../res.playlist-sidebar.$userId";
 import { getCreatedAndFollowedPlaylists } from "./loading";
 

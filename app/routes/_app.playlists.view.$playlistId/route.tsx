@@ -1,4 +1,4 @@
-import { Button, GameCover, LibraryView, Separator, Comment } from "@/components";
+import { Button, Comment, DeletePlaylistDialog, GameCover, LibraryView, RenamePlaylistDialog, Separator } from "@/components";
 import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
 import { Game } from "@/types/games";
@@ -12,11 +12,11 @@ import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { z } from "zod";
 import { zx } from "zodix";
 import { StatsSidebar } from "../res.playlist-sidebar.$userId";
-import { DeletePlaylistDialog } from "./components/delete-playlist-dialog";
+import { FollowerSidebar } from "./components/followers-sidebar";
+import { GuestMenubar } from "./components/guest-menubar";
 import { PlaylistCommentForm } from "./components/pl-comment-form";
-import { PlaylistEntryControls } from "./components/playlist-entry-controls.tsx";
+import { PlaylistEntryControls } from "./components/playlist-entry-controls";
 import { PlaylistMenubar } from "./components/playlist-menubar";
-import { RenamePlaylistDialog } from "./components/rename-playlist-dialog";
 import {
 	getAggregatedPlaylistRating,
 	getAllTags,
@@ -25,8 +25,6 @@ import {
 	getPlaylistWithGamesAndFollowers,
 	getUserFollowAndRatingData,
 } from "./loading";
-import { GuestMenubar } from "./components/guest-menubar";
-import { FollowerSidebar } from "./components/followers-sidebar";
 
 // Type guard types. We can block users by returning "blocked" from the loader.
 // As such, if we want type safety, we need to define the types first and narrow.
