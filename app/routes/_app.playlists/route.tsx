@@ -1,48 +1,19 @@
 import { Outlet } from "@remix-run/react";
-import { uuidv4 } from "callum-util";
-import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
-import { db } from "db";
-import { playlists } from "db/schema/playlists";
-import { z } from "zod";
-import { zx } from "zodix";
-import { activityManager } from "@/services/events/events.server";
+import { ActionFunctionArgs } from "@remix-run/node";
+import { authenticate } from "@/services";
+import { methodHandler } from "@/util/method-handling";
+import { postRequestHandler } from "./method-handlers";
 
 // Route handler for the CREATION OF PLAYLISTS
 export const action = async ({ request }: ActionFunctionArgs) => {
-	// Safety net
-	if (request.method !== "POST") {
-		return json("Method not allowed", { status: 405 });
-	}
+	await authenticate(request);
 
-	if (request.method === "POST") {
-		const result = await zx.parseFormSafe(request, {
-			playlistName: z.string(),
-			userId: z.string(),
-			isPrivate: z.string().optional(),
-		});
-
-		if (!result.success) {
-			return json({ error: result.error }, { status: 400 });
-		}
-
-		const { playlistName, userId, isPrivate } = result.data;
-		const isPrivateBool = isPrivate === "on" ? true : false;
-		const newId = `pl_${uuidv4()}`;
-
-		const createdPlaylist = await db
-			.insert(playlists)
-			.values({
-				id: newId,
-				name: playlistName,
-				creatorId: userId,
-				isPrivate: isPrivateBool,
-			})
-			.returning();
-
-		activityManager.createPlaylist(userId, newId);
-
-		return redirect(`/playlists/view/${createdPlaylist[0].id}`);
-	}
+	return await methodHandler(request, [
+		{
+			method: "POST",
+			function: postRequestHandler,
+		},
+	]);
 };
 
 export default function PlaylistsRoute() {

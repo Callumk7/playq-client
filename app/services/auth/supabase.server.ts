@@ -1,9 +1,11 @@
+import { json, redirect } from "@remix-run/node";
 import {
 	createServerClient as _createServerClient,
 	parse,
 	serialize,
 } from "@supabase/ssr";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
 
 export function createServerClient(request: Request) {
 	const cookies = parse(request.headers.get("Cookie") ?? "");
@@ -35,4 +37,15 @@ export async function getSession(supabase: SupabaseClient) {
 		data: { session },
 	} = await supabase.auth.getSession();
 	return session;
+}
+
+export async function authenticate(request: Request) {
+	const { supabase } = createServerClient(request);
+	const session = await getSession(supabase);
+	if (!session) {
+		throw json(ReasonPhrases.UNAUTHORIZED, {
+			status: StatusCodes.UNAUTHORIZED,
+			statusText: ReasonPhrases.UNAUTHORIZED,
+		});
+	}
 }
