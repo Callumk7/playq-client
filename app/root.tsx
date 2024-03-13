@@ -78,7 +78,11 @@ export function ErrorBoundary() {
 				<Links />
 			</head>
 			<body>
-				<h1>SOMETHING HAS GONE TERRIBLY WRONG</h1>
+				<div className="w-4.5 mx-auto mt-24 text-center">
+					<h1 className="font-bold text-red-400 bg-background text-3xl">
+						SOMETHING HAS GONE TERRIBLY WRONG
+					</h1>
+				</div>
 				<Scripts />
 			</body>
 		</html>

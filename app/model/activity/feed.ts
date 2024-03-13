@@ -37,6 +37,11 @@ export const getFriendActivity = async (userId: string) => {
 	return userFriendsWithActivity;
 };
 
+/**
+ * This function takes the activity entries retrieved from the server and flattens
+ * the response into a single array of UserWithActivity, which is an object
+ * containing all of a user's data, and an activity property
+ */
 export const transformActivity = (
 	friendsWithActivity: UserWithActivity[],
 ): UserWithActivityFeedEntry[] => {

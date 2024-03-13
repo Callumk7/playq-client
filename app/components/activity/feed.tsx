@@ -166,7 +166,10 @@ interface UsernameLinkProps {
 }
 export function UsernameLink({ user }: UsernameLinkProps) {
 	return (
-		<Link to={`/friends/${user.id}`} className="text-primary font-semibold hover:underline">
+		<Link
+			to={`/friends/${user.id}`}
+			className="text-primary font-semibold hover:underline"
+		>
 			{user.username}
 		</Link>
 	);
