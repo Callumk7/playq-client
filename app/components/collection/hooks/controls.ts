@@ -20,7 +20,7 @@ export const useCollectionControls = (
 			},
 			{
 				method: "delete",
-				action: "/api/collections",
+				action: "/collection",
 			},
 		);
 	};

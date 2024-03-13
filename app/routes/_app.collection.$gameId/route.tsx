@@ -1,5 +1,5 @@
 import { getCompleteGame } from "@/model/games";
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
 	Button,
 	Comment,
@@ -9,7 +9,7 @@ import {
 	Separator,
 } from "@/components";
 import { GameViewMenubar } from "./components/game-view-menubar";
-import { createServerClient, getSession } from "@/services";
+import { authenticate, createServerClient, getSession } from "@/services";
 import { getUserPlaylists } from "@/features/playlists";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
 import { useState } from "react";
@@ -18,6 +18,11 @@ import { getGameComments } from "./loading";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { and, eq } from "drizzle-orm";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { methodHandler } from "@/util/method-handling";
+import { zx } from "zodix";
+import { z } from "zod";
+import { postRequestHandler, putRequestHandler } from "./method-handlers";
 
 ///
 /// LOADER
@@ -51,6 +56,29 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	}
 
 	return typedjson({ game, userPlaylists, gameComments, session, collectionDetails });
+};
+
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+	try {
+		await authenticate(request);
+	} catch (err) {
+		return new Response(ReasonPhrases.UNAUTHORIZED, {
+			status: StatusCodes.UNAUTHORIZED,
+			statusText: ReasonPhrases.UNAUTHORIZED,
+		});
+	}
+
+	const { userId } = zx.parseParams(params, { userId: z.string() });
+	return await methodHandler(
+		request,
+		[
+			{
+				method: "PUT",
+				function: putRequestHandler,
+			},
+		],
+		{ userId },
+	);
 };
 
 export default function GamesRoute() {

@@ -16,7 +16,7 @@ export function RemoveFromCollectionButton({
 	const deleteFetcher = useFetcher();
 
 	return (
-		<deleteFetcher.Form method="delete" action="/api/collections">
+		<deleteFetcher.Form method="delete" action="/collections">
 			<input type="hidden" value={gameId} name="gameId" />
 			<input type="hidden" value={userId} name="userId" />
 			{deleteFetcher.state === "idle" ? (

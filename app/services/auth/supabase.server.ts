@@ -43,9 +43,6 @@ export async function authenticate(request: Request) {
 	const { supabase } = createServerClient(request);
 	const session = await getSession(supabase);
 	if (!session) {
-		throw json(ReasonPhrases.UNAUTHORIZED, {
-			status: StatusCodes.UNAUTHORIZED,
-			statusText: ReasonPhrases.UNAUTHORIZED,
-		});
+		throw new Error("UNAUTHENTICATED");
 	}
 }
