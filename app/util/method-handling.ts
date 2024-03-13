@@ -2,19 +2,19 @@ import { json } from "@remix-run/node";
 
 type AllowedMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-type MethodFunction = {
+type MethodFunction<T = Record<string, string> | undefined> = {
 	method: AllowedMethod;
-	function: (request: Request, ...args: any[]) => Promise<Response>;
+	function: (request: Request, params: T) => Promise<Response>;
 };
 
-export const methodHandler = async (
+export const methodHandler = async <T = Record<string, string> | undefined>(
 	request: Request,
-	methods: MethodFunction[],
-	...args: any[]
+	methods: MethodFunction<T>[],
+	params?: T,
 ): Promise<Response> => {
 	for (const method of methods) {
 		if (request.method === method.method) {
-			return method.function(request, ...args);
+			return method.function(request, params!);
 		}
 	}
 

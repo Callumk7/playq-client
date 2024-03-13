@@ -1,22 +1,15 @@
 import { activityManager } from "@/services/events/events.server";
-import { InsertUsersToGames } from "@/types/games";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { InsertUsersToGames } from "@/types";
+import { json } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { and, eq } from "drizzle-orm";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { zx } from "zodix";
 
-// api.collections.userId
-// PUT updates
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const putRequestHandler = async (request: Request, params: { userId: string }) => {
 	const userId = params.userId;
 
-	// early return if there is no userId param
-	if (!userId) {
-		return json("No user id provided", { status: 405 });
-	}
-
-	// gameId is provided in the formData
 	const result = await zx.parseFormSafe(request, {
 		gameId: zx.NumAsString,
 		played: zx.BoolAsString.optional(),
@@ -26,9 +19,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		pinned: zx.BoolAsString.optional(),
 	});
 
-	// early return if the game is in the wrong format
 	if (!result.success) {
-		return json({ error: result.error });
+		return json(ReasonPhrases.BAD_REQUEST, { status: StatusCodes.BAD_REQUEST });
 	}
 
 	const gameUpdate: InsertUsersToGames = {
@@ -52,8 +44,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		gameUpdate.pinned = result.data.pinned;
 	}
 
-	console.log(gameUpdate);
-
 	const updateGame = await db
 		.update(usersToGames)
 		.set(gameUpdate)
@@ -75,5 +65,5 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		activityManager.rateGame(userId, result.data.gameId, result.data.rating!);
 	}
 
-	return json({ updateGame });
+	return json({ updateGame }, { status: StatusCodes.OK });
 };
