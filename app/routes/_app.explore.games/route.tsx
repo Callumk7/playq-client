@@ -6,9 +6,9 @@ import { ExploreGame } from "@/features/explore/components/search-game";
 import { GameListItem } from "@/features/library/components/game-list-item";
 import { ListView } from "@/features/library/components/list-view";
 import { getUserCollectionGameIds } from "@/model";
-import { IGDBGame, IGDBGameSchemaArray } from "@/types/igdb";
+import { type IGDBGame, IGDBGameSchemaArray } from "@/types/igdb";
 import { ArrowLeftIcon, ArrowRightIcon, ViewGridIcon } from "@radix-ui/react-icons";
-import { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useEffect, useRef, useState } from "react";
 import {
 	redirect,
@@ -16,7 +16,7 @@ import {
 	useTypedFetcher,
 	useTypedLoaderData,
 } from "remix-typedjson";
-import { FetchOptions, fetchGamesFromIGDB } from "@/services/igdb";
+import { type FetchOptions, fetchGamesFromIGDB } from "@/services/igdb";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { supabase, headers } = createServerClient(request);

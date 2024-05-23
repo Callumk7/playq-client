@@ -1,6 +1,6 @@
 import { WORKER_URL } from "@/constants";
 import { activityManager } from "@/services/events/events.server";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { type ActionFunctionArgs, json } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { and, eq } from "drizzle-orm";
