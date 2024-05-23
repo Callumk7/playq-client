@@ -15,6 +15,9 @@ import { useEffect, useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { getCreatedAndFollowedPlaylists, getUserFriends } from "./loader";
 
+import { ErrorBoundary as _ErrorBoundary } from "@/components/error-boundary";
+export const ErrorBoundary = _ErrorBoundary;
+
 export const meta: MetaFunction = () => {
 	return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
 };

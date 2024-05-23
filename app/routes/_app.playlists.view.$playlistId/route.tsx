@@ -1,4 +1,12 @@
-import { Button, Comment, DeletePlaylistDialog, GameCover, LibraryView, RenamePlaylistDialog, Separator } from "@/components";
+import {
+	Button,
+	Comment,
+	DeletePlaylistDialog,
+	GameCover,
+	LibraryView,
+	RenamePlaylistDialog,
+	Separator,
+} from "@/components";
 import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
 import { Game } from "@/types/games";
@@ -7,7 +15,7 @@ import { PlaylistWithGames, Tag } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { Session } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { z } from "zod";
 import { zx } from "zodix";
@@ -25,6 +33,7 @@ import {
 	getPlaylistWithGamesAndFollowers,
 	getUserFollowAndRatingData,
 } from "./loading";
+import { PlaylistMenuSection } from "./components/playlist-menu-section";
 
 // Type guard types. We can block users by returning "blocked" from the loader.
 // As such, if we want type safety, we need to define the types first and narrow.
@@ -99,6 +108,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		allTagsPromise,
 	]);
 
+	// Since we are fetching all the data in at the same time, I can get away
+	// with performing this check here. The data that would not be fetched as a result
+	// of this is only small, and almost certainly does not hold up the Promise.all
 	const isCreator = playlistWithGames!.creatorId === session.user.id;
 
 	return typedjson({
@@ -156,76 +168,22 @@ export default function PlaylistRoute() {
 	return (
 		<>
 			<div className="flex flex-col gap-6">
-				<div className="flex gap-7">
-					{isCreator ? (
-						<PlaylistMenubar
-							isPrivate={playlistWithGames.isPrivate}
-							userCollection={userCollection}
-							playlistGames={playlistWithGames.games.map((game) => game.gameId)}
-							playlistId={playlistWithGames.id}
-							userId={playlistWithGames.creatorId}
-							setRenameDialogOpen={setRenameDialogOpen}
-							setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
-							isEditing={isEditing}
-							setIsEditing={setIsEditing}
-							tags={allTags}
-						/>
-					) : (
-						<GuestMenubar
-							playlistId={playlistWithGames.id}
-							userId={session.user.id}
-							isFollowing={userFollowAndRatingData.isFollowing}
-							userPlaylistRating={userFollowAndRatingData.rating}
-						/>
-					)}
-					{playlistWithGames?.isPrivate && (
-						<Button disabled variant={"outline"} size={"sm"}>
-							is private
-						</Button>
-					)}
-				</div>
-				<h1 className="mt-5 py-2 text-3xl font-semibold">{playlistWithGames?.name}</h1>
-				<Separator />
-				<div className="relative grid lg:grid-cols-12 gap-10">
-					<div className="lg:col-span-9 flex flex-col gap-5">
-						<LibraryView>
-							{playlistWithGames?.games.map((game) => (
-								<div key={game.game.id} className="flex flex-col gap-2">
-									<GameCover coverId={game.game.cover.imageId} gameId={game.gameId} />
-									<PlaylistEntryControls
-										inCollection={userCollectionGameIds.includes(game.gameId)}
-										gameId={game.gameId}
-										userId={session.user.id}
-										isEditing={isEditing}
-									/>
-								</div>
-							))}
-						</LibraryView>
-						<Separator className="mt-10" />
-						<div className="flex gap-5 items-center">
-							<h2 className="text-2xl font-semibold">Comments</h2>
-							<Button
-								variant={"outline"}
-								size={"sm"}
-								onClick={() => setIsCommenting(!isCommenting)}
-							>
-								{isCommenting ? "Hide" : "Post a Comment"}
-							</Button>
-						</div>
-						{isCommenting && (
-							<PlaylistCommentForm
-								userId={session.user.id}
-								playlistId={playlistWithGames.id}
-							/>
-						)}
-						<div className="grid gap-3">
-							{playlistComments.map((comment) => (
-								<Comment key={comment.id} comment={comment} author={comment.author} />
-							))}
-						</div>
-					</div>
-					<div className="relative lg:col-span-3">
-						<div className="h-full flex flex-col gap-8">
+				<PlaylistMenuSection
+					playlistWithGames={playlistWithGames}
+					isCreator={isCreator}
+					userCollection={userCollection}
+					setRenameDialogOpen={setRenameDialogOpen}
+					setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
+					isEditing={isEditing}
+					setIsEditing={setIsEditing}
+					allTags={allTags}
+					userId={session.user.id}
+					userFollowAndRatingData={userFollowAndRatingData}
+				/>
+				<PlaylistTitle title={playlistWithGames.name} />
+				<LibraryViewWithSidebar
+					sidebar={
+						<>
 							<StatsSidebar
 								userId={session.user.id}
 								playlistId={playlistWithGames.id}
@@ -236,9 +194,45 @@ export default function PlaylistRoute() {
 								followers={aggregatedRating.count}
 								rating={Math.floor(aggregatedRating.aggRating)}
 							/>
-						</div>
+						</>
+					}
+				>
+					<LibraryView>
+						{playlistWithGames?.games.map((game) => (
+							<div key={game.game.id} className="flex flex-col gap-2">
+								<GameCover coverId={game.game.cover.imageId} gameId={game.gameId} />
+								<PlaylistEntryControls
+									inCollection={userCollectionGameIds.includes(game.gameId)}
+									gameId={game.gameId}
+									userId={session.user.id}
+									isEditing={isEditing}
+								/>
+							</div>
+						))}
+					</LibraryView>
+					<Separator className="mt-10" />
+					<div className="flex gap-5 items-center">
+						<h2 className="text-2xl font-semibold">Comments</h2>
+						<Button
+							variant={"outline"}
+							size={"sm"}
+							onClick={() => setIsCommenting(!isCommenting)}
+						>
+							{isCommenting ? "Hide" : "Post a Comment"}
+						</Button>
 					</div>
-				</div>
+					{isCommenting && (
+						<PlaylistCommentForm
+							userId={session.user.id}
+							playlistId={playlistWithGames.id}
+						/>
+					)}
+					<div className="grid gap-3">
+						{playlistComments.map((comment) => (
+							<Comment key={comment.id} comment={comment} author={comment.author} />
+						))}
+					</div>
+				</LibraryViewWithSidebar>
 			</div>
 			<RenamePlaylistDialog
 				renameDialogOpen={renameDialogOpen}
@@ -251,5 +245,28 @@ export default function PlaylistRoute() {
 				playlistId={playlistWithGames.id}
 			/>
 		</>
+	);
+}
+
+function PlaylistTitle({ title }: { title: string }) {
+	return (
+		<>
+			<h1 className="mt-5 py-2 text-3xl font-semibold">{title}</h1>
+			<Separator />
+		</>
+	);
+}
+
+function LibraryViewWithSidebar({
+	children,
+	sidebar,
+}: { children: ReactNode; sidebar: ReactNode }) {
+	return (
+		<div className="relative grid lg:grid-cols-12 gap-10">
+			<div className="lg:col-span-9 flex flex-col gap-5">{children}</div>
+			<div className="relative lg:col-span-3">
+				<div className="h-full flex flex-col gap-8">{sidebar}</div>
+			</div>
+		</div>
 	);
 }
