@@ -50,9 +50,6 @@ async function main() {
 	console.log(`We have ${problemEntries.length} problems to resolve`);
 	console.log("Deleting...");
 
-	// NOTE: it is interesting that forEach seems to do each one of these tasks 
-	// without waiting on the previous to finish. The bottom console log is fired before
-	// this is completed. This is a forEach thing..
 	 problemEntries.forEach(async (entry) => {
 		const result = await db
 			.delete(gamesOnPlaylists)
