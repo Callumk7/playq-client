@@ -1,4 +1,4 @@
-import { avg, count, eq, isNotNull, relations } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
 	boolean,
 	integer,
@@ -41,6 +41,7 @@ export const gamesRelations = relations(games, ({ one, many }) => ({
 	genres: many(genresToGames),
 	activity: many(activity),
 	notes: many(notes),
+	externalStores: many(externalStores),
 }));
 
 export const covers = pgTable("covers", {
@@ -158,4 +159,22 @@ export const usersToGamesRelations = relations(usersToGames, ({ one, many }) => 
 		references: [games.gameId],
 	}),
 	comments: many(notes),
+}));
+
+export const externalStores = pgTable("external_stores", {
+	gameId: integer("game_id").notNull(),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+	isUpdated: boolean("is_updated").default(false).notNull(),
+	externalName: text("external_name"),
+	externalWebsite: text("external_website"),
+	external_id: text("external_id").notNull(),
+	typeEnum: integer("type_enum").notNull(),
+});
+
+export const externalStoresRelations = relations(externalStores, ({ one }) => ({
+	game: one(games, {
+		fields: [externalStores.gameId],
+		references: [games.gameId],
+	}),
 }));
