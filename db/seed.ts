@@ -1,6 +1,6 @@
 import { db } from "db";
 import { users } from "./schema/users";
-import { uuidv4 } from "@/util/generate-uuid";
+import { uuidv4 } from "callum-util";
 
 const seedUsers = [
 	{

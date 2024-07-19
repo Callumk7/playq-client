@@ -1,3 +1,4 @@
+import { Genre } from "@/types/games";
 import { db } from "db";
 import { genres, genresToGames, usersToGames } from "db/schema/games";
 import { eq, inArray } from "drizzle-orm";
@@ -17,23 +18,6 @@ export const getAllGenres = async () => {
 	return allGenres;
 };
 
-export const getUserGenres = async (userId: string) => {
-	const userGames = await db
-		.select()
-		.from(usersToGames)
-		.where(eq(usersToGames.userId, userId));
-
-	const gameIds = userGames.map((entry) => entry.gameId);
-
-	const userGenresQueryArray = await db
-		.selectDistinctOn([genresToGames.genreId])
-		.from(genresToGames)
-		.where(inArray(genresToGames.gameId, gameIds))
-		.rightJoin(genres, eq(genresToGames.genreId, genres.id));
-
-	const userGenres =  userGenresQueryArray
-		.filter((q) => q.genres !== null)
-		.map(q => q.genres)
-
-	return userGenres;
+export const genresToStrings = (genres: Genre[]): string[] => {
+	return genres.map((genre) => genre.name);
 };
