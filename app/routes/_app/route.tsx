@@ -16,6 +16,7 @@ import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 import { getCreatedAndFollowedPlaylists, getUserFriends } from "./loader";
 
 import { ErrorBoundary as _ErrorBoundary } from "@/components/error-boundary";
+import { getUserDetails } from "@/model/users/database-queries";
 export const ErrorBoundary = _ErrorBoundary;
 
 export const meta: MetaFunction = () => {
@@ -38,30 +39,32 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		return redirect("/login");
 	}
 
-	const userPlaylistsPromise = await getCreatedAndFollowedPlaylists(session.user.id);
-	const userFriendsPromise = await getUserFriends(session.user.id);
-	const friendActivityPromise = await getFriendActivity(session.user.id);
+	const userPlaylistsPromise = getCreatedAndFollowedPlaylists(session.user.id);
+	const userFriendsPromise = getUserFriends(session.user.id);
+	const friendActivityPromise = getFriendActivity(session.user.id);
 
 	// Set the store for user gameIds as a cache on the app route.
-	const userCollectionPromise = await getUserCollectionGameIds(session.user.id);
+	const userCollectionPromise = getUserCollectionGameIds(session.user.id);
+  const userDetailsPromise = getUserDetails(session.user.id);
 
-	const [userPlaylists, userFriends, friendActivity, userCollection] = await Promise.all([
+	const [userPlaylists, userFriends, friendActivity, userCollection, userDetails] = await Promise.all([
 		userPlaylistsPromise,
 		userFriendsPromise,
 		friendActivityPromise,
 		userCollectionPromise,
+    userDetailsPromise,
 	]);
 
 	const activityFeed = transformActivity(friendActivity);
 
 	return typedjson(
-		{ ENV, session, userPlaylists, userFriends, userCollection, activityFeed },
+		{ ENV, session, userPlaylists, userFriends, userCollection, activityFeed, userDetails },
 		{ headers },
 	);
 };
 
 export default function AppLayout() {
-	const { ENV, session, userPlaylists, userFriends, userCollection, activityFeed } =
+	const { ENV, session, userPlaylists, userFriends, userCollection, activityFeed, userDetails } =
 		useTypedLoaderData<typeof loader>();
 	// set the store for use around the app
 	const setUserCollection = useUserCacheStore((state) => state.setUserCollection);
@@ -137,6 +140,7 @@ export default function AppLayout() {
 						session={session}
 						sidebarOpen={sidebarOpen}
 						setSidebarOpen={setSidebarOpen}
+            userDetails={userDetails}
 					/>
 					<Container className="py-20 md:pt-0">
 						<Outlet />

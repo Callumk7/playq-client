@@ -2,12 +2,15 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@remix-run/react";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { NavigationLink } from ".";
+import { User } from "@/types";
 
 export function Login({
 	supabase,
+  userDetails,
 	session,
 }: {
 	supabase: SupabaseClient;
+  userDetails: User;
 	session: Session | null;
 }) {
 	const handleLogout = async () => {
@@ -20,7 +23,7 @@ export function Login({
 
 	return session ? (
 		<div className="flex gap-4 items-center">
-			<NavigationLink link={{ to: "/profile", name: "Profile" }} />
+			<NavigationLink link={{ to: "/profile", name: `${userDetails.username}` }} />
 			<Button variant={"outline"} onClick={handleLogout}>
 				Sign Out
 			</Button>

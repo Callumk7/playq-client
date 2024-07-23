@@ -5,6 +5,7 @@ import {
 	CollapsibleTrigger,
 	Login,
 } from "@/components";
+import { User } from "@/types";
 import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
@@ -40,11 +41,12 @@ const links = [
 interface NavbarProps {
 	supabase: SupabaseClient;
 	session: Session | null;
+  userDetails: User;
 	sidebarOpen: boolean;
 	setSidebarOpen: (sidebarOpen: boolean) => void;
 }
 
-export function Navbar({ supabase, session, sidebarOpen, setSidebarOpen }: NavbarProps) {
+export function Navbar({ supabase, session, sidebarOpen, setSidebarOpen, userDetails }: NavbarProps) {
 	// auto-collapse on navigate. useNavigation is a remix hook,
 	// and we create an effect that changes the controlled state of
 	// the collapsible to closed once the navigation is 'idle', which
@@ -86,7 +88,7 @@ export function Navbar({ supabase, session, sidebarOpen, setSidebarOpen }: Navba
 				</Collapsible>
 				<div className="md:flex hidden flex-row justify-start gap-4">{linksMarkup}</div>
 			</div>
-			<Login supabase={supabase} session={session} />
+			<Login supabase={supabase} session={session} userDetails={userDetails} />
 		</nav>
 	);
 }
