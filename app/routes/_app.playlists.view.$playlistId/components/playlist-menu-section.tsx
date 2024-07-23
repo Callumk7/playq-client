@@ -11,7 +11,6 @@ interface PlaylistMenuSectionProps {
   setDeletePlaylistDialogOpen: (state: boolean) => void;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
-  allTags: Tag[];
   userId: string;
 	userFollowAndRatingData: {
 		isFollowing: boolean;
@@ -27,7 +26,6 @@ export function PlaylistMenuSection({
   setDeletePlaylistDialogOpen,
   isEditing,
   setIsEditing,
-  allTags,
   userId,
   userFollowAndRatingData,
 }: PlaylistMenuSectionProps) {
@@ -44,7 +42,6 @@ export function PlaylistMenuSection({
 					setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
 					isEditing={isEditing}
 					setIsEditing={setIsEditing}
-					tags={allTags}
 				/>
 			) : (
 				<GuestMenubar

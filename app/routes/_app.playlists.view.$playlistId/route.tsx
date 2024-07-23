@@ -21,13 +21,10 @@ import { z } from "zod";
 import { zx } from "zodix";
 import { StatsSidebar } from "../res.playlist-sidebar.$userId";
 import { FollowerSidebar } from "./components/followers-sidebar";
-import { GuestMenubar } from "./components/guest-menubar";
 import { PlaylistCommentForm } from "./components/pl-comment-form";
 import { PlaylistEntryControls } from "./components/playlist-entry-controls";
-import { PlaylistMenubar } from "./components/playlist-menubar";
 import {
 	getAggregatedPlaylistRating,
-	getAllTags,
 	getMinimumPlaylistData,
 	getPlaylistComments,
 	getPlaylistWithGamesAndFollowers,
@@ -55,7 +52,6 @@ interface Result {
 	session: Session;
 	playlistComments: NoteWithAuthor[];
 	aggregatedRating: { id: string; aggRating: number; count: number };
-	allTags: Tag[];
 }
 
 ///
@@ -90,7 +86,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		playlistId,
 	);
 	const aggregatedRatingPromise = getAggregatedPlaylistRating(playlistId);
-	const allTagsPromise = getAllTags();
 
 	const [
 		playlistWithGames,
@@ -98,14 +93,12 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		playlistComments,
 		userFollowAndRatingData,
 		aggregatedRating,
-		allTags,
 	] = await Promise.all([
 		playlistWithGamesPromise,
 		userCollectionPromise,
 		playlistCommentsPromise,
 		userFollowAndRatingDataPromise,
 		aggregatedRatingPromise,
-		allTagsPromise,
 	]);
 
 	// Since we are fetching all the data in at the same time, I can get away
@@ -122,7 +115,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		playlistComments,
 		session,
 		aggregatedRating,
-		allTags,
 	});
 };
 
@@ -161,7 +153,6 @@ export default function PlaylistRoute() {
 		playlistComments,
 		userFollowAndRatingData,
 		aggregatedRating,
-		allTags,
 	} = result;
 	const userCollectionGameIds = userCollection.map((c) => c.gameId);
 
@@ -176,7 +167,6 @@ export default function PlaylistRoute() {
 					setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
 					isEditing={isEditing}
 					setIsEditing={setIsEditing}
-					allTags={allTags}
 					userId={session.user.id}
 					userFollowAndRatingData={userFollowAndRatingData}
 				/>

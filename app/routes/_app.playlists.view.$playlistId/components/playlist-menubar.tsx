@@ -19,7 +19,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components";
-import { Game, Tag } from "@/types";
+import { Game } from "@/types";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
 import { useState } from "react";
@@ -34,7 +34,6 @@ interface PlaylistMenubarProps {
 	setDeletePlaylistDialogOpen: (deletePlaylistDialogOpen: boolean) => void;
 	isEditing: boolean;
 	setIsEditing: (isEditing: boolean) => void;
-	tags: Tag[];
 }
 
 export function PlaylistMenubar({
@@ -47,7 +46,6 @@ export function PlaylistMenubar({
 	setDeletePlaylistDialogOpen,
 	isEditing,
 	setIsEditing,
-	tags,
 }: PlaylistMenubarProps) {
 	const markAsPrivateFetcher = useFetcher();
 
@@ -56,11 +54,6 @@ export function PlaylistMenubar({
 			{ isPrivate: !isPrivate },
 			{ action: `/api/playlists/${playlistId}`, method: "PATCH" },
 		);
-	};
-
-	const addTagFetcher = useFetcher();
-	const handleAddTag = (tagId: string) => {
-		addTagFetcher.submit({ playlistId, tagId }, { method: "POST", action: "/api/tags" });
 	};
 
 	return (
@@ -76,16 +69,6 @@ export function PlaylistMenubar({
 						<MenubarItem onClick={handleTogglePrivate}>
 							{isPrivate ? "Make Public" : "Set as Private"}
 						</MenubarItem>
-					</MenubarContent>
-				</MenubarMenu>
-				<MenubarMenu>
-					<MenubarTrigger>Tags</MenubarTrigger>
-					<MenubarContent>
-						{tags.map((tag) => (
-							<MenubarCheckboxItem key={tag.id} onClick={() => handleAddTag(tag.id)}>
-								{tag.name}
-							</MenubarCheckboxItem>
-						))}
 					</MenubarContent>
 				</MenubarMenu>
 			</Menubar>
