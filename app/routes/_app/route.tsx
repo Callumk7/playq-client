@@ -12,7 +12,7 @@ import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { Outlet, useFetcher } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/ssr";
 import { useEffect, useState } from "react";
-import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
+import { redirect, typedjson, useTypedLoaderData, useTypedRouteLoaderData } from "remix-typedjson";
 import { getCreatedAndFollowedPlaylists, getUserFriends } from "./loader";
 
 import { ErrorBoundary as _ErrorBoundary } from "@/components/error-boundary";
@@ -155,3 +155,16 @@ export default function AppLayout() {
 		</>
 	);
 }
+
+// Custom hook to access _app loader data anywhere in the tree.
+// Note, this is not currently revalidated, so it isn't a particularly
+// good solution at the moment. It also isn't very remix'y. Probably a
+// better solution somewhere.
+export function useAppData() {
+	const data = useTypedRouteLoaderData<typeof loader>("routes/_app");
+	if (data === undefined) {
+		throw new Error("useAppData must be used within the _app route or its children");
+	}
+	return data;
+}
+
