@@ -18,10 +18,6 @@ const exploreLinks = [
 		to: "/explore/games",
 	},
 	{
-		name: "Popular",
-		to: "/explore/popular",
-	},
-	{
 		name: "Playlists",
 		to: "/explore/playlists",
 	},
