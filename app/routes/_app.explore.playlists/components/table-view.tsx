@@ -26,7 +26,6 @@ export function PlaylistTableView({ userId, playlists }: PlaylistTableViewProps)
 					<TableHead>Rating</TableHead>
 					<TableHead>Followers</TableHead>
 					<TableHead>Games</TableHead>
-					<TableHead>Tags</TableHead>
 					<TableHead>Controls</TableHead>
 				</TableRow>
 			</TableHeader>
@@ -39,7 +38,6 @@ export function PlaylistTableView({ userId, playlists }: PlaylistTableViewProps)
 						<TableCell>{Math.floor(playlist.aggRating)}</TableCell>
 						<TableCell>{playlist.followerCount}</TableCell>
 						<TableCell>12</TableCell>
-						<TableCell>tags</TableCell>
 						<TableCell>
 							<FollowPlaylistButton
 								userId={userId}
