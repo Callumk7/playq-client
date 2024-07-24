@@ -6,6 +6,7 @@ import {
 	LibraryView,
 	RenamePlaylistDialog,
 	Separator,
+	useDeletePlaylistDialogOpen,
 } from "@/components";
 import { getUserCollection } from "@/model";
 import { createServerClient, getSession } from "@/services";
@@ -127,8 +128,9 @@ export default function PlaylistRoute() {
 	const isSubmitting = rename.state === "submitting";
 
 	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
-	const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] =
-		useState<boolean>(false);
+	const { deletePlaylistDialogOpen, setDeletePlaylistDialogOpen } =
+		useDeletePlaylistDialogOpen();
+
 	const [isCommenting, setIsCommenting] = useState<boolean>(false);
 
 	const [isEditing, setIsEditing] = useState<boolean>(false);
