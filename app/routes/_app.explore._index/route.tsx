@@ -104,7 +104,16 @@ export default function PopularExplore() {
 			<h2 className="text-xl font-bold">Top 10 Games</h2>
 			<LibraryView>
 				{topTenGamesByCount.map((game) => (
-					<div key={game.id} className="flex flex-col gap-3">
+					<div key={game.id} className="relative flex flex-col gap-3">
+						{!userCollectionGameIds.includes(game.gameId) && (
+							<div className="absolute top-3 right-3 z-20">
+								<SaveToCollectionButton
+									variant="outline"
+									gameId={game.gameId}
+									userId={session.user.id}
+								/>
+							</div>
+						)}
 						<GameCover coverId={game.cover.imageId} gameId={game.gameId} />
 						<div className="p-3 rounded-md border">
 							<span className="text-lg font-black">

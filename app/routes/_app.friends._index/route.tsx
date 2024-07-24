@@ -41,8 +41,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function FriendsRoute() {
 	const { justFriends } = useTypedLoaderData<typeof loader>();
 	return (
-		<Container className="flex flex-col gap-4">
+		<div className="flex flex-col">
       <FriendTable friends={justFriends} />
-		</Container>
+		</div>
 	);
 }

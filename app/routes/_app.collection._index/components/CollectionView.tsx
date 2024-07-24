@@ -87,7 +87,6 @@ export function CollectionView({
 
 	return (
 		<div>
-			{offset}
 			<div className="mb-8">
 				<GenreFilter
 					genres={genreNames}

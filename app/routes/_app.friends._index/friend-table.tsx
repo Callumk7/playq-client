@@ -1,40 +1,58 @@
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components";
 import { UserWithPlaylistsFollowsGames } from "@/types";
-import { Link } from "@remix-run/react";
+import { Cross1Icon } from "@radix-ui/react-icons";
+import { Link, useFetcher } from "@remix-run/react";
 
 interface FriendTableProps {
-	friends: UserWithPlaylistsFollowsGames[];
+  friends: UserWithPlaylistsFollowsGames[];
 }
 export function FriendTable({ friends }: FriendTableProps) {
-	return (
-		<Table>
-			<TableHeader>
-				<TableRow>
-					<TableHead>Name</TableHead>
-					<TableHead>Playlist Follows</TableHead>
-					<TableHead>Playlists Created</TableHead>
-					<TableHead>Games in Collection</TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{friends.map((friend) => (
-					<TableRow key={friend.id}>
-						<Link className="font-semibold" to={`/friends/${friend.id}`}>
-							<TableCell>{friend.username}</TableCell>
-						</Link>
-						<TableCell>{friend.playlistFollows.length}</TableCell>
-						<TableCell>{friend.playlists.length}</TableCell>
-						<TableCell>{friend.games.length}</TableCell>
-					</TableRow>
-				))}
-			</TableBody>
-		</Table>
-	);
+  const removeFetcher = useFetcher();
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Playlist Follows</TableHead>
+          <TableHead>Playlists Created</TableHead>
+          <TableHead>Games in Collection</TableHead>
+          <TableHead>Controls</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {friends.map((friend) => (
+          <TableRow key={friend.id}>
+            <Link className="font-semibold" to={`/friends/${friend.id}`}>
+              <TableCell>{friend.username}</TableCell>
+            </Link>
+            <TableCell>{friend.playlistFollows.length}</TableCell>
+            <TableCell>{friend.playlists.length}</TableCell>
+            <TableCell>{friend.games.length}</TableCell>
+            <TableCell>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() =>
+                  removeFetcher.submit(
+                    { friend_id: friend.id },
+                    { method: "DELETE", action: "/friends" },
+                  )
+                }
+              >
+                <Cross1Icon />
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
 }
