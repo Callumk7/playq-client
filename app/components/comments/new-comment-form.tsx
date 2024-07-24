@@ -17,7 +17,7 @@ export function NewCommentForm({ action, userId }: NewCommentFormProps) {
 			onSubmit={() => setContent("")}
 		>
 			<TextArea
-				className="resize-none h-36"
+				className="h-36 resize-none"
 				placeholder="What have you got to say?"
 				name="body"
 				value={content}

@@ -42,10 +42,10 @@ export function TopPlaylists({ userId }: { userId: string }) {
 
 	return (
 		<div>
-			<h1 className="mb-4 pl-1 font-bold">Top Playlists</h1>
+			<h1 className="pl-1 mb-4 font-bold">Top Playlists</h1>
 			<div className="grid gap-2">
 				{playlistFetcher.data?.map((pl) => (
-					<div key={pl.id} className="grid grid-cols-2 rounded-md border p-2">
+					<div key={pl.id} className="grid grid-cols-2 p-2 rounded-md border">
 						<div className="text-lg font-semibold">{pl.name}</div>
 						<div className="text-right">Followers: {pl.followers.length}</div>
 					</div>

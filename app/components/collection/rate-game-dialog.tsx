@@ -31,7 +31,7 @@ export function RateGameDialog({
 					action={`/api/collections/${userId}`}
 					autoFocus={false}
 				>
-					<div className="text-5xl font-bold w-full text-center">{rating}</div>
+					<div className="w-full text-5xl font-bold text-center">{rating}</div>
 					<input type="hidden" name="gameId" value={gameId} />
 					<Slider
 						name="rating"

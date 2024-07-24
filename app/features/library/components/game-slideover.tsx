@@ -29,7 +29,7 @@ export function GameSlideOver({ game, children }: GameSlideOverProps) {
 		<SlideOver>
 			<SlideOverTrigger>{children}</SlideOverTrigger>
 			<SlideOverContent>
-				<ScrollArea className="h-full w-full p-9">
+				<ScrollArea className="p-9 w-full h-full">
 					<div className="flex flex-col gap-2">
 						<h1 className="py-3 text-5xl font-bold">{game.title}</h1>
 						<Separator />

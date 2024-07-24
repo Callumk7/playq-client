@@ -101,13 +101,13 @@ export default function PopularExplore() {
 
 	return (
 		<Container className="space-y-6">
-			<h2 className="font-bold text-xl">Top 10 Games</h2>
+			<h2 className="text-xl font-bold">Top 10 Games</h2>
 			<LibraryView>
 				{topTenGamesByCount.map((game) => (
 					<div key={game.id} className="flex flex-col gap-3">
 						<GameCover coverId={game.cover.imageId} gameId={game.gameId} />
-						<div className="border p-3 rounded-md">
-							<span className="font-black text-lg">
+						<div className="p-3 rounded-md border">
+							<span className="text-lg font-black">
 								{Math.floor(Number(game.avRating))}{" "}
 								<span className="text-xs font-light text-foreground-muted">
 									av. rating
@@ -127,9 +127,9 @@ export default function PopularExplore() {
 			</Toggle>
 			<LibraryView>
 				{processedData.map((game) => (
-					<div key={game.id} className="relative flex flex-col gap-3">
+					<div key={game.id} className="flex relative flex-col gap-3">
 						{!userCollectionGameIds.includes(game.gameId) && (
-							<div className="absolute right-3 top-3 z-20">
+							<div className="absolute top-3 right-3 z-20">
 								<SaveToCollectionButton
 									variant="outline"
 									gameId={game.gameId}
@@ -164,12 +164,12 @@ function ExploreGameDataRow({
 	maxPlaylistCount,
 }: ExploreGameDataRowProps) {
 	return (
-		<div className="flex flex-col gap-2 rounded-md border p-3">
-			<div className="flex w-full flex-col gap-1">
+		<div className="flex flex-col gap-2 p-3 rounded-md border">
+			<div className="flex flex-col gap-1 w-full">
 				<Label>Collection Popularity</Label>
 				<Progress value={collectionCount} max={maxCollectionCount} className="h-2" />
 			</div>
-			<div className="flex w-full flex-col gap-1">
+			<div className="flex flex-col gap-1 w-full">
 				<Label>Playlist Popularity</Label>
 				<Progress value={playlistCount} max={maxPlaylistCount} className="h-2" />
 			</div>

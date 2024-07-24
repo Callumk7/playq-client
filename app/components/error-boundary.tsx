@@ -11,8 +11,8 @@ export function ErrorBoundary() {
 				<Links />
 			</head>
 			<body>
-				<div className="w-4.5 mx-auto mt-24 text-center">
-					<h1 className="font-bold text-red-400 bg-background text-3xl">
+				<div className="mx-auto mt-24 text-center w-4.5">
+					<h1 className="text-3xl font-bold text-red-400 bg-background">
 						SOMETHING HAS GONE TERRIBLY WRONG
 					</h1>
 				</div>

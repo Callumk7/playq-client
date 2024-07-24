@@ -55,7 +55,7 @@ export default function FriendsRoute() {
 	const { friendsPlaylists, friendProfile, friendCollection, session } =
 		useLoaderData<typeof loader>();
 	return (
-		<div className="space-y-7 my-10">
+		<div className="my-10 space-y-7">
 			<Card>
 				<CardHeader>
 					<CardTitle>{friendProfile?.username}</CardTitle>

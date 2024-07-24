@@ -241,7 +241,7 @@ export default function PlaylistRoute() {
 function PlaylistTitle({ title }: { title: string }) {
 	return (
 		<>
-			<h1 className="mt-5 py-2 text-3xl font-semibold">{title}</h1>
+			<h1 className="py-2 mt-5 text-3xl font-semibold">{title}</h1>
 			<Separator />
 		</>
 	);
@@ -252,10 +252,10 @@ function LibraryViewWithSidebar({
 	sidebar,
 }: { children: ReactNode; sidebar: ReactNode }) {
 	return (
-		<div className="relative grid lg:grid-cols-12 gap-10">
-			<div className="lg:col-span-9 flex flex-col gap-5">{children}</div>
+		<div className="grid relative gap-10 lg:grid-cols-12">
+			<div className="flex flex-col gap-5 lg:col-span-9">{children}</div>
 			<div className="relative lg:col-span-3">
-				<div className="h-full flex flex-col gap-8">{sidebar}</div>
+				<div className="flex flex-col gap-8 h-full">{sidebar}</div>
 			</div>
 		</div>
 	);

@@ -28,7 +28,7 @@ export function ExternalSearchDialog({ userId }: ExternalSearchDialogProps) {
 		<Dialog>
 			<DialogTrigger asChild>
 				<Button variant={"outline"}>
-					<MagnifyingGlassIcon className="mr-3 h-4 w-4" />
+					<MagnifyingGlassIcon className="mr-3 w-4 h-4" />
 					<span>Add more</span>
 				</Button>
 			</DialogTrigger>
@@ -45,7 +45,7 @@ export function ExternalSearchDialog({ userId }: ExternalSearchDialogProps) {
 						autoComplete="off"
 					/>
 				</fetcher.Form>
-				<ScrollArea className="h-80 w-full">
+				<ScrollArea className="w-full h-80">
 					<div>
 						{fetcher.data
 							? fetcher.data.map((game) => (
@@ -74,8 +74,8 @@ interface SearchResultProps {
 
 function SearchResult({ game, userId }: SearchResultProps) {
 	return (
-		<div className="flex items-center justify-between px-2">
-			<div className="flex items-center gap-2 py-2">
+		<div className="flex justify-between items-center px-2">
+			<div className="flex gap-2 items-center py-2">
 				<img
 					src={`https://images.igdb.com/igdb/image/upload/t_cover_small/${game.cover.image_id}.jpg`}
 					alt={game.name}

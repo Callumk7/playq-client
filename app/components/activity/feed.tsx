@@ -168,7 +168,7 @@ export function UsernameLink({ user }: UsernameLinkProps) {
 	return (
 		<Link
 			to={`/friends/${user.id}`}
-			className="text-primary font-semibold hover:underline"
+			className="font-semibold hover:underline text-primary"
 		>
 			{user.username}
 		</Link>
@@ -182,7 +182,7 @@ export function PlaylistLink({ playlist }: PlaylistLinkProps) {
 	return (
 		<Link
 			to={`/playlists/view/${playlist.id}`}
-			className="text-primary font-semibold hover:underline"
+			className="font-semibold hover:underline text-primary"
 		>
 			{playlist.name}
 		</Link>
@@ -196,7 +196,7 @@ export function GameLink({ game }: GameLinkProps) {
 	return (
 		<Link
 			to={`/collection/${game.gameId}`}
-			className="text-primary font-semibold hover:underline"
+			className="font-semibold hover:underline text-primary"
 		>
 			{game.title}
 		</Link>

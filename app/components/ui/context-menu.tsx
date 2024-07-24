@@ -26,7 +26,7 @@ const ContextMenuSubTrigger = forwardRef<
 		{...props}
 	>
 		{children}
-		<ChevronRightIcon className="ml-auto h-4 w-4" />
+		<ChevronRightIcon className="ml-auto w-4 h-4" />
 	</ContextMenuPrimitive.SubTrigger>
 ));
 ContextMenuSubTrigger.displayName = ContextMenuPrimitive.SubTrigger.displayName;
@@ -94,9 +94,9 @@ const ContextMenuCheckboxItem = forwardRef<
 		checked={checked}
 		{...props}
 	>
-		<span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+		<span className="flex absolute left-2 justify-center items-center w-3.5 h-3.5">
 			<ContextMenuPrimitive.ItemIndicator>
-				<CheckIcon className="h-4 w-4" />
+				<CheckIcon className="w-4 h-4" />
 			</ContextMenuPrimitive.ItemIndicator>
 		</span>
 		{children}
@@ -116,9 +116,9 @@ const ContextMenuRadioItem = forwardRef<
 		)}
 		{...props}
 	>
-		<span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+		<span className="flex absolute left-2 justify-center items-center w-3.5 h-3.5">
 			<ContextMenuPrimitive.ItemIndicator>
-				<CircleIcon className="h-2 w-2 fill-current" />
+				<CircleIcon className="w-2 h-2 fill-current" />
 			</ContextMenuPrimitive.ItemIndicator>
 		</span>
 		{children}

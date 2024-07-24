@@ -25,7 +25,7 @@ export function NotificationBell({
 
 	return (
 		<div className="relative">
-			<div className="rounded-full bg-red-500 text-white absolute top-2 right-2 p-3">
+			<div className="absolute top-2 right-2 p-3 text-white bg-red-500 rounded-full">
 				{nCount}
 			</div>
 			<BellIcon />

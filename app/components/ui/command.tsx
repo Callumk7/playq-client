@@ -38,8 +38,8 @@ const CommandInput = forwardRef<
 	ElementRef<typeof CommandPrimitive.Input>,
 	ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-	<div className="flex items-center border-b px-3" cmdk-input-wrapper="">
-		<MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+	<div className="flex items-center px-3 border-b" cmdk-input-wrapper="">
+		<MagnifyingGlassIcon className="mr-2 w-4 h-4 opacity-50 shrink-0" />
 		<CommandPrimitive.Input
 			ref={ref}
 			className={cn(
@@ -70,7 +70,7 @@ const CommandEmpty = forwardRef<
 	ElementRef<typeof CommandPrimitive.Empty>,
 	ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
 >((props, ref) => (
-	<CommandPrimitive.Empty ref={ref} className="py-6 text-center text-sm" {...props} />
+	<CommandPrimitive.Empty ref={ref} className="py-6 text-sm text-center" {...props} />
 ));
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName;

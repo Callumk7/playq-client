@@ -51,7 +51,7 @@ export default function PlaylistView() {
 	return (
 		<>
 			<main className="mt-10">
-				<div className="mt-5 flex gap-5">
+				<div className="flex gap-5 mt-5">
 					<Button
 						onClick={() => setPlaylistDialogOpen(true)}
 						variant={"outline"}

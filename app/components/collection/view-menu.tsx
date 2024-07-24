@@ -24,7 +24,7 @@ export function CollectionMenubar({
 
   return (
     <div className="flex justify-between">
-      <div className="flex w-full justify-start gap-4">
+      <div className="flex gap-4 justify-start w-full">
         <ExternalSearchDialog userId={userId} />
         <GameSortAndFilterMenu />
         <Toggle

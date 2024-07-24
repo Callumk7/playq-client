@@ -108,16 +108,16 @@ export default function LoginPage() {
 				authError && (
 					<div className="absolute top-0 p-6">
 						<Alert variant={"destructive"} className="w-full">
-							<ExclamationTriangleIcon className="h-4 w-4" />
+							<ExclamationTriangleIcon className="w-4 h-4" />
 							<AlertTitle>Error Logging In</AlertTitle>
 							<AlertDescription>{authError.message}</AlertDescription>
 						</Alert>
 					</div>
 				)
 			}
-			<Container className="mt-10 flex h-[80vh] flex-col items-center justify-center">
+			<Container className="flex flex-col justify-center items-center mt-10 h-[80vh]">
 				<form
-					className="mx-auto flex w-11/12 flex-col gap-9 md:w-2/3"
+					className="flex flex-col gap-9 mx-auto w-11/12 md:w-2/3"
 					onSubmit={handleSubmit(onSubmit)}
 				>
 					<div className="flex flex-col gap-2">
@@ -128,7 +128,7 @@ export default function LoginPage() {
 							placeholder="enter your email"
 							{...register("email")}
 						/>
-						<p className="min-h-4 text-sm font-medium leading-none text-destructive">
+						<p className="text-sm font-medium leading-none min-h-4 text-destructive">
 							{errors.email?.message}
 						</p>
 					</div>
@@ -140,13 +140,13 @@ export default function LoginPage() {
 							placeholder="enter your password"
 							{...register("password")}
 						/>
-						<p className="min-h-4 text-sm font-medium leading-none text-destructive">
+						<p className="text-sm font-medium leading-none min-h-4 text-destructive">
 							{errors.password?.message}
 						</p>
 					</div>
 					<Button>Sign In</Button>
 				</form>
-				<div className="mx-auto mt-9 flex w-11/12 flex-col justify-between gap-4 md:w-2/3">
+				<div className="flex flex-col gap-4 justify-between mx-auto mt-9 w-11/12 md:w-2/3">
 					<Button variant={"secondary"} className="w-full" onClick={handleGitHubLogin}>
 						Sign In With Github
 					</Button>

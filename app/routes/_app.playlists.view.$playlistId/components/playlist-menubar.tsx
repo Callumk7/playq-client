@@ -119,7 +119,7 @@ function AddGameToPlaylistDialog({
 					onSubmit={() => setOpen(false)}
 				>
 					<input type="hidden" name="addedBy" value={userId} />
-					<ScrollArea className="h-[50vh] w-full">
+					<ScrollArea className="w-full h-[50vh]">
 						<Table aria-label="Games list">
 							<TableHeader>
 								<TableRow>

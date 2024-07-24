@@ -67,7 +67,7 @@ export default function GamesRoute() {
 					className="rounded-2xl"
 				/>
 			)}
-			<div className="relative flex flex-col gap-5">
+			<div className="flex relative flex-col gap-5">
 				<h1 className="pt-4 text-6xl font-semibold">{game.title}</h1>
 				<GenreTags genres={game.genres.map((g) => g.genre.name)} />
 				<div className="mt-7">

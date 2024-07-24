@@ -75,8 +75,8 @@ export default function SignUpPage() {
 	console.log(watch("email"));
 
 	return (
-		<Container className="mt-10 flex h-[80vh] flex-col items-center justify-center">
-			<form className="flex w-2/3 flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
+		<Container className="flex flex-col justify-center items-center mt-10 h-[80vh]">
+			<form className="flex flex-col gap-2 w-2/3" onSubmit={handleSubmit(onSubmit)}>
 				<FormInputField
 					name="email"
 					label="Email"
@@ -147,7 +147,7 @@ function FormInputField({
 				placeholder={placeholder}
 				{...register(name)}
 			/>
-			<p className="min-h-4 text-sm font-medium leading-none text-destructive">
+			<p className="text-sm font-medium leading-none min-h-4 text-destructive">
 				{error && error}
 			</p>
 		</div>

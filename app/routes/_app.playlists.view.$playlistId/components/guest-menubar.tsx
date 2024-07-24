@@ -27,7 +27,7 @@ export function GuestMenubar({
 	const [rating, setRating] = useState(0);
 	const fetcher = useFetcher();
 	return (
-		<div className="flex items-center gap-4">
+		<div className="flex gap-4 items-center">
 			<Popover>
 				<PopoverTrigger asChild>
 					<Button variant={"outline"} size={"icon"}>

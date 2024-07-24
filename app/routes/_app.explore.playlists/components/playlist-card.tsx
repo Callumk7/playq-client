@@ -24,14 +24,14 @@ export function PlaylistCard({ playlist, games, creator }: PlaylistCardProps) {
 	return (
 		<Link
 			to={`/playlists/view/${playlist.id}`}
-			className="relative flex w-full justify-between gap-3 overflow-hidden rounded-lg bg-background-3 p-5 transition-colors ease-in-out hover:bg-primary/10"
+			className="flex overflow-hidden relative gap-3 justify-between p-5 w-full rounded-lg transition-colors ease-in-out bg-background-3 hover:bg-primary/10"
 		>
-			<div className="flex w-1/3 flex-col gap-4">
+			<div className="flex flex-col gap-4 w-1/3">
 				<h1 className="text-2xl font-semibold">{playlist.name}</h1>
-				<p className="overflow-clip text-sm text-primary">{creator.username}</p>
+				<p className="text-sm overflow-clip text-primary">{creator.username}</p>
 				<PlaylistGenres gameIds={games.map((game) => game.gameId)} />
 			</div>
-			<div className="grid h-fit w-1/2 grid-cols-4 overflow-hidden rounded-lg">
+			<div className="grid overflow-hidden grid-cols-4 w-1/2 rounded-lg h-fit">
 				{games.map((game) => (
 					<div key={game.id}>
 						<DBImage imageId={game.cover.imageId} size="cover_big" />

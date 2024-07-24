@@ -56,7 +56,7 @@ export default function App() {
 					<Meta />
 					<Links />
 				</head>
-				<body className="bg-background text-foreground font-sans">
+				<body className="font-sans bg-background text-foreground">
 					<Outlet />
 					<ScrollRestoration />
 					<Scripts />

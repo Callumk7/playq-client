@@ -208,7 +208,7 @@ const CarouselPrevious = forwardRef<HTMLButtonElement, ComponentProps<typeof But
 				onClick={scrollPrev}
 				{...props}
 			>
-				<ArrowLeftIcon className="h-4 w-4" />
+				<ArrowLeftIcon className="w-4 h-4" />
 				<span className="sr-only">Previous slide</span>
 			</Button>
 		);
@@ -236,7 +236,7 @@ const CarouselNext = forwardRef<HTMLButtonElement, ComponentProps<typeof Button>
 				onClick={scrollNext}
 				{...props}
 			>
-				<ArrowRightIcon className="h-4 w-4" />
+				<ArrowRightIcon className="w-4 h-4" />
 				<span className="sr-only">Next slide</span>
 			</Button>
 		);

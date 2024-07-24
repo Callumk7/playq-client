@@ -188,7 +188,7 @@ function FormInputField({
 				defaultValue={defaultValue}
 				{...register(name)}
 			/>
-			<p className="min-h-4 text-sm font-medium leading-none text-destructive">
+			<p className="text-sm font-medium leading-none min-h-4 text-destructive">
 				{error && error}
 			</p>
 		</div>

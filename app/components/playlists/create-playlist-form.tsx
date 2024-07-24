@@ -37,7 +37,7 @@ export function CreatePlaylistForm({
 					add
 				</Button>
 			</div>
-			<div className="flex items-center gap-4">
+			<div className="flex gap-4 items-center">
 				<Switch name="isPrivate" id="private" />
 				<Label htmlFor="private">Private</Label>
 			</div>

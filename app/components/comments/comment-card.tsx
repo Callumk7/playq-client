@@ -22,7 +22,7 @@ export function Comment({ comment, author }: PlaylistCommentProps) {
 			<CardContent>
 				{isEditing ? (
 					<textarea
-						className="bg-background text-foreground w-full h-full resize-y"
+						className="w-full h-full resize-y bg-background text-foreground"
 						value={editContent}
 						onInput={(e) => setEditContent(e.currentTarget.value)}
 					/>
@@ -72,7 +72,7 @@ function CommentControls({
 		setIsEditing(!isEditing);
 	};
 	return (
-		<div className="absolute top-3 right-3 flex gap-3">
+		<div className="flex absolute top-3 right-3 gap-3">
 			<ButtonWithTooltip tooltip="Reply">
 				<ChatBubbleIcon />
 			</ButtonWithTooltip>

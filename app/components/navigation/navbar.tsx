@@ -64,7 +64,7 @@ export function Navbar({ supabase, session, sidebarOpen, setSidebarOpen, userDet
 	const linksMarkup = links.map((link) => <NavigationLink key={link.name} link={link} />);
 
 	return (
-		<nav className="top-0 z-50 fixed md:relative flex w-full flex-row items-start md:items-center justify-between bg-background/80 px-6 py-4 backdrop-blur">
+		<nav className="flex fixed top-0 z-50 flex-row justify-between items-start py-4 px-6 w-full md:relative md:items-center bg-background/80 backdrop-blur">
 			<div className="flex gap-6">
 				<Button
 					variant={"outline"}
@@ -83,10 +83,10 @@ export function Navbar({ supabase, session, sidebarOpen, setSidebarOpen, userDet
 						<HamburgerMenuIcon className="w-6 h-6" />
 					</CollapsibleTrigger>
 					<CollapsibleContent>
-						<div className="mt-4 flex flex-col gap-3">{linksMarkup}</div>
+						<div className="flex flex-col gap-3 mt-4">{linksMarkup}</div>
 					</CollapsibleContent>
 				</Collapsible>
-				<div className="md:flex hidden flex-row justify-start gap-4">{linksMarkup}</div>
+				<div className="hidden flex-row gap-4 justify-start md:flex">{linksMarkup}</div>
 			</div>
 			<Login supabase={supabase} session={session} userDetails={userDetails} />
 		</nav>

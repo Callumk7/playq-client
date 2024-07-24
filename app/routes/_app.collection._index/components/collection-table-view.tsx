@@ -69,7 +69,7 @@ export function CollectionTableView({
         <TableBody>
           {sortedGames.map((game) => (
             <TableRow key={game.id}>
-              <TableCell className="font-semibold flex items-center">
+              <TableCell className="flex items-center font-semibold">
                 <DrawingPinIcon className={game.pinned ? "text-primary" : ""} />
                 <Link to={`/collection/${game.gameId}`} className="ml-3">
                   <span>{game.title}</span>

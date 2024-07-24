@@ -102,7 +102,7 @@ export function ActivityFeedCard({ activity }: ActivityFeedCardProps) {
 
 	const Feed: ReactNode = (
 		<Card className="p-3">
-			<div className="flex justify-between w-full pb-4">
+			<div className="flex justify-between pb-4 w-full">
 				<span className="text-sm font-light">
 					{activity.activity.timestamp.toDateString()}
 				</span>
