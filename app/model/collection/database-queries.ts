@@ -19,9 +19,13 @@ export const getUserCollection = async (userId: string) => {
 
 export const getUserGamesWithDetails = async (
 	userId: string,
+	limit: number | undefined = 50,
+	offset?: number
 ): Promise<UserCollectionWithFullDetails[]> => {
 	const userCollection = await db.query.usersToGames.findMany({
 		where: eq(usersToGames.userId, userId),
+		limit,
+		offset,
 		with: {
 			game: {
 				with: {

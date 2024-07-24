@@ -1,4 +1,5 @@
 import {
+	Button,
 	CollectionGameMenu,
 	GameWithControls,
 	GenreFilter,
@@ -12,6 +13,9 @@ import { CollectionTableView } from "./collection-table-view";
 import { useCollectionStore } from "@/store";
 import { CollectionProgress } from "./collection-progress";
 import { CollectionMenubar } from "./collection-menubar";
+import { Form, useSearchParams } from "@remix-run/react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
+import { useState } from "react";
 
 interface CollectionViewProps {
 	games: GameWithCollection[];
@@ -49,8 +53,41 @@ export function CollectionView({
 	const hideProgress = useCollectionStore((state) => state.hideProgress);
 	const isTableView = useCollectionStore((state) => state.isTableView);
 
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const [limit, setLimit] = useState(() => {
+		const initLimit = Number(searchParams.get("limit"));
+		if (initLimit === 0) {
+			return 50;
+		}
+    return initLimit;
+	});
+	const [offset, setOffset] = useState(Number(searchParams.get("offset")));
+
+	const handleIncreaseOffset = () => {
+		const newOffset = offset + limit;
+		setOffset(newOffset);
+		const params = new URLSearchParams();
+		params.set("limit", String(limit));
+		params.set("offset", String(newOffset));
+		setSearchParams(params);
+	};
+
+  const handleDecreaseOffset = () => {
+    let newOffset = offset - limit;
+    if (newOffset < 0) {
+      newOffset = 0;
+    }
+    setOffset(newOffset);
+		const params = new URLSearchParams();
+		params.set("limit", String(limit));
+		params.set("offset", String(newOffset));
+		setSearchParams(params);
+  }
+
 	return (
 		<div>
+			{offset}
 			<div className="mb-8">
 				<GenreFilter
 					genres={genreNames}
@@ -68,6 +105,20 @@ export function CollectionView({
 						completedGames={completedGames}
 					/>
 				)}
+			</div>
+			<div className="flex flex-row gap-2 mb-4">
+				{offset >= limit && (
+					<Button
+						variant="outline"
+						size="icon"
+						onClick={handleDecreaseOffset}
+					>
+						<ArrowLeftIcon />
+					</Button>
+				)}
+				<Button variant="outline" size="icon" onClick={handleIncreaseOffset}>
+					<ArrowRightIcon />
+				</Button>
 			</div>
 			{isTableView ? (
 				<CollectionTableView

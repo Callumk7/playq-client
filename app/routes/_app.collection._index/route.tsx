@@ -12,6 +12,16 @@ import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 
 import { CollectionView } from "./components/CollectionView";
 import { useHandleRateGameDialog } from "./hooks/rate-game-dialog";
+import { useFetcher } from "@remix-run/react";
+
+const getLimitAndOffset = (request: Request) => {
+	const url = new URL(request.url);
+	const queryParams = url.searchParams;
+	let limit: number | undefined = Number(queryParams.get("limit")); 
+	const offset = Number(queryParams.get("offset"));
+  if (limit === 0) limit = undefined;
+	return { limit, offset };
+};
 
 ///
 /// LOADER FUNCTION
@@ -25,7 +35,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		});
 	}
 
-	const userCollectionPromise = getUserGamesWithDetails(session.user.id);
+	const { limit, offset } = getLimitAndOffset(request);
+
+	const userCollectionPromise = getUserGamesWithDetails(session.user.id, limit, offset);
 	const userPlaylistsPromise = getUserPlaylists(session.user.id);
 	const allUserGenresPromise = getUserGenres(session.user.id);
 
