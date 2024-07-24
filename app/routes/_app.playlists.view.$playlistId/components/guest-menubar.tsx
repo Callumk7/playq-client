@@ -22,7 +22,6 @@ export function GuestMenubar({
 	isFollowing,
 	playlistId,
 	userId,
-	userPlaylistRating,
 }: GuestMenubarProps) {
 	const [rating, setRating] = useState(0);
 	const fetcher = useFetcher();

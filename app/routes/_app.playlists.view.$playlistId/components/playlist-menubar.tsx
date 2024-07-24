@@ -6,7 +6,6 @@ import {
 	DialogFooter,
 	DialogTrigger,
 	Menubar,
-	MenubarCheckboxItem,
 	MenubarContent,
 	MenubarItem,
 	MenubarMenu,
