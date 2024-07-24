@@ -1,4 +1,4 @@
-import { PlaylistContextMenu } from "@/features/playlists/components/playlist-context-menu";
+import { PlaylistContextMenu, PlaylistDropdownMenu } from "@/features/playlists/components/playlist-context-menu";
 import { PlaylistWithCreator } from "@/types/playlists";
 import { UserWithActivityFeedEntry } from "@/types/users";
 import { PlusIcon } from "@radix-ui/react-icons";
@@ -14,9 +14,9 @@ interface SidebarProps {
 export function Sidebar({ playlists, hasSession }: SidebarProps) {
 	const { setPlaylistDialogOpen } = usePlaylistDialogOpen();
 	return (
-		<div className="h-screen w-full border px-5 py-3">
+		<div className="py-3 px-3 w-full h-screen border">
 			<h3>Playlists</h3>
-			<div className="mt-5 flex gap-5">
+			<div className="flex gap-5 mt-5">
 				<Button
 					onClick={() => setPlaylistDialogOpen(true)}
 					variant={"outline"}
@@ -28,7 +28,7 @@ export function Sidebar({ playlists, hasSession }: SidebarProps) {
 					<PlusIcon />
 				</Button>
 			</div>
-			<ScrollArea className="w-full h-[90vh] mt-5">
+			<ScrollArea className="mt-5 w-full h-[90vh]">
 				<div className="flex flex-col gap-2 py-4">
 					{playlists.map((playlist) => (
 						<SidebarPlaylistEntry key={playlist.id} playlist={playlist} />
@@ -45,17 +45,18 @@ interface SidebarPlaylistEntryProps {
 
 function SidebarPlaylistEntry({ playlist }: SidebarPlaylistEntryProps) {
 	return (
-		<PlaylistContextMenu>
+		<PlaylistContextMenu playlist={playlist}>
 			<Link
 				to={`playlists/view/${playlist.id}`}
-				className="flex items-center gap-2 rounded-md p-4 hover:bg-background-hover"
+				className="flex gap-2 justify-between items-start p-4 w-full rounded-md hover:bg-background-hover"
 			>
-				<div className="flex flex-col gap-1">
+				<div className="flex flex-col gap-1 w-3/5">
 					<span className="text-sm font-bold">{playlist.name}</span>
 					<span className="text-sm font-light text-gray-400">
 						{playlist.creator.username}
 					</span>
 				</div>
+        <PlaylistDropdownMenu playlist={playlist} />
 			</Link>
 		</PlaylistContextMenu>
 	);
@@ -68,7 +69,7 @@ function SidebarPlaylistEntry({ playlist }: SidebarPlaylistEntryProps) {
 //}
 //function ActivityFeed({ activityFeed }: ActivityFeedProps) {
 //  return (
-//    <div className="flex w-full flex-col gap-5 divide-y text-sm">
+//    <div className="flex flex-col gap-5 w-full text-sm divide-y">
 //      {activityFeed.map((activity) =>
 //        activity.activity.type === "col_add" ? (
 //          <AddedToCollectionActivity

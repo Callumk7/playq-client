@@ -3,18 +3,54 @@ import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
-	DialogDescription,
-	DialogFooter,
 	Button,
 } from "@/components";
 import { Form } from "@remix-run/react";
+import { ReactNode, createContext, useContext, useState } from "react";
+
+interface DeletePlaylistDialogOpenState {
+	deletePlaylistDialogOpen: boolean;
+	setDeletePlaylistDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// create context with undefined as default value
+const DeletePlaylistDialogOpenContext = createContext<DeletePlaylistDialogOpenState | undefined>(
+	undefined,
+);
+
+interface DeletePlaylistDialogOpenProviderProps {
+	children: ReactNode;
+}
+
+export function DeletePlaylistDialogOpenProvider({
+	children,
+}: DeletePlaylistDialogOpenProviderProps) {
+	const [deletePlaylistDialogOpen, setDeletePlaylistDialogOpen] = useState<boolean>(false);
+
+	return (
+		<DeletePlaylistDialogOpenContext.Provider
+			value={{ deletePlaylistDialogOpen, setDeletePlaylistDialogOpen }}
+		>
+			{children}
+		</DeletePlaylistDialogOpenContext.Provider>
+	);
+}
+
+export function useDeletePlaylistDialogOpen(): DeletePlaylistDialogOpenState {
+  const context = useContext(DeletePlaylistDialogOpenContext);
+	if (!context) {
+		throw new Error(
+			"useDeletePlaylistDialogOpen must be used within a DeletePlaylistDialogOpenProvider",
+		);
+	}
+	return context;
+}
 
 interface DeletePlaylistDialogProps {
 	deletePlaylistDialogOpen: boolean;
 	setDeletePlaylistDialogOpen: (dialogOpen: boolean) => void;
 	playlistId: string;
 }
-
 export function DeletePlaylistDialog({
 	deletePlaylistDialogOpen,
 	setDeletePlaylistDialogOpen,
