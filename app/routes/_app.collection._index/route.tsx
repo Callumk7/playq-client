@@ -12,14 +12,13 @@ import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
 
 import { CollectionView } from "./components/CollectionView";
 import { useHandleRateGameDialog } from "./hooks/rate-game-dialog";
-import { useFetcher } from "@remix-run/react";
 
 const getLimitAndOffset = (request: Request) => {
 	const url = new URL(request.url);
 	const queryParams = url.searchParams;
-	let limit: number | undefined = Number(queryParams.get("limit")); 
+	let limit: number | undefined = Number(queryParams.get("limit"));
 	const offset = Number(queryParams.get("offset"));
-  if (limit === 0) limit = undefined;
+	if (limit === 0) limit = undefined;
 	return { limit, offset };
 };
 
