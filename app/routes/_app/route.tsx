@@ -7,7 +7,6 @@ import {
 } from "@/components";
 import { getFriendActivity, getUserCollectionGameIds, transformActivity } from "@/model";
 import { createServerClient, getSession } from "@/services";
-import { useUserCacheStore } from "@/store";
 import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { Outlet, useFetcher } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/ssr";
@@ -58,36 +57,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const activityFeed = transformActivity(friendActivity);
 
 	return typedjson(
-		{ ENV, session, userPlaylists, userFriends, userCollection, activityFeed, userDetails },
+		{ ENV, session, userPlaylists, activityFeed, userDetails },
 		{ headers },
 	);
 };
 
 export default function AppLayout() {
-	const { ENV, session, userPlaylists, userFriends, userCollection, activityFeed, userDetails } =
+	const { ENV, session, userPlaylists, activityFeed, userDetails } =
 		useTypedLoaderData<typeof loader>();
-	// set the store for use around the app
-	const setUserCollection = useUserCacheStore((state) => state.setUserCollection);
-	const setUserFriends = useUserCacheStore((state) => state.setUserFriends);
-	const setUserPlaylists = useUserCacheStore((state) => state.setUserPlaylists);
-	const setFollowedPlaylists = useUserCacheStore((state) => state.setFollwedPlaylists);
-
-	// SET THE CACHE ON INITIAL LOAD FOR USER DETAILS THAT CAN BE USED AROUND THE APP
-	// biome-ignore lint/correctness/useExhaustiveDependencies: Only run on initial render
-	useEffect(() => {
-		setUserCollection(userCollection);
-		setUserFriends(userFriends.map((friend) => friend.id));
-		setUserPlaylists(
-			userPlaylists
-				.filter((playlist) => playlist.creator.id === session.user.id)
-				.map((playlist) => playlist.id),
-		);
-		setFollowedPlaylists(
-			userPlaylists
-				.filter((playlist) => playlist.creator.id !== session.user.id)
-				.map((playlist) => playlist.id),
-		);
-	}, []);
 
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 	const { playlistDialogOpen, setPlaylistDialogOpen } = usePlaylistDialogOpen();
