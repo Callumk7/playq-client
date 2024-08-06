@@ -1,77 +1,30 @@
 import { Button, Input, LibraryView } from "@/components";
-import { IGDB_BASE_URL } from "@/constants";
-import { createServerClient, getSession } from "@/services";
-import { markResultsAsSaved } from "@/features/explore";
+import { authenticate } from "@/services";
 import { ExploreGame } from "@/features/explore/components/search-game";
 import { GameListItem } from "@/features/library/components/game-list-item";
 import { ListView } from "@/features/library/components/list-view";
-import { getUserCollectionGameIds } from "@/model";
-import { type IGDBGame, IGDBGameSchemaArray } from "@/types/igdb";
 import { ArrowLeftIcon, ArrowRightIcon, ViewGridIcon } from "@radix-ui/react-icons";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useEffect, useRef, useState } from "react";
 import {
-	redirect,
 	typedjson,
 	useTypedFetcher,
 	useTypedLoaderData,
 } from "remix-typedjson";
-import { type FetchOptions, fetchGamesFromIGDB } from "@/services/igdb";
+import { getSearchResults } from "./queries.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-	const { supabase, headers } = createServerClient(request);
-	const session = await getSession(supabase);
-
-	if (!session) {
-		// there is no session, therefore, we are redirecting
-		// to the landing page. The `/?index` is required here
-		// for Remix to correctly call our loaders
-		return redirect("/?index", {
-			// we still need to return response.headers to attach the set-cookie header
-			headers,
-		});
-	}
-
-	const gameIds = await getUserCollectionGameIds(session.user.id);
+	const session = await authenticate(request);
 
 	const url = new URL(request.url);
 	const search = url.searchParams.get("search");
 	const offset = url.searchParams.get("offset");
 
-	// Search results from IGDB
-	let searchResults: IGDBGame[] = [];
-	const searchOptions: FetchOptions = {
-		fields: ["name", "cover.image_id"],
-		limit: 50,
-		filters: [
-			"cover != null",
-			"parent_game = null",
-			"version_parent = null",
-			"themes != (42)",
-		],
-	};
-
-	if (offset) {
-		searchOptions.offset = Number(offset);
-	}
-
-	if (search) {
-		searchOptions.search = search;
-	} else {
-		searchOptions.sort = ["rating desc"];
-		searchOptions.filters?.push("follows > 250", "rating > 80");
-	}
-	const results = await fetchGamesFromIGDB(IGDB_BASE_URL, searchOptions);
-
-	try {
-		const parsedGames = IGDBGameSchemaArray.parse(results);
-		searchResults = parsedGames;
-	} catch (e) {
-		console.error(e);
-	}
-
-	// this mutates the shape of the result
-	const resultsMarkedAsSaved = markResultsAsSaved(searchResults, gameIds);
+	const resultsMarkedAsSaved = await getSearchResults({
+		userId: session.user.id,
+		search,
+		offset: Number(offset),
+	});
 
 	return typedjson({ resultsMarkedAsSaved, session });
 };

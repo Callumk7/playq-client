@@ -5,14 +5,19 @@ import {
 	Sidebar,
 	usePlaylistDialogOpen,
 } from "@/components";
-import { getFriendActivity, getUserCollectionGameIds, transformActivity } from "@/model";
+import { getFriendActivity, transformActivity } from "@/model";
 import { createServerClient, getSession } from "@/services";
 import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { Outlet, useFetcher } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/ssr";
 import { useEffect, useState } from "react";
-import { redirect, typedjson, useTypedLoaderData, useTypedRouteLoaderData } from "remix-typedjson";
-import { getCreatedAndFollowedPlaylists, getUserFriends } from "./loader";
+import {
+	redirect,
+	typedjson,
+	useTypedLoaderData,
+	useTypedRouteLoaderData,
+} from "remix-typedjson";
+import { getCreatedAndFollowedPlaylists } from "./loader";
 
 import { ErrorBoundary as _ErrorBoundary } from "@/components/error-boundary";
 import { getUserDetails } from "@/model/users/database-queries";
@@ -39,19 +44,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	}
 
 	const userPlaylistsPromise = getCreatedAndFollowedPlaylists(session.user.id);
-	const userFriendsPromise = getUserFriends(session.user.id);
 	const friendActivityPromise = getFriendActivity(session.user.id);
 
 	// Set the store for user gameIds as a cache on the app route.
-	const userCollectionPromise = getUserCollectionGameIds(session.user.id);
-  const userDetailsPromise = getUserDetails(session.user.id);
+	const userDetailsPromise = getUserDetails(session.user.id);
 
-	const [userPlaylists, userFriends, friendActivity, userCollection, userDetails] = await Promise.all([
+	const [userPlaylists, friendActivity, userDetails] = await Promise.all([
 		userPlaylistsPromise,
-		userFriendsPromise,
 		friendActivityPromise,
-		userCollectionPromise,
-    userDetailsPromise,
+		userDetailsPromise,
 	]);
 
 	const activityFeed = transformActivity(friendActivity);
@@ -117,7 +118,7 @@ export default function AppLayout() {
 						session={session}
 						sidebarOpen={sidebarOpen}
 						setSidebarOpen={setSidebarOpen}
-            userDetails={userDetails}
+						userDetails={userDetails}
 					/>
 					<Container className="py-20 md:pt-0">
 						<Outlet />
@@ -144,4 +145,3 @@ export function useAppData() {
 	}
 	return data;
 }
-
