@@ -4,16 +4,13 @@ import { authenticate, createServerClient, getSession } from "@/services";
 import { GameWithCollection } from "@/types";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import {
-	redirect,
 	typedjson,
-	useTypedLoaderData,
 	useTypedRouteLoaderData,
 } from "remix-typedjson";
 
 import { CollectionView } from "./components/CollectionView";
 import { useHandleRateGameDialog } from "./hooks/rate-game-dialog";
 import { getCollectionData } from "./queries.server";
-import { useMatches } from "@remix-run/react";
 
 const getLimitAndOffset = (request: Request) => {
 	const url = new URL(request.url);
@@ -23,6 +20,8 @@ const getLimitAndOffset = (request: Request) => {
 	if (limit === 0) limit = undefined;
 	return { limit, offset };
 };
+
+// hello
 
 ///
 /// LOADER FUNCTION
