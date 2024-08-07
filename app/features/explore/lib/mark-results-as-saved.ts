@@ -1,4 +1,3 @@
-import { IGDBGame } from "@/types/igdb";
 
 export const markInternalResultsAsSaved = <G extends { games: { gameId: number } }>(
 	searchResults: G[],
