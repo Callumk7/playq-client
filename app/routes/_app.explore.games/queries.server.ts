@@ -1,6 +1,6 @@
 import { IGDB_BASE_URL } from "@/constants";
 import { getUserCollectionGameIds } from "@/model";
-import { FetchOptions, fetchGamesFromIGDB } from "@/services";
+import { FetchOptions, IGDBClient, fetchGamesFromIGDB } from "@/services";
 import { IGDBGame, IGDBGameSchemaArray } from "@/types";
 
 type GetSearchResultsOptions = {
@@ -66,3 +66,26 @@ const markResultsAsSaved = (searchResults: IGDBGame[], userCollection: number[])
 		};
 	});
 };
+
+const client = new IGDBClient(
+	process.env.IGDB_CLIENT_ID!,
+	process.env.IGDB_BEARER_TOKEN!,
+);
+
+export async function getTopRatedRecentGames() {
+	const games = await client.execute(
+		"games",
+		client
+			.games("full")
+			.where("release_dates.y >= 2015")
+			.where("aggregated_rating_count >= 20")
+			.sort("aggregated_rating", "desc")
+			.limit(30),
+	);
+
+	console.log(games);
+
+	const searchResults = IGDBGameSchemaArray.parse(games);
+
+	return searchResults;
+}

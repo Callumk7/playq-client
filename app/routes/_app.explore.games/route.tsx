@@ -6,12 +6,8 @@ import { ListView } from "@/features/library/components/list-view";
 import { ArrowLeftIcon, ArrowRightIcon, ViewGridIcon } from "@radix-ui/react-icons";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useEffect, useRef, useState } from "react";
-import {
-	typedjson,
-	useTypedFetcher,
-	useTypedLoaderData,
-} from "remix-typedjson";
-import { getSearchResults } from "./queries.server";
+import { typedjson, useTypedFetcher, useTypedLoaderData } from "remix-typedjson";
+import { getSearchResults, getTopRatedRecentGames } from "./queries.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await authenticate(request);
@@ -26,7 +22,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		offset: Number(offset),
 	});
 
-	return typedjson({ resultsMarkedAsSaved, session });
+	const topGames = await getTopRatedRecentGames();
+
+	return typedjson({ resultsMarkedAsSaved, session, topGames });
 };
 
 export default function ExploreRoute() {
@@ -114,31 +112,7 @@ export default function ExploreRoute() {
 						<ArrowRightIcon />
 					</Button>
 				</div>
-				{view === "card" ? (
-					<LibraryView>
-						{data.resultsMarkedAsSaved.map((game) => (
-							<ExploreGame
-								key={game.id}
-								game={game}
-								coverId={game.cover.image_id}
-								gameId={game.id}
-								userId={data.session.user.id}
-							/>
-						))}
-					</LibraryView>
-				) : (
-					<ListView>
-						{data.resultsMarkedAsSaved.map((game) => (
-							<GameListItem
-								key={game.id}
-								gameTitle={game.name}
-								gameId={game.id}
-								userId={data.session.user.id}
-								game={game}
-							/>
-						))}
-					</ListView>
-				)}
+				<ResultsView view={view} userId={data.session.user.id} />
 				<div className="flex gap-2">
 					<Button
 						variant={"outline"}
@@ -162,5 +136,39 @@ export default function ExploreRoute() {
 				</div>
 			</div>
 		</div>
+	);
+}
+
+function ResultsView(props: { view: "card" | "list"; userId: string }) {
+	const { view, userId } = props;
+	const loaderData = useTypedLoaderData<typeof loader>();
+	return (
+		<>
+			{view === "card" ? (
+				<LibraryView>
+					{loaderData.topGames.map((game) => (
+						<ExploreGame
+							key={game.id}
+							game={game}
+							coverId={game.cover.image_id}
+							gameId={game.id}
+							userId={userId}
+						/>
+					))}
+				</LibraryView>
+			) : (
+				<ListView>
+					{loaderData.topGames.map((game) => (
+						<GameListItem
+							key={game.id}
+							gameTitle={game.name}
+							gameId={game.id}
+							userId={userId}
+							game={game}
+						/>
+					))}
+				</ListView>
+			)}
+		</>
 	);
 }
