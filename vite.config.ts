@@ -10,9 +10,7 @@ export default defineConfig({
 		port: 3000,
 	},
 	plugins: [
-		remix({
-			ignoredRouteFiles: ["**/.*"],
-		}),
+		remix(),
 		tsconfigPaths()
 	],
 });
