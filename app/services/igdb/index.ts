@@ -119,6 +119,8 @@ export class IGDBClient {
 		});
 
 		if (!response.ok) {
+			console.error(response.statusText)
+			console.error(await response.text())
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
@@ -129,6 +131,7 @@ export class IGDBClient {
 class QueryBuilder {
 	private fields: string[] = [];
 	private whereConditions: string[] = [];
+	private searchTerm: string | null = null;
 	private sortOptions: string[] = [];
 	private limitValue: number | null = null;
 	private offsetValue: number | null = null;
@@ -166,30 +169,38 @@ class QueryBuilder {
 		return this;
 	}
 
+	search(searchTerm: string | null): QueryBuilder {
+		this.searchTerm = searchTerm;
+		return this;
+	}
+
 	sort(field: string, order: "asc" | "desc" = "asc"): QueryBuilder {
 		this.sortOptions.push(`${field} ${order}`);
 		return this;
 	}
 
-	limit(value: number): QueryBuilder {
+	limit(value: number | null): QueryBuilder {
 		this.limitValue = value;
 		return this;
 	}
 
-	offset(value: number): QueryBuilder {
+	offset(value: number | null): QueryBuilder {
 		this.offsetValue = value;
 		return this;
 	}
 
 	build(): string {
 		let query = "";
+		if (this.searchTerm) {
+			query += ` search "${this.searchTerm}";`
+		}
 		if (this.fields.length > 0) {
 			query += `fields ${this.fields.join(", ")};`;
 		}
 		if (this.whereConditions.length > 0) {
 			query += ` where ${this.whereConditions.join(" & ")};`;
 		}
-		if (this.sortOptions.length > 0) {
+		if (this.sortOptions.length > 0 && this.searchTerm === null) {
 			query += ` sort ${this.sortOptions.join(", ")};`;
 		}
 		if (this.limitValue !== null) {
@@ -198,6 +209,7 @@ class QueryBuilder {
 		if (this.offsetValue !== null) {
 			query += ` offset ${this.offsetValue};`;
 		}
+		console.log(query);
 		return query;
 	}
 }

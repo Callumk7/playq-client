@@ -89,3 +89,26 @@ export async function getTopRatedRecentGames() {
 
 	return searchResults;
 }
+
+export async function getSearchResultsNew(
+	query: string | null,
+	page: string | null
+) {
+	const limit = 25;
+	let offset: number | null = null;
+
+	if (page === null) {
+		offset = 0;
+	} else {
+		offset = Number(page) * limit;
+	}
+
+	const games = await client.execute(
+		"games",
+		client.games("full").search(query).limit(limit).offset(offset),
+	);
+
+	console.log(games);
+
+	return games;
+}
