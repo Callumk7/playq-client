@@ -80,7 +80,7 @@ export const fetchGenresFromIGDB = async () => {
 	try {
 		const res = await fetch(url, { method: "POST", headers, body });
 		const json = await res.json();
-		return json as unknown[];
+		return json as {id: string, name: string}[];
 	} catch (e) {
 		console.error(e);
 		throw new Error("Error fetching games from IGDB");
@@ -105,7 +105,7 @@ export class IGDBClient {
 		return new QueryBuilder().selectPreset(preset);
 	}
 
-	async execute(endpoint: string, queryBuilder: QueryBuilder): Promise<unknown> {
+	async execute(endpoint: string, queryBuilder: QueryBuilder): Promise<unknown[]> {
 		const query = queryBuilder.build();
 		const response = await fetch(`${this.baseUrl}/${endpoint}`, {
 			method: "POST",

@@ -1,7 +1,7 @@
 import { IGDB_BASE_URL } from "@/constants";
 import { getUserCollectionGameIds } from "@/model";
 import { FetchOptions, IGDBClient, fetchGamesFromIGDB } from "@/services";
-import { IGDBGame, IGDBGameSchemaArray } from "@/types";
+import { IGDBGame, IGDBGameSchema, IGDBGameSchemaArray } from "@/types";
 
 type GetSearchResultsOptions = {
 	userId: string;
@@ -90,10 +90,7 @@ export async function getTopRatedRecentGames() {
 	return searchResults;
 }
 
-export async function getSearchResultsNew(
-	query: string | null,
-	page: string | null
-) {
+export async function getSearchResultsNew(query: string | null, page: string | null) {
 	const limit = 25;
 	let offset: number | null = null;
 
@@ -108,7 +105,13 @@ export async function getSearchResultsNew(
 		client.games("full").search(query).limit(limit).offset(offset),
 	);
 
-	console.log(games);
+	const parsedResults = [];
+	for (const game of games) {
+		const result = IGDBGameSchema.safeParse(game);
+		if (result.success) {
+			parsedResults.push(result.data);
+		}
+	}
 
-	return games;
+	return parsedResults;
 }
