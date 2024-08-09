@@ -27,10 +27,7 @@ export const meta: MetaFunction = () => {
 	return [{ title: "playQ" }, { name: "description", content: "What are you playing?" }];
 };
 
-// We are going to use this base route for supabase authentication. This is also where
-// we define the basic layout, including navigation bar and sidebar.
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-	// env variables that we need on the browser:
 	const ENV = {
 		SUPABASE_URL: process.env.SUPABASE_URL!,
 		SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
@@ -44,27 +41,23 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	}
 
 	const userPlaylistsPromise = getCreatedAndFollowedPlaylists(session.user.id);
-	const friendActivityPromise = getFriendActivity(session.user.id);
 
 	// Set the store for user gameIds as a cache on the app route.
 	const userDetailsPromise = getUserDetails(session.user.id);
 
-	const [userPlaylists, friendActivity, userDetails] = await Promise.all([
+	const [userPlaylists, userDetails] = await Promise.all([
 		userPlaylistsPromise,
-		friendActivityPromise,
 		userDetailsPromise,
 	]);
 
-	const activityFeed = transformActivity(friendActivity);
-
 	return typedjson(
-		{ ENV, session, userPlaylists, activityFeed, userDetails },
+		{ ENV, session, userPlaylists, userDetails },
 		{ headers },
 	);
 };
 
 export default function AppLayout() {
-	const { ENV, session, userPlaylists, activityFeed, userDetails } =
+	const { ENV, session, userPlaylists, userDetails } =
 		useTypedLoaderData<typeof loader>();
 
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
@@ -109,7 +102,6 @@ export default function AppLayout() {
 						userId={session.user.id}
 						playlists={userPlaylists}
 						hasSession={!!session}
-						activityFeed={activityFeed}
 					/>
 				</div>
 				<div className={`h-full ${sidebarOpen ? "lg:pl-64" : ""}`}>
