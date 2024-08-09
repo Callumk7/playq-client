@@ -1,22 +1,20 @@
-import {
-	LibraryView,
-} from "@/components";
+import { LibraryView } from "@/components";
 import { ExploreGame } from "@/features/explore/components/search-game";
 import { GameListItem } from "@/features/library/components/game-list-item";
 import { ListView } from "@/features/library/components/list-view";
 import { View, useGameSearchData } from "../route";
 
 interface ResultsViewProps {
-  view: View
-  userId: string
+	view: View;
+	userId: string;
 }
-export function ResultsView({view, userId}: ResultsViewProps) {
-  const {searchResults} = useGameSearchData();
+export function ResultsView({ view, userId }: ResultsViewProps) {
+	const { results } = useGameSearchData();
 	return (
 		<>
 			{view === "card" ? (
 				<LibraryView>
-					{searchResults.map((game) => (
+					{results.map((game) => (
 						<ExploreGame
 							key={game.id}
 							game={game}
@@ -28,7 +26,7 @@ export function ResultsView({view, userId}: ResultsViewProps) {
 				</LibraryView>
 			) : (
 				<ListView>
-					{searchResults.map((game) => (
+					{results.map((game) => (
 						<GameListItem
 							key={game.id}
 							gameTitle={game.name}

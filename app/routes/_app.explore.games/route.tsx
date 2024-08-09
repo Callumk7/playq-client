@@ -2,7 +2,7 @@ import { authenticate, fetchGenresFromIGDB } from "@/services";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useState } from "react";
 import { typedjson, useTypedRouteLoaderData } from "remix-typedjson";
-import { getSearchResultsNew } from "./queries.server";
+import { getSearchResultsNew, getTopRatedRecentGames } from "./queries.server";
 import { useLoaderData } from "@remix-run/react";
 import { GameSearch } from "./components/game-search";
 import { ResultsView } from "./components/results-view";
@@ -25,17 +25,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await authenticate(request);
 	const { search, page } = getSearchParams(request.url);
 
-	const searchResults = await getSearchResultsNew(search, page);
+	const results = await (search
+		? getSearchResultsNew(search, page)
+		: getTopRatedRecentGames());
+
 	const genres = await fetchGenresFromIGDB().then((results) =>
 		results.map((result) => result.name),
 	);
 
-	return typedjson({ searchResults, session, genres });
+	return typedjson({ results, session, genres });
 };
 
 export default function ExploreRoute() {
 	const { session } = useLoaderData<typeof loader>();
-	const [view, setView] = useState<View>("list");
+	const [view, setView] = useState<View>("card");
 
 	return (
 		<div className="mb-12">
@@ -52,7 +55,6 @@ export function ErrorBoundary() {
 	return <p className="w-full text-center italic text-red-300">Oops</p>;
 }
 
-
 export function useGameSearchData() {
 	const data = useTypedRouteLoaderData<typeof loader>("routes/_app.explore.games");
 	if (data === undefined) {
@@ -62,4 +64,3 @@ export function useGameSearchData() {
 	}
 	return data;
 }
-

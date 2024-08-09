@@ -1,57 +1,8 @@
-import { IGDB_BASE_URL } from "@/constants";
-import { getUserCollectionGameIds } from "@/model";
-import { FetchOptions, IGDBClient, fetchGamesFromIGDB } from "@/services";
+import { IGDBClient } from "@/services";
 import { IGDBGame, IGDBGameSchema, IGDBGameSchemaArray } from "@/types";
 
-type GetSearchResultsOptions = {
-	userId: string;
-	search: string | null;
-	offset: number | null;
-};
-export async function getSearchResults({
-	userId,
-	search,
-	offset,
-}: GetSearchResultsOptions) {
-	let searchResults: IGDBGame[] = [];
-	const searchOptions: FetchOptions = {
-		fields: ["name", "cover.image_id"],
-		limit: 50,
-		filters: [
-			"cover != null",
-			"parent_game = null",
-			"version_parent = null",
-			"themes != (42)",
-		],
-	};
-
-	if (offset) {
-		searchOptions.offset = offset;
-	}
-
-	if (search) {
-		searchOptions.search = search;
-	} else {
-		searchOptions.sort = ["rating desc"];
-		searchOptions.filters?.push("follows > 250", "rating > 80");
-	}
-
-	const resultsPromise = fetchGamesFromIGDB(IGDB_BASE_URL, searchOptions);
-	const gameIdsPromise = getUserCollectionGameIds(userId);
-
-	const [results, gameIds] = await Promise.all([resultsPromise, gameIdsPromise]);
-
-	try {
-		const parsedGames = IGDBGameSchemaArray.parse(results);
-		searchResults = parsedGames;
-	} catch (e) {
-		console.error(e);
-	}
-	const resultsMarkedAsSaved = markResultsAsSaved(searchResults, gameIds);
-
-	return resultsMarkedAsSaved;
-}
-
+// WARN: Not currently used. Should be applied to results from IGDB to ensure
+// that the correct state of the game is captured.
 const markResultsAsSaved = (searchResults: IGDBGame[], userCollection: number[]) => {
 	return searchResults.map((game) => {
 		if (userCollection.includes(game.id)) {
@@ -85,9 +36,15 @@ export async function getTopRatedRecentGames() {
 
 	console.log(games);
 
-	const searchResults = IGDBGameSchemaArray.parse(games);
+	const parsedResults = [];
+	for (const game of games) {
+		const result = IGDBGameSchema.safeParse(game);
+		if (result.success) {
+			parsedResults.push(result.data);
+		}
+	}
 
-	return searchResults;
+	return parsedResults;
 }
 
 export async function getSearchResultsNew(query: string | null, page: string | null) {
