@@ -5,21 +5,15 @@ import { gamesOnPlaylists } from "db/schema/playlists";
 
 export const getPopularGames = async () => {
 	const topTenByRatingP = getTopTenByRating();
-	const topTenByCountP = getTopTenByRatingCount();
 	const popularGamesByPlaylistP = getPopularGamesByPlaylist();
 	const popularGamesByCollectionP = getPopularGamesByCollection();
 
-	const [
-		topTenByRating,
-		topTenByCount,
-		popularGamesByPlaylist,
-		popularGamesByCollection,
-	] = await Promise.all([
-		topTenByRatingP,
-		topTenByCountP,
-		popularGamesByPlaylistP,
-		popularGamesByCollectionP,
-	]);
+	const [topTenByRating, popularGamesByPlaylist, popularGamesByCollection] =
+		await Promise.all([
+			topTenByRatingP,
+			popularGamesByPlaylistP,
+			popularGamesByCollectionP,
+		]);
 
 	const popularGames = await combinePopularGameData({
 		popularGamesByCollection,
@@ -37,14 +31,13 @@ export const getPopularGames = async () => {
 
 	return {
 		topTenByRating,
-		topTenByCount,
 		popularGames,
 		maxCollectionCount,
 		maxPlaylistCount,
 	};
 };
 
-export const getTopTenByRating = async () => {
+const getTopTenByRating = async () => {
 	// First: get gameId, calculate rating and count
 	const topGames = await db
 		.select({
@@ -57,7 +50,7 @@ export const getTopTenByRating = async () => {
 		.where(isNotNull(usersToGames.playerRating))
 		.groupBy(games.gameId)
 		.orderBy(desc(avg(usersToGames.playerRating)))
-		.limit(10);
+		.limit(100);
 
 	// Second: get the rest of the game data
 	const gameIds = topGames.map((game) => game.gameId);
@@ -77,6 +70,7 @@ export const getTopTenByRating = async () => {
 				...game,
 			};
 		})
+		.filter((game) => game.ratingCount >= 2)
 		.sort(
 			(a, b) =>
 				Number(b.avRating ? b.avRating : 0) - Number(a.avRating ? a.avRating : 0),
@@ -86,44 +80,45 @@ export const getTopTenByRating = async () => {
 };
 
 // WARN: This function gets the top ten MOST RATED games, regardless of the rating
-export const getTopTenByRatingCount = async () => {
-	const topGames = await db
-		.select({
-			gameId: games.gameId,
-			avRating: avg(usersToGames.playerRating),
-			ratingCount: count(usersToGames.playerRating),
-		})
-		.from(games)
-		.leftJoin(usersToGames, eq(games.gameId, usersToGames.gameId))
-		.where(isNotNull(usersToGames.playerRating))
-		.groupBy(games.gameId)
-		.orderBy(desc(count(usersToGames.playerRating)))
-		.limit(10);
 
-	// get cover data
-	const gameIds = topGames.map((game) => game.gameId);
-	const gameData = await db.query.games.findMany({
-		where: inArray(games.gameId, gameIds),
-		with: {
-			cover: true,
-		},
-	});
-
-	const processedData = gameData
-		.map((game) => {
-			return {
-				avRating: topGames.find((g) => g.gameId === game.gameId)!.avRating,
-				ratingCount: topGames.find((g) => g.gameId === game.gameId)!.ratingCount,
-				...game,
-			};
-		})
-		.sort(
-			(a, b) =>
-				Number(b.avRating ? b.avRating : 0) - Number(a.avRating ? a.avRating : 0),
-		);
-
-	return processedData;
-};
+//const getTopTenByRatingCount = async () => {
+//	const topGames = await db
+//		.select({
+//			gameId: games.gameId,
+//			avRating: avg(usersToGames.playerRating),
+//			ratingCount: count(usersToGames.playerRating),
+//		})
+//		.from(games)
+//		.leftJoin(usersToGames, eq(games.gameId, usersToGames.gameId))
+//		.where(isNotNull(usersToGames.playerRating))
+//		.groupBy(games.gameId)
+//		.orderBy(desc(count(usersToGames.playerRating)))
+//		.limit(10);
+//
+//	// get cover data
+//	const gameIds = topGames.map((game) => game.gameId);
+//	const gameData = await db.query.games.findMany({
+//		where: inArray(games.gameId, gameIds),
+//		with: {
+//			cover: true,
+//		},
+//	});
+//
+//	const processedData = gameData
+//		.map((game) => {
+//			return {
+//				avRating: topGames.find((g) => g.gameId === game.gameId)!.avRating,
+//				ratingCount: topGames.find((g) => g.gameId === game.gameId)!.ratingCount,
+//				...game,
+//			};
+//		})
+//		.sort(
+//			(a, b) =>
+//				Number(b.avRating ? b.avRating : 0) - Number(a.avRating ? a.avRating : 0),
+//		);
+//
+//	return processedData;
+//};
 
 interface GameCount {
 	gameId: number;
@@ -132,7 +127,7 @@ interface GameCount {
 
 // Get games from the database that are popular based on the number
 // of playlists that they are in. Returns gameId and count
-export const getPopularGamesByPlaylist = async (): Promise<GameCount[]> => {
+const getPopularGamesByPlaylist = async (): Promise<GameCount[]> => {
 	// games that are in the most playlists
 	const popularGamesByPlaylist = await db
 		.select({
@@ -149,7 +144,7 @@ export const getPopularGamesByPlaylist = async (): Promise<GameCount[]> => {
 
 // Get games from the database that are popular based on the number
 // of collections that they are in. Returns gameId and count
-export const getPopularGamesByCollection = async (): Promise<GameCount[]> => {
+const getPopularGamesByCollection = async (): Promise<GameCount[]> => {
 	const popularGamesByCollection = await db
 		.select({
 			gameId: usersToGames.gameId,
@@ -163,7 +158,7 @@ export const getPopularGamesByCollection = async (): Promise<GameCount[]> => {
 	return popularGamesByCollection;
 };
 
-export const combinePopularGameData = async ({
+const combinePopularGameData = async ({
 	popularGamesByPlaylist,
 	popularGamesByCollection,
 }: {

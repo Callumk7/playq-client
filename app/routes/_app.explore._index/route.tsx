@@ -5,19 +5,14 @@ import {
 } from "@/features/collection/queries/get-user-genres";
 import { SaveToCollectionButton } from "@/features/explore";
 import { authenticate } from "@/services";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { useState } from "react";
 import {
-	combinePopularGameData,
 	getPopularGames,
-	getPopularGamesByCollection,
-	getPopularGamesByPlaylist,
-	getTopTenByRating,
-	getTopTenByRatingCount,
 } from "./queries.server";
 import { useAppData } from "../_app/route";
-import { RatingCard } from "./components/rating-card";
+import { RatedGameCard } from "./components/rated-game-card";
+import { useTypedLoaderData, typedjson } from "remix-typedjson";
 
 ///
 /// LOADER
@@ -31,18 +26,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		genreStrings[i] = s.toLowerCase();
 	});
 
-	const {
-		topTenByRating,
-		topTenByCount,
-		popularGames,
-		maxCollectionCount,
-		maxPlaylistCount,
-	} = await getPopularGames();
+	const { topTenByRating, popularGames, maxCollectionCount, maxPlaylistCount } =
+		await getPopularGames();
 
-	return json({
-    session,
+	return typedjson({
+		session,
 		topTenByRating,
-		topTenByCount,
 		popularGames,
 		maxPlaylistCount,
 		maxCollectionCount,
@@ -50,7 +39,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function PopularExplore() {
-	const { session, topTenByCount, topTenByRating, popularGames, maxCollectionCount, maxPlaylistCount } = useLoaderData<typeof loader>();
+	const { session, topTenByRating, popularGames, maxCollectionCount, maxPlaylistCount } =
+		useTypedLoaderData<typeof loader>();
 
 	const { userCollectionIds } = useAppData();
 
@@ -69,22 +59,16 @@ export default function PopularExplore() {
 
 	return (
 		<Container className="space-y-6">
-			<h2 className="text-xl font-bold">Top 10 Games</h2>
+			<h2 className="text-xl font-bold">Top Rated Games</h2>
 			<LibraryView>
-				{topTenByCount.map((game) => (
-					<div key={game.id} className="relative flex flex-col gap-3">
-						{!userCollectionIds.includes(game.gameId) && (
-							<div className="absolute top-3 right-3 z-20">
-								<SaveToCollectionButton
-									variant="outline"
-									gameId={game.gameId}
-									userId={session.user.id}
-								/>
-							</div>
-						)}
-						<GameCover coverId={game.cover.imageId} gameId={game.gameId} />
-						<RatingCard avRating={Number(game.avRating)} ratingCount={game.ratingCount} />
-					</div>
+				{topTenByRating.map((game) => (
+					<RatedGameCard
+						userId={session.user.id}
+						key={game.id}
+						game={game}
+						avRating={Number(game.avRating)}
+						ratingCount={game.ratingCount}
+					/>
 				))}
 			</LibraryView>
 			<Toggle pressed={sortByCollection} onPressedChange={handleToggleSortBy}>
