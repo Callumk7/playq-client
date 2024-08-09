@@ -27,7 +27,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	});
 
 	const { topTenByRating, popularGames, maxCollectionCount, maxPlaylistCount } =
-		await getPopularGames();
+		await getPopularGames(25);
 
 	return typedjson({
 		session,

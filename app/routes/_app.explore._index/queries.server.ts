@@ -3,8 +3,8 @@ import { games, usersToGames } from "db/schema/games";
 import { avg, count, desc, eq, inArray, isNotNull } from "drizzle-orm";
 import { gamesOnPlaylists } from "db/schema/playlists";
 
-export const getPopularGames = async () => {
-	const topTenByRatingP = getTopTenByRating();
+export const getPopularGames = async (limit: number) => {
+	const topTenByRatingP = getTopTenByRatingCount(limit);
 	const popularGamesByPlaylistP = getPopularGamesByPlaylist();
 	const popularGamesByCollectionP = getPopularGamesByCollection();
 
@@ -79,46 +79,46 @@ const getTopTenByRating = async () => {
 	return processedData;
 };
 
-// WARN: This function gets the top ten MOST RATED games, regardless of the rating
+const getTopTenByRatingCount = async (limit: number) => {
+	const topGames = await db
+		.select({
+			gameId: games.gameId,
+			avRating: avg(usersToGames.playerRating),
+			ratingCount: count(usersToGames.playerRating),
+		})
+		.from(games)
+		.leftJoin(usersToGames, eq(games.gameId, usersToGames.gameId))
+		.where(isNotNull(usersToGames.playerRating))
+		.groupBy(games.gameId)
+		.orderBy(desc(count(usersToGames.playerRating)))
+		.limit(100);
 
-//const getTopTenByRatingCount = async () => {
-//	const topGames = await db
-//		.select({
-//			gameId: games.gameId,
-//			avRating: avg(usersToGames.playerRating),
-//			ratingCount: count(usersToGames.playerRating),
-//		})
-//		.from(games)
-//		.leftJoin(usersToGames, eq(games.gameId, usersToGames.gameId))
-//		.where(isNotNull(usersToGames.playerRating))
-//		.groupBy(games.gameId)
-//		.orderBy(desc(count(usersToGames.playerRating)))
-//		.limit(10);
-//
-//	// get cover data
-//	const gameIds = topGames.map((game) => game.gameId);
-//	const gameData = await db.query.games.findMany({
-//		where: inArray(games.gameId, gameIds),
-//		with: {
-//			cover: true,
-//		},
-//	});
-//
-//	const processedData = gameData
-//		.map((game) => {
-//			return {
-//				avRating: topGames.find((g) => g.gameId === game.gameId)!.avRating,
-//				ratingCount: topGames.find((g) => g.gameId === game.gameId)!.ratingCount,
-//				...game,
-//			};
-//		})
-//		.sort(
-//			(a, b) =>
-//				Number(b.avRating ? b.avRating : 0) - Number(a.avRating ? a.avRating : 0),
-//		);
-//
-//	return processedData;
-//};
+	// get cover data
+	const gameIds = topGames.map((game) => game.gameId);
+	const gameData = await db.query.games.findMany({
+		where: inArray(games.gameId, gameIds),
+		with: {
+			cover: true,
+		},
+	});
+
+	const processedData = gameData
+		.map((game) => {
+			return {
+				avRating: topGames.find((g) => g.gameId === game.gameId)!.avRating,
+				ratingCount: topGames.find((g) => g.gameId === game.gameId)!.ratingCount,
+				...game,
+			};
+		})
+		.filter((game) => game.ratingCount >= 2)
+		.sort(
+			(a, b) =>
+				Number(b.avRating ? b.avRating : 0) - Number(a.avRating ? a.avRating : 0),
+		)
+		.slice(0, limit);
+
+	return processedData;
+};
 
 interface GameCount {
 	gameId: number;
