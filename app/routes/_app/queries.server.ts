@@ -18,15 +18,6 @@ export const getCreatedAndFollowedPlaylists = async (userId: string) => {
 				playlist: {
 					with: {
 						creator: true,
-						games: {
-							with: {
-								game: {
-									with: {
-										cover: true,
-									},
-								},
-							},
-						},
 					},
 				},
 			},

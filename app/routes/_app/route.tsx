@@ -5,7 +5,6 @@ import {
 	Sidebar,
 	usePlaylistDialogOpen,
 } from "@/components";
-import { getFriendActivity, transformActivity } from "@/model";
 import { createServerClient, getSession } from "@/services";
 import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { Outlet, useFetcher } from "@remix-run/react";
@@ -17,10 +16,11 @@ import {
 	useTypedLoaderData,
 	useTypedRouteLoaderData,
 } from "remix-typedjson";
-import { getCreatedAndFollowedPlaylists } from "./loader";
+import { getCreatedAndFollowedPlaylists } from "./queries.server";
 
 import { ErrorBoundary as _ErrorBoundary } from "@/components/error-boundary";
 import { getUserDetails } from "@/model/users/database-queries";
+import { getUserCollectionGameIds } from "@/model";
 export const ErrorBoundary = _ErrorBoundary;
 
 export const meta: MetaFunction = () => {
@@ -41,17 +41,18 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	}
 
 	const userPlaylistsPromise = getCreatedAndFollowedPlaylists(session.user.id);
+  const userCollectionIdsPromise = getUserCollectionGameIds(session.user.id);
 
-	// Set the store for user gameIds as a cache on the app route.
 	const userDetailsPromise = getUserDetails(session.user.id);
 
-	const [userPlaylists, userDetails] = await Promise.all([
+	const [userPlaylists, userCollectionIds, userDetails] = await Promise.all([
 		userPlaylistsPromise,
+    userCollectionIdsPromise,
 		userDetailsPromise,
 	]);
 
 	return typedjson(
-		{ ENV, session, userPlaylists, userDetails },
+		{ ENV, session, userPlaylists, userCollectionIds, userDetails },
 		{ headers },
 	);
 };

@@ -1,23 +1,6 @@
 import { IGDBClient } from "@/services";
 import { IGDBGame, IGDBGameSchema, IGDBGameSchemaArray } from "@/types";
 
-// WARN: Not currently used. Should be applied to results from IGDB to ensure
-// that the correct state of the game is captured.
-const markResultsAsSaved = (searchResults: IGDBGame[], userCollection: number[]) => {
-	return searchResults.map((game) => {
-		if (userCollection.includes(game.id)) {
-			return {
-				...game,
-				saved: true,
-			};
-		}
-		return {
-			...game,
-			saved: false,
-		};
-	});
-};
-
 const client = new IGDBClient(
 	process.env.IGDB_CLIENT_ID!,
 	process.env.IGDB_BEARER_TOKEN!,
