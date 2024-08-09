@@ -17,7 +17,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	}
 
 	const activity = await getFriendActivity(session.user.id);
-	// This sorts by timestamp, might want to move that out of this function
 	const feed = transformActivity(activity);
 
 	return typedjson({ session, feed }, { headers });
