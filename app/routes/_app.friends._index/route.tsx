@@ -1,11 +1,11 @@
-import { Container } from "@/components";
 import { createServerClient, getSession } from "@/services";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { db } from "db";
 import { friends } from "db/schema/users";
 import { eq } from "drizzle-orm";
-import { FriendTable } from "./friend-table";
 import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
+import { FriendTable } from "./components/friend-table";
+import { FriendMenu } from "./components/friend-menu";
 
 ///
 /// LOADER
@@ -33,7 +33,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		},
 	});
 
-  const justFriends = userFriends.map(f => f.friend)
+	const justFriends = userFriends.map((f) => f.friend);
 
 	return typedjson({ justFriends }, { headers });
 };
@@ -41,8 +41,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function FriendsRoute() {
 	const { justFriends } = useTypedLoaderData<typeof loader>();
 	return (
-		<div className="flex flex-col">
-      <FriendTable friends={justFriends} />
+		<div className="mt-10">
+			<FriendMenu />
+			<FriendTable friends={justFriends} />
 		</div>
 	);
 }
