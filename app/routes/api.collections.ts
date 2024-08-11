@@ -7,6 +7,12 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { zx } from "zodix";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
+import { IGDBClient, SaveGameService } from "@/services";
+
+const client = new IGDBClient(
+	process.env.IGDB_CLIENT_ID!,
+	process.env.IGDB_BEARER_TOKEN!,
+);
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	// This action needs to handle POST and DELETE requests for games
@@ -31,17 +37,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				.onConflictDoNothing()
 				.returning();
 
-			// This is offloading the work to a cloudflare worker
-			await fetch(`${WORKER_URL}/games/${gameId}`, {
-				method: "POST",
-			}).then((res) => {
-				if (res.ok) {
-					console.log(`Successfully saved ${gameId} to our database.`);
-				} else {
-					console.error(`Failed to save ${gameId} to our database.`);
-				}
-			});
-
+			// Migrated from random cloudflare worker here
+			const service = new SaveGameService(db, client);
+			await service.getGameFromIGDB(gameId);
+			// This.. seems to be working..
 			activityManager.addToCollection(userId, gameId);
 
 			return json(

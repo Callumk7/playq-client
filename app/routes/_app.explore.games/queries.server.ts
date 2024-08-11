@@ -1,5 +1,5 @@
 import { IGDBClient } from "@/services";
-import { IGDBGame, IGDBGameSchema, IGDBGameSchemaArray } from "@/types";
+import { IGDBGameSchema } from "@/types";
 
 const client = new IGDBClient(
 	process.env.IGDB_CLIENT_ID!,
@@ -17,8 +17,6 @@ export async function getTopRatedRecentGames() {
 			.limit(30),
 	);
 
-	console.log(games);
-
 	const parsedResults = [];
 	for (const game of games) {
 		const result = IGDBGameSchema.safeParse(game);
@@ -30,7 +28,7 @@ export async function getTopRatedRecentGames() {
 	return parsedResults;
 }
 
-export async function getSearchResultsNew(query: string | null, page: string | null) {
+export async function getSearchResults(query: string | null, page: string | null) {
 	const limit = 25;
 	let offset: number | null = null;
 
