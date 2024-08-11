@@ -7,13 +7,19 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components";
+import { useAppData } from "@/routes/_app/route";
 import { User } from "@/types";
+import { useFetcher } from "@remix-run/react";
 
 interface UserSearchTableProps {
 	users: User[];
+	friendIds: string[];
 }
 
-export function UserSearchTable({ users }: UserSearchTableProps) {
+export function UserSearchTable({ users, friendIds }: UserSearchTableProps) {
+	const { session } = useAppData();
+	const fetcher = useFetcher();
+
 	if (users.length > 0) {
 		return (
 			<Table>
@@ -28,7 +34,31 @@ export function UserSearchTable({ users }: UserSearchTableProps) {
 							<TableCell>{user.username}</TableCell>
 							<TableCell>{user.email}</TableCell>
 							<TableCell>
-								<Button variant={"ghost"}>Add</Button>
+								{friendIds.includes(user.id) ? (
+									<Button
+										variant={"ghost"}
+										onClick={() =>
+											fetcher.submit(
+												{ userId: session.user.id, friendId: user.id },
+												{ method: "DELETE" },
+											)
+										}
+									>
+										Remove
+									</Button>
+								) : (
+									<Button
+										variant={"ghost"}
+										onClick={() =>
+											fetcher.submit(
+												{ userId: session.user.id, friendId: user.id },
+												{ method: "POST" },
+											)
+										}
+									>
+										Add
+									</Button>
+								)}
 							</TableCell>
 						</TableRow>
 					))}

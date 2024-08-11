@@ -21,13 +21,11 @@ export function FriendTable({ friends }: FriendTableProps) {
 		<Card className="mt-10">
 			<Table>
 				<TableHeader>
-					<TableRow>
-						<TableHead>Name</TableHead>
-						<TableHead>Playlist Follows</TableHead>
-						<TableHead>Playlists Created</TableHead>
-						<TableHead>Games in Collection</TableHead>
-						<TableHead>Controls</TableHead>
-					</TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Playlist Follows</TableHead>
+          <TableHead>Playlists Created</TableHead>
+          <TableHead>Games in Collection</TableHead>
+          <TableHead>Controls</TableHead>
 				</TableHeader>
 				<TableBody>
 					{friends.map((friend) => (

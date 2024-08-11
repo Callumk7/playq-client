@@ -35,12 +35,3 @@ export const getCreatedAndFollowedPlaylists = async (userId: string) => {
 	return allPlaylists;
 };
 
-export const getUserFriendIds = async (userId: string) => {
-	const userFriends = await db.query.friends
-		.findMany({
-			where: eq(friends.userId, userId),
-		})
-		.then((results) => results.map((result) => result.friendId));
-
-	return userFriends;
-};

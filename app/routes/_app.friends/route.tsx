@@ -1,47 +1,61 @@
-import { createServerClient, getSession } from "@/services";
-import { ActionFunctionArgs } from "@remix-run/node";
+import { authenticate } from "@/services";
+import { ActionFunctionArgs, json } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { db } from "db";
 import { friends } from "db/schema/users";
 import { and, eq } from "drizzle-orm";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { z } from "zod";
+import { zx } from "zodix";
+import { connectAsFriends } from "./queries.server";
+
+const parseRequest = async (request: Request) => {
+	const result = await zx.parseFormSafe(request, {
+		userId: z.string(),
+		friendId: z.string(),
+	});
+
+	if (!result.success) {
+		throw new Response(ReasonPhrases.BAD_REQUEST, { status: StatusCodes.BAD_REQUEST });
+	}
+
+	return {
+		userId: result.data.userId,
+		friendId: result.data.friendId,
+	};
+};
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const { supabase } = createServerClient(request);
-  const session = await getSession(supabase);
+	const session = await authenticate(request);
+	const { userId, friendId } = await parseRequest(request);
 
-  const formData = await request.formData();
-  const friendId = String(formData.get("friend_id"));
-  if (request.method === "POST") {
-    const newFriend = await db.insert(friends).values({
-      userId: session!.user.id,
-      friendId: friendId,
-    });
+	if (request.method === "POST") {
+		try {
+			await connectAsFriends(userId, friendId);
+			return json({ success: true, userId, friendId });
+		} catch (error) {
+			console.error("There was an error connecting friends");
+			return json({ success: false });
+		}
+	}
 
-    const newConnection = await db.insert(friends).values({
-      userId: friendId,
-      friendId: session!.user.id,
-    });
+	if (request.method === "DELETE") {
+		const removeFriend = await db
+			.delete(friends)
+			.where(and(eq(friends.userId, session!.user.id), eq(friends.friendId, friendId)));
 
-    return { newFriend, newConnection };
-  }
-
-  if (request.method === "DELETE") {
-    const removeFriend = await db
-      .delete(friends)
-      .where(and(eq(friends.userId, session!.user.id), eq(friends.friendId, friendId)));
-
-    const removeConnection = await db
-      .delete(friends)
-      .where(and(eq(friends.userId, friendId), eq(friends.friendId, session!.user.id)));
-    return { removeFriend, removeConnection };
-  }
-  return new Response("Method not allowed", { status: 405 });
+		const removeConnection = await db
+			.delete(friends)
+			.where(and(eq(friends.userId, friendId), eq(friends.friendId, session!.user.id)));
+		return { removeFriend, removeConnection };
+	}
+	return new Response("Method not allowed", { status: 405 });
 };
 
 export default function FriendsRoute() {
-  return (
-    <div>
-      <Outlet />
-    </div>
-  );
+	return (
+		<div>
+			<Outlet />
+		</div>
+	);
 }
