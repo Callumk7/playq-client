@@ -2,7 +2,7 @@
 // application works at larger scales
 
 import { InsertFollower, InsertGamesOnPlaylist, InsertUsersToGames } from "@/types";
-import { uuidv4 } from "@/util/generate-uuid";
+import { uuidv4 } from "callum-util";
 import { db } from "db";
 import { games, usersToGames } from "db/schema/games";
 import { followers, gamesOnPlaylists, playlists } from "db/schema/playlists";
