@@ -2,36 +2,34 @@ import {
 	Button,
 	Comment,
 	DeletePlaylistDialog,
-	GameCover,
-	LibraryView,
 	RenamePlaylistDialog,
 	Separator,
 	useDeletePlaylistDialogOpen,
 } from "@/components";
 import { getUserCollection } from "@/model";
-import { createServerClient, getSession } from "@/services";
+import { authenticate } from "@/services";
 import { Game } from "@/types/games";
 import { NoteWithAuthor } from "@/types/notes";
-import { PlaylistWithGames, Tag } from "@/types/playlists";
+import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { Session } from "@supabase/supabase-js";
 import { ReactNode, useEffect, useState } from "react";
-import { redirect, typedjson, useTypedLoaderData } from "remix-typedjson";
+import { typedjson, useTypedLoaderData, useTypedRouteLoaderData } from "remix-typedjson";
 import { z } from "zod";
 import { zx } from "zodix";
 import { StatsSidebar } from "../res.playlist-sidebar.$userId";
 import { FollowerSidebar } from "./components/followers-sidebar";
 import { PlaylistCommentForm } from "./components/pl-comment-form";
-import { PlaylistEntryControls } from "./components/playlist-entry-controls";
 import {
 	getAggregatedPlaylistRating,
 	getMinimumPlaylistData,
 	getPlaylistComments,
 	getPlaylistWithGamesAndFollowers,
 	getUserFollowAndRatingData,
-} from "./loading";
+} from "./queries.server";
 import { PlaylistMenuSection } from "./components/playlist-menu-section";
+import { PlaylistView } from "./components/playlist-view";
 
 // Type guard types. We can block users by returning "blocked" from the loader.
 // As such, if we want type safety, we need to define the types first and narrow.
@@ -59,14 +57,7 @@ interface Result {
 /// LOADER
 ///
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-	const { supabase, headers } = createServerClient(request);
-	const session = await getSession(supabase);
-
-	if (!session) {
-		return redirect("/?index", {
-			headers,
-		});
-	}
+	const session = await authenticate(request);
 
 	const { playlistId } = zx.parseParams(params, {
 		playlistId: z.string(),
@@ -102,9 +93,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		aggregatedRatingPromise,
 	]);
 
-	// Since we are fetching all the data in at the same time, I can get away
-	// with performing this check here. The data that would not be fetched as a result
-	// of this is only small, and almost certainly does not hold up the Promise.all
 	const isCreator = playlistWithGames!.creatorId === session.user.id;
 
 	return typedjson({
@@ -135,8 +123,7 @@ export default function PlaylistRoute() {
 
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 
-	// hmmm. I don't remember writing this. But I am sure there is a better solution to this
-	// than an effect. The component itself should handle this.
+	// This should not be required.
 	useEffect(() => {
 		if (isSubmitting && renameDialogOpen) {
 			setRenameDialogOpen(false);
@@ -156,7 +143,6 @@ export default function PlaylistRoute() {
 		userFollowAndRatingData,
 		aggregatedRating,
 	} = result;
-	const userCollectionGameIds = userCollection.map((c) => c.gameId);
 
 	return (
 		<>
@@ -189,19 +175,7 @@ export default function PlaylistRoute() {
 						</>
 					}
 				>
-					<LibraryView>
-						{playlistWithGames?.games.map((game) => (
-							<div key={game.game.id} className="flex flex-col gap-2">
-								<GameCover coverId={game.game.cover.imageId} gameId={game.gameId} />
-								<PlaylistEntryControls
-									inCollection={userCollectionGameIds.includes(game.gameId)}
-									gameId={game.gameId}
-									userId={session.user.id}
-									isEditing={isEditing}
-								/>
-							</div>
-						))}
-					</LibraryView>
+					<PlaylistView isEditing={isEditing} />
 					<Separator className="mt-10" />
 					<div className="flex gap-5 items-center">
 						<h2 className="text-2xl font-semibold">Comments</h2>
@@ -262,3 +236,16 @@ function LibraryViewWithSidebar({
 		</div>
 	);
 }
+
+export const usePlaylistViewData = () => {
+	const data = useTypedRouteLoaderData<Blocked | Result>(
+		"routes/_app.playlists.view.$playlistId",
+	);
+	if (data === undefined) {
+		throw new Error(
+			"usePlaylistViewData must be used within the _app.playlists.view.$playlistId route or its children",
+		);
+	}
+
+	return data;
+};
