@@ -46,38 +46,6 @@ export function CollectionView({
 	const hideProgress = useCollectionStore((state) => state.hideProgress);
 	const isTableView = useCollectionStore((state) => state.isTableView);
 
-	//const [searchParams, setSearchParams] = useSearchParams();
-	//
-	//const [limit, setLimit] = useState(() => {
-	//	const initLimit = Number(searchParams.get("limit"));
-	//	if (initLimit === 0) {
-	//		return 50;
-	//	}
-	//   return initLimit;
-	//});
-	//const [offset, setOffset] = useState(Number(searchParams.get("offset")));
-	//
-	//const handleIncreaseOffset = () => {
-	//	const newOffset = offset + limit;
-	//	setOffset(newOffset);
-	//	const params = new URLSearchParams();
-	//	params.set("limit", String(limit));
-	//	params.set("offset", String(newOffset));
-	//	setSearchParams(params);
-	//};
-	//
-	// const handleDecreaseOffset = () => {
-	//   let newOffset = offset - limit;
-	//   if (newOffset < 0) {
-	//     newOffset = 0;
-	//   }
-	//   setOffset(newOffset);
-	//	const params = new URLSearchParams();
-	//	params.set("limit", String(limit));
-	//	params.set("offset", String(newOffset));
-	//	setSearchParams(params);
-	// }
-
 	return (
 		<div>
 			<div className="mb-8">
