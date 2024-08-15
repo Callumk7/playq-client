@@ -1,5 +1,6 @@
 import { getUserCollection } from "@/model";
 import { authenticate } from "@/services";
+import { GameWithCollection } from "@/types";
 import { Params, redirect } from "@remix-run/react";
 import { db } from "db";
 import { notes } from "db/schema/notes";
