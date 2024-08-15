@@ -1,4 +1,10 @@
-import { Button, GameCover, LibraryView, Separator, Comment } from "@/components";
+import {
+	Button,
+	GameCover,
+	LibraryView,
+	Separator,
+	Comment,
+} from "@/components";
 import { PlaylistEntryControls } from "./playlist-entry-controls";
 import { usePlaylistViewData } from "../route";
 import { LibraryViewWithSidebar } from "@/components/collection/library-view-with-sidebar";
@@ -11,6 +17,7 @@ export function PlaylistView() {
 	const data = usePlaylistViewData();
 	const { playlistWithGames, userCollection, session } = data;
 	const userCollectionGameIds = userCollection.map((c) => c.gameId);
+
 	const store = usePlaylistViewStore();
 
 	return (
@@ -29,7 +36,7 @@ export function PlaylistView() {
 				}
 			>
 				<LibraryView>
-					{playlistWithGames!.games.map((game) => (
+					{playlistWithGames.games.map((game) => (
 						<div key={game.game.id} className="flex flex-col gap-2">
 							<GameCover coverId={game.game.cover.imageId} gameId={game.gameId} />
 							<PlaylistEntryControls
