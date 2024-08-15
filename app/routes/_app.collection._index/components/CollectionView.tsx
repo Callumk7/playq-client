@@ -24,11 +24,11 @@ export function CollectionView({
   	const { userPlaylists, games, session, genreNames } =
 		useCollectionData();
 
+  const store = useCollectionStore();
 
-	// Custom hooks for handling search, sort and filter
-	const { filteredGames } = useFilter(games);
-	const { searchedGames } = useSearch(filteredGames);
-	const { sortedGames } = useSort(searchedGames);
+	const { filteredGames } = useFilter(games, store);
+	const { searchedGames } = useSearch(filteredGames, store.searchTerm);
+	const { sortedGames } = useSort(searchedGames, store.sortOption);
 
 	// We pass state from the filter store here, so the genre-filter component
 	// can be reused in other routes
