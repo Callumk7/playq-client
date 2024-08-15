@@ -21,8 +21,8 @@ export const handlePlaylistRequest = async (request: Request, params: Params) =>
 		throw redirect("/playlists/view/blocked");
 	}
 
-	const playlistCommentsPromise = getPlaylistComments(playlistId);
 	const playlistWithGamesPromise = getPlaylistWithGamesAndFollowers(playlistId);
+	const playlistCommentsPromise = getPlaylistComments(playlistId);
 	const userCollectionPromise = getUserCollection(session.user.id);
 	const userFollowAndRatingDataPromise = getUserFollowAndRatingData(
 		session.user.id,
@@ -44,7 +44,11 @@ export const handlePlaylistRequest = async (request: Request, params: Params) =>
 		aggregatedRatingPromise,
 	]);
 
-	const isCreator = playlistWithGames!.creatorId === session.user.id;
+	if (!playlistWithGames) {
+		throw redirect("/playlists")
+	}
+
+	const isCreator = playlistWithGames.creatorId === session.user.id;
 
 	return {
 		playlistWithGames,
