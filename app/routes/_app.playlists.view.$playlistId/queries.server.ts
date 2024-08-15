@@ -1,9 +1,63 @@
+import { getUserCollection } from "@/model";
+import { authenticate } from "@/services";
+import { Params, redirect } from "@remix-run/react";
 import { db } from "db";
 import { notes } from "db/schema/notes";
 import { followers, playlists, tags } from "db/schema/playlists";
 import { and, avg, count, eq } from "drizzle-orm";
+import { z } from "zod";
+import { zx } from "zodix";
 
-export const getMinimumPlaylistData = async (playlistId: string) => {
+export const handlePlaylistRequest = async (request: Request, params: Params) => {
+	const session = await authenticate(request);
+	const { playlistId } = zx.parseParams(params, {
+		playlistId: z.string(),
+	});
+
+	const minPlaylistData = await getMinimumPlaylistData(playlistId); // minimum to decide permissions
+
+	// A private route: We must remove the explorer here.
+	if (minPlaylistData[0].creator !== session.user.id && minPlaylistData[0].isPrivate) {
+		throw redirect("/playlists/view/blocked");
+	}
+
+	const playlistCommentsPromise = getPlaylistComments(playlistId);
+	const playlistWithGamesPromise = getPlaylistWithGamesAndFollowers(playlistId);
+	const userCollectionPromise = getUserCollection(session.user.id);
+	const userFollowAndRatingDataPromise = getUserFollowAndRatingData(
+		session.user.id,
+		playlistId,
+	);
+	const aggregatedRatingPromise = getAggregatedPlaylistRating(playlistId);
+
+	const [
+		playlistWithGames,
+		userCollection,
+		playlistComments,
+		userFollowAndRatingData,
+		aggregatedRating,
+	] = await Promise.all([
+		playlistWithGamesPromise,
+		userCollectionPromise,
+		playlistCommentsPromise,
+		userFollowAndRatingDataPromise,
+		aggregatedRatingPromise,
+	]);
+
+	const isCreator = playlistWithGames!.creatorId === session.user.id;
+
+	return {
+		playlistWithGames,
+		userCollection,
+		playlistComments,
+		userFollowAndRatingData,
+		aggregatedRating,
+		isCreator,
+		session
+	};
+};
+
+const getMinimumPlaylistData = async (playlistId: string) => {
 	const minimumPlaylistData = await db
 		.select({
 			creator: playlists.creatorId,
@@ -72,7 +126,7 @@ export const getUserFollowAndRatingData = async (
 	};
 };
 
-export const getAggregatedPlaylistRating = async (playlistId: string) => {
+const getAggregatedPlaylistRating = async (playlistId: string) => {
 	const queryResult = await db
 		.select({
 			id: followers.playlistId,
@@ -87,7 +141,7 @@ export const getAggregatedPlaylistRating = async (playlistId: string) => {
 		return queryResult[0];
 	}
 
-	return { id: playlistId, aggRating: 0, count: 0 };
+	return { id: playlistId, aggRating: "0", count: "0" };
 };
 
 export const getAllTags = async () => {

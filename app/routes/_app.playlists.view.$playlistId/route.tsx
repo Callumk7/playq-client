@@ -6,134 +6,25 @@ import {
 	Separator,
 	useDeletePlaylistDialogOpen,
 } from "@/components";
-import { getUserCollection } from "@/model";
-import { authenticate } from "@/services";
-import { Game } from "@/types/games";
-import { NoteWithAuthor } from "@/types/notes";
-import { PlaylistWithGames } from "@/types/playlists";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
-import { Session } from "@supabase/supabase-js";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { typedjson, useTypedLoaderData, useTypedRouteLoaderData } from "remix-typedjson";
-import { z } from "zod";
-import { zx } from "zodix";
 import { StatsSidebar } from "../res.playlist-sidebar.$userId";
 import { FollowerSidebar } from "./components/followers-sidebar";
 import { PlaylistCommentForm } from "./components/pl-comment-form";
-import {
-	getAggregatedPlaylistRating,
-	getMinimumPlaylistData,
-	getPlaylistComments,
-	getPlaylistWithGamesAndFollowers,
-	getUserFollowAndRatingData,
-} from "./queries.server";
+import { handlePlaylistRequest } from "./queries.server";
 import { PlaylistMenuSection } from "./components/playlist-menu-section";
 import { PlaylistView } from "./components/playlist-view";
 
-// Type guard types. We can block users by returning "blocked" from the loader.
-// As such, if we want type safety, we need to define the types first and narrow.
-interface Blocked {
-	blocked: true;
-}
-
-interface Result {
-	blocked: false;
-	playlistWithGames: PlaylistWithGames & {
-		followers: { userId: string }[];
-	};
-	userCollection: Game[];
-	isCreator: boolean;
-	userFollowAndRatingData: {
-		isFollowing: boolean;
-		rating: number | null;
-	};
-	session: Session;
-	playlistComments: NoteWithAuthor[];
-	aggregatedRating: { id: string; aggRating: number; count: number };
-}
-
-///
-/// LOADER
-///
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-	const session = await authenticate(request);
-
-	const { playlistId } = zx.parseParams(params, {
-		playlistId: z.string(),
-	});
-
-	const minPlaylistData = await getMinimumPlaylistData(playlistId); // minimum to decide permissions
-
-	// if creator != user & isPrivate
-	if (minPlaylistData[0].creator !== session.user.id && minPlaylistData[0].isPrivate) {
-		return typedjson({ blocked: true });
-	}
-
-	const playlistCommentsPromise = getPlaylistComments(playlistId);
-	const playlistWithGamesPromise = getPlaylistWithGamesAndFollowers(playlistId);
-	const userCollectionPromise = getUserCollection(session.user.id);
-	const userFollowAndRatingDataPromise = getUserFollowAndRatingData(
-		session.user.id,
-		playlistId,
-	);
-	const aggregatedRatingPromise = getAggregatedPlaylistRating(playlistId);
-
-	const [
-		playlistWithGames,
-		userCollection,
-		playlistComments,
-		userFollowAndRatingData,
-		aggregatedRating,
-	] = await Promise.all([
-		playlistWithGamesPromise,
-		userCollectionPromise,
-		playlistCommentsPromise,
-		userFollowAndRatingDataPromise,
-		aggregatedRatingPromise,
-	]);
-
-	const isCreator = playlistWithGames!.creatorId === session.user.id;
-
-	return typedjson({
-		playlistWithGames,
-		userCollection,
-		blocked: false,
-		isCreator,
-		userFollowAndRatingData,
-		playlistComments,
-		session,
-		aggregatedRating,
-	});
+	const data = await handlePlaylistRequest(request, params);
+	return typedjson(data);
 };
 
 ///
 /// ROUTE
 ///
 export default function PlaylistRoute() {
-	const result = useTypedLoaderData<Blocked | Result>();
-	const rename = useFetcher();
-	const isSubmitting = rename.state === "submitting";
-
-	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
-	const { deletePlaylistDialogOpen, setDeletePlaylistDialogOpen } =
-		useDeletePlaylistDialogOpen();
-
-	const [isCommenting, setIsCommenting] = useState<boolean>(false);
-
-	const [isEditing, setIsEditing] = useState<boolean>(false);
-
-	// This should not be required.
-	useEffect(() => {
-		if (isSubmitting && renameDialogOpen) {
-			setRenameDialogOpen(false);
-		}
-	}, [isSubmitting, renameDialogOpen]);
-
-	if (result.blocked) {
-		return <div>This Playlist is Private</div>;
-	}
-
 	const {
 		playlistWithGames,
 		userCollection,
@@ -142,13 +33,19 @@ export default function PlaylistRoute() {
 		playlistComments,
 		userFollowAndRatingData,
 		aggregatedRating,
-	} = result;
+	} = useTypedLoaderData<typeof loader>();
+
+  const { deletePlaylistDialogOpen, setDeletePlaylistDialogOpen } =
+  useDeletePlaylistDialogOpen();
+	const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
+	const [isCommenting, setIsCommenting] = useState<boolean>(false);
+	const [isEditing, setIsEditing] = useState<boolean>(false);
 
 	return (
 		<>
 			<div className="flex flex-col gap-6">
 				<PlaylistMenuSection
-					playlistWithGames={playlistWithGames}
+					playlistWithGames={playlistWithGames!}
 					isCreator={isCreator}
 					userCollection={userCollection}
 					setRenameDialogOpen={setRenameDialogOpen}
@@ -158,15 +55,15 @@ export default function PlaylistRoute() {
 					userId={session.user.id}
 					userFollowAndRatingData={userFollowAndRatingData}
 				/>
-				<PlaylistTitle title={playlistWithGames.name} />
+				<PlaylistTitle title={playlistWithGames!.name} />
 				<LibraryViewWithSidebar
 					sidebar={
 						<>
 							<StatsSidebar
 								userId={session.user.id}
-								playlistId={playlistWithGames.id}
-								max={playlistWithGames.games.length}
-								followerCount={playlistWithGames.followers.length}
+								playlistId={playlistWithGames!.id}
+								max={playlistWithGames!.games.length}
+								followerCount={playlistWithGames!.followers.length}
 							/>
 							<FollowerSidebar
 								followers={aggregatedRating.count}
@@ -190,7 +87,7 @@ export default function PlaylistRoute() {
 					{isCommenting && (
 						<PlaylistCommentForm
 							userId={session.user.id}
-							playlistId={playlistWithGames.id}
+							playlistId={playlistWithGames!.id}
 						/>
 					)}
 					<div className="grid gap-3">
@@ -203,12 +100,12 @@ export default function PlaylistRoute() {
 			<RenamePlaylistDialog
 				renameDialogOpen={renameDialogOpen}
 				setRenameDialogOpen={setRenameDialogOpen}
-				playlistId={playlistWithGames.id}
+				playlistId={playlistWithGames!.id}
 			/>
 			<DeletePlaylistDialog
 				deletePlaylistDialogOpen={deletePlaylistDialogOpen}
 				setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
-				playlistId={playlistWithGames.id}
+				playlistId={playlistWithGames!.id}
 			/>
 		</>
 	);
@@ -238,7 +135,7 @@ function LibraryViewWithSidebar({
 }
 
 export const usePlaylistViewData = () => {
-	const data = useTypedRouteLoaderData<Blocked | Result>(
+	const data = useTypedRouteLoaderData<typeof loader>(
 		"routes/_app.playlists.view.$playlistId",
 	);
 	if (data === undefined) {
