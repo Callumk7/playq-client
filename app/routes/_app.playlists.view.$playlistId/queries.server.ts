@@ -3,9 +3,10 @@ import { authenticate } from "@/services";
 import { GameWithCollection } from "@/types";
 import { Params, redirect } from "@remix-run/react";
 import { db } from "db";
+import { usersToGames } from "db/schema/games";
 import { notes } from "db/schema/notes";
 import { followers, playlists, tags } from "db/schema/playlists";
-import { and, avg, count, eq } from "drizzle-orm";
+import { and, avg, count, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { zx } from "zodix";
 
@@ -46,19 +47,41 @@ export const handlePlaylistRequest = async (request: Request, params: Params) =>
 	]);
 
 	if (!playlistWithGames) {
-		throw redirect("/playlists")
+		throw redirect("/playlists");
+	}
+
+	const gameIds = playlistWithGames.games.map((game) => game.gameId);
+	const collectionData = await db.query.usersToGames.findMany({
+		where: and(
+			inArray(usersToGames.gameId, gameIds),
+			eq(usersToGames.userId, session.user.id),
+		),
+	});
+
+	const transformedGames: GameWithCollection[] = [];
+	for (const c of collectionData) {
+		const game = playlistWithGames.games.find(game => game.gameId === c.gameId)!.game;
+		transformedGames.push({
+			...c,
+			...game,
+			cover: game.cover,
+			playlists: game.playlists.map(p => p.playlist),
+			genres: game.genres.map(g => g.genre),
+			dateAdded: c.createdAt
+		})
 	}
 
 	const isCreator = playlistWithGames.creatorId === session.user.id;
 
 	return {
 		playlistWithGames,
+		transformedGames,
 		userCollection,
 		playlistComments,
 		userFollowAndRatingData,
 		aggregatedRating,
 		isCreator,
-		session
+		session,
 	};
 };
 
@@ -83,6 +106,18 @@ export const getPlaylistWithGamesAndFollowers = async (playlistId: string) => {
 					game: {
 						with: {
 							cover: true,
+							playlists: {
+								with: {
+									playlist: true,
+								},
+							},
+							screenshots: true,
+							artworks: true,
+							genres: {
+								with: {
+									genre: true,
+								},
+							},
 						},
 					},
 				},
