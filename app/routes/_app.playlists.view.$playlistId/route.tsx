@@ -11,6 +11,8 @@ import { PlaylistView } from "./components/playlist-view";
 import { usePlaylistViewStore } from "@/store/playlist-view";
 import { PlaylistTitle } from "@/components/headers";
 import { AddGameToPlaylistDialog } from "./components/add-game-to-playlist-dialog";
+import { RatePlaylistDialog } from "./components/rate-playlist-dialog";
+import { useState } from "react";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const data = await handlePlaylistRequest(request, params);
@@ -51,6 +53,11 @@ export default function PlaylistRoute() {
 				deletePlaylistDialogOpen={deletePlaylistDialogOpen}
 				setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
 				playlistId={playlistWithGames!.id}
+			/>
+			<RatePlaylistDialog
+				isOpen={store.ratePlaylistDialogOpen}
+				setIsOpen={store.setRatePlaylistDialogOpen}
+				playlistId={playlistWithGames.id}
 			/>
 		</>
 	);

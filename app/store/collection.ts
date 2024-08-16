@@ -1,55 +1,15 @@
 import { SortOption } from "@/components";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import { FilterState, SortState, ViewState } from "./types";
 
-interface UserCollectionStore {
-	genreFilter: string[];
-	searchTerm: string;
-	sortOption: SortOption;
+interface UserCollectionStore extends SortState, FilterState, ViewState {
 	selectModeOn: boolean;
 	selectedGames: number[];
-	isTableView: boolean;
 	hideProgress: boolean;
-	filterOnPlayed: boolean;
-	filterOnUnPlayed: boolean;
-	filterOnCompleted: boolean;
-	filterOnUnCompleted: boolean;
-	filterOnRated: boolean;
-	filterOnUnrated: boolean;
-	filterOnStarred: boolean;
-	setGenreFilter: (genreFilter: string[]) => void;
-	setSearchTerm: (searchTerm: string) => void;
-	setSortOption: (sortOption: SortOption) => void;
 	setSelectedGames: (selectedGames: number[]) => void;
 	setHideProgress: (hideProgress: boolean) => void;
-	handleToggleFilterOnPlayed: () => void;
-	handleToggleFilterOnUnPlayed: () => void;
-	handleToggleFilterOnCompleted: () => void;
-	handleToggleFilterOnUnCompleted: () => void;
-	handleToggleFilterOnRated: () => void;
-	handleToggleFilterOnUnrated: () => void;
-	handleToggleFilterOnStarred: () => void;
-	setFilterOnStarred: (filter: boolean) => void;
-	setFilterOnPlayed: (filter: boolean) => void;
-	setFilterOnUnPlayed: (filter: boolean) => void;
-	setFilterOnCompleted: (filter: boolean) => void;
-	setFilterOnUnCompleted: (filter: boolean) => void;
-	setFilterOnRated: (filter: boolean) => void;
-	setFilterOnUnRated: (filter: boolean) => void;
-	setIsTableView: (isTableView: boolean) => void;
 	setSelectModeOn: (selectMode: boolean) => void;
-	handleGenreToggled: (genre: string) => void;
-	handleToggleAllGenres: (genres: string[]) => void;
-	handleToggleSortName: () => void;
-	handleTogglePlayerRating: () => void;
-	handleToggleSortDateAdded: () => void;
-	handleToggleSortReleaseDate: () => void;
-	handleToggleSortAggRating: () => void;
-	handleToggleSortAggRatingCount: () => void;
-	handleToggleSortFollows: () => void;
-	handleToggleSortRating: () => void;
-	handleToggleView: () => void;
-	handleToggleHideProgress: () => void;
 }
 
 export const useCollectionStore = create<UserCollectionStore>()(

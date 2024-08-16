@@ -17,7 +17,7 @@ export function FollowerSidebar() {
 					</div>
 					<div className="flex justify-between">
 						<p className="font-semibold">Rating:</p>
-						<p>{aggregatedRating.aggRating}</p>
+						<p>{Math.floor(Number(aggregatedRating.aggRating))}</p>
 					</div>
 				</div>
 			</CardContent>

@@ -3,13 +3,18 @@ import {
 	PopoverTrigger,
 	PopoverContent,
 	Button,
-	Slider,
-	Label,
 	FollowPlaylistButton,
+	Menubar,
+	MenubarMenu,
+	MenubarTrigger,
+	MenubarContent,
+	MenubarItem,
+	SortAndView,
+	Filters,
 } from "@/components";
+import { usePlaylistViewStore } from "@/store/playlist-view";
 import { MixerHorizontalIcon } from "@radix-ui/react-icons";
 import { useFetcher } from "@remix-run/react";
-import { useState } from "react";
 
 interface GuestMenubarProps {
 	isFollowing: boolean;
@@ -18,15 +23,33 @@ interface GuestMenubarProps {
 	userPlaylistRating: number | null;
 }
 
-export function GuestMenubar({
-	isFollowing,
-	playlistId,
-	userId,
-}: GuestMenubarProps) {
-	const [rating, setRating] = useState(0);
-	const fetcher = useFetcher();
+export function GuestMenubar({ isFollowing, playlistId, userId }: GuestMenubarProps) {
+	const store = usePlaylistViewStore();
+	const followFetcher = useFetcher();
+	const handleToggle = () => {
+		followFetcher.submit(
+			{ userId: userId, playlistId: playlistId },
+			{ method: isFollowing ? "DELETE" : "POST", action: "/api/followers" },
+		);
+	};
+
 	return (
 		<div className="flex gap-4 items-center">
+			<Menubar>
+				<MenubarMenu>
+					<MenubarTrigger>Options</MenubarTrigger>
+					<MenubarContent>
+						<MenubarItem onClick={() => store.setRatePlaylistDialogOpen(true)}>
+							Rate
+						</MenubarItem>
+						<MenubarItem onClick={handleToggle}>
+							{isFollowing ? "Unfollow" : "Follow"}
+						</MenubarItem>
+					</MenubarContent>
+				</MenubarMenu>
+				<SortAndView store={store} />
+				<Filters store={store} />
+			</Menubar>
 			<Popover>
 				<PopoverTrigger asChild>
 					<Button variant={"outline"} size={"icon"}>
@@ -36,23 +59,6 @@ export function GuestMenubar({
 				<PopoverContent>
 					<div className="grid gap-4">
 						<h4 className="font-medium leading-none">Rate Playlist</h4>
-						<fetcher.Form action={`/api/playlists/${playlistId}/ratings`} method="POST">
-							<div className="flex flex-col gap-4">
-								<div className="flex flex-col gap-2">
-									<Label htmlFor="rating">Rating: {rating}</Label>
-									<Slider
-										value={[rating]}
-										onValueChange={(v) => setRating(v[0])}
-										name="rating"
-										id="rating"
-									/>
-								</div>
-								<input type="hidden" value={userId} name="user_id" />
-								<Button variant={"outline"} size={"sm"} type="submit">
-									Submit
-								</Button>
-							</div>
-						</fetcher.Form>
 					</div>
 				</PopoverContent>
 			</Popover>

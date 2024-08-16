@@ -1,50 +1,8 @@
-import { SortOption } from "@/components";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import { FilterState, SortState, ViewState } from "./types";
 
-interface PlaylistViewStore {
-	genreFilter: string[];
-	searchTerm: string;
-	sortOption: SortOption;
-	isTableView: boolean;
-	filterOnPlayed: boolean;
-	filterOnUnPlayed: boolean;
-	filterOnCompleted: boolean;
-	filterOnUnCompleted: boolean;
-	filterOnRated: boolean;
-	filterOnUnrated: boolean;
-	filterOnStarred: boolean;
-	setGenreFilter: (genreFilter: string[]) => void;
-	setSearchTerm: (searchTerm: string) => void;
-	setSortOption: (sortOption: SortOption) => void;
-	handleToggleFilterOnPlayed: () => void;
-	handleToggleFilterOnUnPlayed: () => void;
-	handleToggleFilterOnCompleted: () => void;
-	handleToggleFilterOnUnCompleted: () => void;
-	handleToggleFilterOnRated: () => void;
-	handleToggleFilterOnUnrated: () => void;
-	handleToggleFilterOnStarred: () => void;
-	setFilterOnStarred: (filter: boolean) => void;
-	setFilterOnPlayed: (filter: boolean) => void;
-	setFilterOnUnPlayed: (filter: boolean) => void;
-	setFilterOnCompleted: (filter: boolean) => void;
-	setFilterOnUnCompleted: (filter: boolean) => void;
-	setFilterOnRated: (filter: boolean) => void;
-	setFilterOnUnRated: (filter: boolean) => void;
-	setIsTableView: (isTableView: boolean) => void;
-	handleGenreToggled: (genre: string) => void;
-	handleToggleAllGenres: (genres: string[]) => void;
-	handleToggleSortName: () => void;
-	handleTogglePlayerRating: () => void;
-	handleToggleSortDateAdded: () => void;
-	handleToggleSortReleaseDate: () => void;
-	handleToggleSortAggRating: () => void;
-	handleToggleSortAggRatingCount: () => void;
-	handleToggleSortFollows: () => void;
-	handleToggleSortRating: () => void;
-	handleToggleView: () => void;
-
-	// playlist route specific
+interface PlaylistViewStore extends ViewState, FilterState, SortState {
 	isEditing: boolean;
 	setIsEditing: (isEditing: boolean) => void;
 	isCommenting: boolean;
@@ -53,6 +11,8 @@ interface PlaylistViewStore {
 	setRenameDialogOpen: (renameDialogOpen: boolean) => void;
 	addGameDialogOpen: boolean;
 	setAddGameDialogOpen: (addGameDialogOpen: boolean) => void;
+	ratePlaylistDialogOpen: boolean;
+	setRatePlaylistDialogOpen: (ratePlaylistDialogOpen: boolean) => void;
 }
 
 export const usePlaylistViewStore = create<PlaylistViewStore>()(
@@ -167,5 +127,8 @@ export const usePlaylistViewStore = create<PlaylistViewStore>()(
 		setRenameDialogOpen: (renameDialogOpen) => set({ renameDialogOpen }),
 		addGameDialogOpen: false,
 		setAddGameDialogOpen: (addGameDialogOpen) => set({ addGameDialogOpen }),
+		ratePlaylistDialogOpen: false,
+		setRatePlaylistDialogOpen: (ratePlaylistDialogOpen) =>
+			set({ ratePlaylistDialogOpen }),
 	})),
 );
