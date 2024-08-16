@@ -1,34 +1,20 @@
-import { Game, PlaylistWithGames, Tag } from "@/types";
 import { PlaylistMenubar } from "./playlist-menubar";
 import { GuestMenubar } from "./guest-menubar";
-import { Button } from "@/components";
+import { Button, useDeletePlaylistDialogOpen } from "@/components";
+import { usePlaylistViewStore } from "@/store/playlist-view";
+import { usePlaylistViewData } from "../route";
 
-interface PlaylistMenuSectionProps {
-	playlistWithGames: PlaylistWithGames;
-	isCreator: boolean;
-	userCollection: Game[];
-  setRenameDialogOpen: (state: boolean) => void;
-  setDeletePlaylistDialogOpen: (state: boolean) => void;
-  isEditing: boolean;
-  setIsEditing: (isEditing: boolean) => void;
-  userId: string;
-	userFollowAndRatingData: {
-		isFollowing: boolean;
-		rating: number | null;
-	};
- }
+export function PlaylistMenuSection() {
+	const store = usePlaylistViewStore();
+	const { setDeletePlaylistDialogOpen } = useDeletePlaylistDialogOpen();
+	const {
+		playlistWithGames,
+		userCollection,
+		session,
+    isCreator,
+		userFollowAndRatingData,
+	} = usePlaylistViewData();
 
-export function PlaylistMenuSection({
-	playlistWithGames,
-	isCreator,
-  userCollection,
-  setRenameDialogOpen,
-  setDeletePlaylistDialogOpen,
-  isEditing,
-  setIsEditing,
-  userId,
-  userFollowAndRatingData,
-}: PlaylistMenuSectionProps) {
 	return (
 		<div className="flex gap-7">
 			{isCreator ? (
@@ -38,15 +24,15 @@ export function PlaylistMenuSection({
 					playlistGames={playlistWithGames.games.map((game) => game.gameId)}
 					playlistId={playlistWithGames.id}
 					userId={playlistWithGames.creatorId}
-					setRenameDialogOpen={setRenameDialogOpen}
+					setRenameDialogOpen={store.setRenameDialogOpen}
 					setDeletePlaylistDialogOpen={setDeletePlaylistDialogOpen}
-					isEditing={isEditing}
-					setIsEditing={setIsEditing}
+					isEditing={store.isEditing}
+					setIsEditing={store.setIsEditing}
 				/>
 			) : (
 				<GuestMenubar
 					playlistId={playlistWithGames.id}
-					userId={userId}
+					userId={session.user.id}
 					isFollowing={userFollowAndRatingData.isFollowing}
 					userPlaylistRating={userFollowAndRatingData.rating}
 				/>

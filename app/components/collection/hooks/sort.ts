@@ -30,8 +30,7 @@ interface SortableGame {
 	pinned: boolean;
 }
 
-export const useSort = <G extends SortableGame>(games: G[]) => {
-	const sortOption = useCollectionStore((state) => state.sortOption);
+export const useSort = <G extends SortableGame>(games: G[], sortOption: SortOption) => {
 	const sortedGames = applySorting(games, sortOption);
 
 	return {

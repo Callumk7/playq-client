@@ -11,10 +11,18 @@ interface WithUserData {
 	playerRating: number | null;
 }
 
-export const useFilter = <G extends WithGenres & WithUserData>(games: G[]) => {
-	let output = [...games];
+interface Store {
+	filterOnRated: boolean;
+	filterOnUnrated: boolean;
+	filterOnPlayed: boolean;
+	filterOnUnPlayed: boolean;
+	filterOnCompleted: boolean;
+	filterOnUnCompleted: boolean;
+	genreFilter: string[];
+}
 
-	const store = useCollectionStore();
+export const useFilter = <G extends WithGenres & WithUserData>(games: G[], store: Store) => {
+	let output = [...games];
 
 	output = output.filter((game) => {
 		if (game.genres.length === 0) {

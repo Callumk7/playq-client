@@ -1,11 +1,9 @@
 import { Card, CardHeader, CardSubTitle, CardContent } from "@/components";
+import { usePlaylistViewData } from "../route";
 
-interface FollowerSidebarProps {
-	followers: number;
-	rating: number;
-}
+export function FollowerSidebar() {
+	const { aggregatedRating } = usePlaylistViewData();
 
-export function FollowerSidebar({ followers, rating }: FollowerSidebarProps) {
 	return (
 		<Card>
 			<CardHeader>
@@ -15,11 +13,11 @@ export function FollowerSidebar({ followers, rating }: FollowerSidebarProps) {
 				<div className="flex flex-col gap-5">
 					<div className="flex justify-between">
 						<p className="font-semibold">Followers:</p>
-						<p>{followers}</p>
+						<p>{aggregatedRating.count}</p>
 					</div>
 					<div className="flex justify-between">
 						<p className="font-semibold">Rating:</p>
-						<p>{rating}</p>
+						<p>{aggregatedRating.aggRating}</p>
 					</div>
 				</div>
 			</CardContent>
