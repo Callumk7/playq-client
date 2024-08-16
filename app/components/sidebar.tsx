@@ -1,6 +1,5 @@
 import { PlaylistContextMenu, PlaylistDropdownMenu } from "@/features/playlists/components/playlist-context-menu";
 import { PlaylistWithCreator } from "@/types/playlists";
-import { UserWithActivityFeedEntry } from "@/types/users";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { Button, ScrollArea, usePlaylistDialogOpen } from ".";
@@ -14,7 +13,6 @@ export function Sidebar({ playlists, hasSession }: SidebarProps) {
 	const { setPlaylistDialogOpen } = usePlaylistDialogOpen();
 	return (
 		<div className="py-3 px-3 w-full h-screen border">
-			<h3>Playlists</h3>
 			<div className="flex gap-5 mt-5">
 				<Button
 					onClick={() => setPlaylistDialogOpen(true)}
@@ -23,7 +21,7 @@ export function Sidebar({ playlists, hasSession }: SidebarProps) {
 					disabled={!hasSession}
 					className="w-full"
 				>
-					<span className="mr-3">Create new</span>
+					<span className="mr-3">Create Playlist</span>
 					<PlusIcon />
 				</Button>
 			</div>
@@ -60,62 +58,3 @@ function SidebarPlaylistEntry({ playlist }: SidebarPlaylistEntryProps) {
 		</PlaylistContextMenu>
 	);
 }
-
-// Removing this incomplete feature from demo project.
-
-//interface ActivityFeedProps {
-//  activityFeed: UserWithActivityFeedEntry[];
-//}
-//function ActivityFeed({ activityFeed }: ActivityFeedProps) {
-//  return (
-//    <div className="flex flex-col gap-5 w-full text-sm divide-y">
-//      {activityFeed.map((activity) =>
-//        activity.activity.type === "col_add" ? (
-//          <AddedToCollectionActivity
-//            user={activity}
-//            game={activity.activity.game}
-//          />
-//        ) : activity.activity.type === "pl_create" ? (
-//          <PlaylistCreatedActivity
-//            user={activity}
-//            playlist={activity.activity.playlist}
-//          />
-//        ) : activity.activity.type === "game_rated" ? (
-//          <GameRatedActivity activity={activity} />
-//        ) : activity.activity.type === "comment_add" ? (
-//          <CommentLeftActivity activity={activity} />
-//        ) : activity.activity.type === "pl_follow" ? (
-//          <PlaylistFollowedActivity activity={activity} />
-//        ) : activity.activity.type === "pl_add_game" ? (
-//          <AddedGameToPlaylistActivity
-//            user={activity}
-//            game={activity.activity.game}
-//            playlist={activity.activity.playlist}
-//          />
-//        ) : null
-//      )}
-//    </div>
-//  );
-//}
-//function GameRatedActivity({
-//  activity,
-//}: {
-//  activity: UserWithActivityFeedEntry;
-//}) {
-//  return <div>playlist created work in progress</div>;
-//}
-//function CommentLeftActivity({
-//  activity,
-//}: {
-//  activity: UserWithActivityFeedEntry;
-//}) {
-//  return <div>playlist created work in progress</div>;
-//}
-//
-//function PlaylistFollowedActivity({
-//  activity,
-//}: {
-//  activity: UserWithActivityFeedEntry;
-//}) {
-//  return <div>playlist created work in progress</div>;
-//}
