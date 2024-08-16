@@ -51,6 +51,7 @@ export const handlePlaylistRequest = async (request: Request, params: Params) =>
 	}
 
 	const gameIds = playlistWithGames.games.map((game) => game.gameId);
+
 	const collectionData = await db.query.usersToGames.findMany({
 		where: and(
 			inArray(usersToGames.gameId, gameIds),
@@ -58,6 +59,8 @@ export const handlePlaylistRequest = async (request: Request, params: Params) =>
 		),
 	});
 
+	// huh. This is a problem. We are using collection games, so if the user doesn't 
+	// have a gmae in their collection we won't show the game...
 	const transformedGames: GameWithCollection[] = [];
 	for (const c of collectionData) {
 		const game = playlistWithGames.games.find(game => game.gameId === c.gameId)!.game;
