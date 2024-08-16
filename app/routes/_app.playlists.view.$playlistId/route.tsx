@@ -10,6 +10,7 @@ import { PlaylistMenuSection } from "./components/playlist-menu-section";
 import { PlaylistView } from "./components/playlist-view";
 import { usePlaylistViewStore } from "@/store/playlist-view";
 import { PlaylistTitle } from "@/components/headers";
+import { AddGameToPlaylistDialog } from "./components/add-game-to-playlist-dialog";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 	const data = await handlePlaylistRequest(request, params);
@@ -20,7 +21,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 /// ROUTE
 ///
 export default function PlaylistRoute() {
-	const { playlistWithGames } =
+	const { playlistWithGames, userCollection, session } =
 		useTypedLoaderData<typeof loader>();
 
 	const { deletePlaylistDialogOpen, setDeletePlaylistDialogOpen } =
@@ -35,6 +36,12 @@ export default function PlaylistRoute() {
 				<PlaylistTitle title={playlistWithGames.name} />
 				<PlaylistView />
 			</div>
+			<AddGameToPlaylistDialog
+				userCollection={userCollection}
+				playlistId={playlistWithGames.id}
+				playlistGames={playlistWithGames.games.map((game) => game.gameId)}
+				userId={session.user.id}
+			/>
 			<RenamePlaylistDialog
 				renameDialogOpen={store.renameDialogOpen}
 				setRenameDialogOpen={store.setRenameDialogOpen}

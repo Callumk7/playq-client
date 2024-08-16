@@ -51,6 +51,8 @@ interface PlaylistViewStore {
 	setIsCommenting: (isCommenting: boolean) => void;
 	renameDialogOpen: boolean;
 	setRenameDialogOpen: (renameDialogOpen: boolean) => void;
+	addGameDialogOpen: boolean;
+	setAddGameDialogOpen: (addGameDialogOpen: boolean) => void;
 }
 
 export const usePlaylistViewStore = create<PlaylistViewStore>()(
@@ -163,5 +165,7 @@ export const usePlaylistViewStore = create<PlaylistViewStore>()(
 		setIsCommenting: (isCommenting) => set({ isCommenting }),
 		renameDialogOpen: false,
 		setRenameDialogOpen: (renameDialogOpen) => set({ renameDialogOpen }),
+		addGameDialogOpen: false,
+		setAddGameDialogOpen: (addGameDialogOpen) => set({ addGameDialogOpen }),
 	})),
 );
