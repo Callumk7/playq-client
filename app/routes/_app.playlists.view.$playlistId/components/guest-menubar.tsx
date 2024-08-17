@@ -40,7 +40,6 @@ export function GuestMenubar({ isFollowing, playlistId, userId }: GuestMenubarPr
 					</MenubarItem>
 				</MenubarContent>
 			</MenubarMenu>
-			<SortAndView store={store} />
 			<Filters store={store} />
 		</Menubar>
 	);

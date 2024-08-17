@@ -85,3 +85,42 @@ export type GameWithFullDetails = Game & {
 export type UserCollectionWithFullDetails = UsersToGames & {
 	game: GameWithFullDetails;
 };
+
+// Define the base game schema
+const gameSchema = gamesSelectSchema.extend({
+  cover: coversSelectSchema,
+  genres: z.array(genresSelectSchema),
+  screenshots: z.array(screenshotsSelectSchema),
+  artworks: z.array(artworksSelectSchema),
+  playlists: z.array(playlistsSelectSchema),
+});
+
+// Define the collection data schema
+const collectionDataSchema = z.object({
+  played: z.boolean(),
+  playerRating: z.number().nullable(),
+  completed: z.boolean().nullable(),
+  position: z.number().nullable(),
+  dateAdded: z.date(),
+  pinned: z.boolean(),
+});
+
+// Create the full game schema
+const fullGameSchema = gameSchema.extend({
+  inCollection: z.boolean(),
+  collectionData: collectionDataSchema.nullable(),
+}).refine(
+  (data) => {
+    if (data.inCollection) {
+      return data.collectionData !== null;
+    }
+      return data.collectionData === null;
+  },
+  {
+    message: "Collection data must be present when inCollection is true, and null when false",
+    path: ["collectionData"],
+  }
+);
+
+export type GameAndOptionalCollectionData = z.infer<typeof fullGameSchema>;
+

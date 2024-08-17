@@ -1,5 +1,4 @@
 import {
-	Button,
 	CollectionGameMenu,
 	GameWithControls,
 	GenreFilter,
@@ -30,35 +29,24 @@ export function CollectionView({
 	const { searchedGames } = useSearch(filteredGames, store.searchTerm);
 	const { sortedGames } = useSort(searchedGames, store.sortOption);
 
-	// We pass state from the filter store here, so the genre-filter component
-	// can be reused in other routes
-	const genreFilter = useCollectionStore((state) => state.genreFilter);
-	const handleGenreToggled = useCollectionStore((state) => state.handleGenreToggled);
-	const handleToggleAllGenres = useCollectionStore(
-		(state) => state.handleToggleAllGenres,
-	);
-
 	// For the progress bars
 	const gameCount = games.length;
 	const playedGames = games.filter((game) => game.played).length;
 	const completedGames = games.filter((game) => game.completed).length;
-
-	const hideProgress = useCollectionStore((state) => state.hideProgress);
-	const isTableView = useCollectionStore((state) => state.isTableView);
 
 	return (
 		<div>
 			<div className="mb-8">
 				<GenreFilter
 					genres={genreNames}
-					genreFilter={genreFilter}
-					handleGenreToggled={handleGenreToggled}
-					handleToggleAllGenres={handleToggleAllGenres}
+					genreFilter={store.genreFilter}
+					handleGenreToggled={store.handleGenreToggled}
+					handleToggleAllGenres={store.handleToggleAllGenres}
 				/>
 			</div>
 			<CollectionMenubar userId={session.user.id} userPlaylists={userPlaylists} />
 			<div className="my-6">
-				{!hideProgress && (
+				{!store.hideProgress && (
 					<CollectionProgress
 						gameCount={gameCount}
 						playedGames={playedGames}
@@ -66,7 +54,7 @@ export function CollectionView({
 					/>
 				)}
 			</div>
-			{isTableView ? (
+			{store.isTableView ? (
 				<CollectionTableView
 					sortedGames={sortedGames}
 					userPlaylists={userPlaylists}

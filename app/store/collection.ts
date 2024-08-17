@@ -1,4 +1,3 @@
-import { SortOption } from "@/components";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { FilterState, SortState, ViewState } from "./types";

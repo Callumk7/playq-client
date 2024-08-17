@@ -1,4 +1,4 @@
-import { Button, GameCover, LibraryView, Separator, Comment, useFilter, useSearch, useSort } from "@/components";
+import { Button, GameCover, LibraryView, Separator, Comment, useFilter, useSearch, useSort, useFilterForPlaylists } from "@/components";
 import { PlaylistEntryControls } from "./playlist-entry-controls";
 import { usePlaylistViewData } from "../route";
 import { LibraryViewWithSidebar } from "@/components/collection/library-view-with-sidebar";
@@ -14,9 +14,8 @@ export function PlaylistView() {
 
 	const store = usePlaylistViewStore();
 
-	const { filteredGames } = useFilter(transformedGames, store);
+	const { filteredGames } = useFilterForPlaylists(transformedGames, store);
 	const { searchedGames } = useSearch(filteredGames, store.searchTerm);
-	const { sortedGames } = useSort(searchedGames, store.sortOption);
 
 	return (
 		<>
@@ -34,7 +33,7 @@ export function PlaylistView() {
 				}
 			>
 				<LibraryView>
-					{sortedGames.map((game) => (
+					{searchedGames.map((game) => (
 						<div key={game.id} className="flex flex-col gap-2">
 							<GameCover coverId={game.cover.imageId} gameId={game.gameId} />
 							<PlaylistEntryControls
