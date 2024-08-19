@@ -34,16 +34,3 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 	return json([]);
 };
-
-// WARN: Not currently used?
-const saveGameToDatabase = (gameId: number) => {
-	fetch(`${WORKER_URL}/games/${gameId}`, {
-		method: "POST",
-	}).then((res) => {
-		if (res.ok) {
-			console.log(`Successfully saved ${gameId} to our database.`);
-		} else {
-			console.error(`Failed to save ${gameId} to our database.`);
-		}
-	});
-};
