@@ -3,6 +3,8 @@ import { ExploreGame } from "@/features/explore/components/search-game";
 import { GameListItem } from "@/features/library/components/game-list-item";
 import { ListView } from "@/features/library/components/list-view";
 import { View, useGameSearchData } from "../route";
+import { useAppData } from "@/routes/_app/route";
+import { IGDBGame } from "@/types";
 
 interface ResultsViewProps {
 	view: View;
@@ -10,11 +12,13 @@ interface ResultsViewProps {
 }
 export function ResultsView({ view, userId }: ResultsViewProps) {
 	const { results } = useGameSearchData();
+	const { userCollectionIds } = useAppData();
+	const resultsWithSaved = markResultsAsSaved(results, userCollectionIds);
 	return (
 		<>
 			{view === "card" ? (
 				<LibraryView>
-					{results.map((game) => (
+					{resultsWithSaved.map((game) => (
 						<ExploreGame
 							key={game.id}
 							game={game}
@@ -26,7 +30,7 @@ export function ResultsView({ view, userId }: ResultsViewProps) {
 				</LibraryView>
 			) : (
 				<ListView>
-					{results.map((game) => (
+					{resultsWithSaved.map((game) => (
 						<GameListItem
 							key={game.id}
 							gameTitle={game.name}
@@ -40,3 +44,18 @@ export function ResultsView({ view, userId }: ResultsViewProps) {
 		</>
 	);
 }
+
+const markResultsAsSaved = (searchResults: IGDBGame[], userCollection: number[]) => {
+	return searchResults.map((game) => {
+		if (userCollection.includes(game.id)) {
+			return {
+				...game,
+				saved: true,
+			};
+		}
+		return {
+			...game,
+			saved: false,
+		};
+	});
+};

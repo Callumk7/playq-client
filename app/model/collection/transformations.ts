@@ -5,12 +5,6 @@ import {
 } from "@/types/games";
 import { ZodError } from "zod";
 
-/**
- * This function transforms data returned from the database into
- * a shape that we can use in our app, nice and flat. It does mean
- * that I have to maintain this going forward, as I add new features
- * that need different parts from the server.
- * */
 export const transformCollectionIntoGames = (
 	collection: UserCollectionWithFullDetails[],
 ) => {

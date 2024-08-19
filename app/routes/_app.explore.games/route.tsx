@@ -2,7 +2,7 @@ import { authenticate, fetchGenresFromIGDB } from "@/services";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useState } from "react";
 import { typedjson, useTypedRouteLoaderData } from "remix-typedjson";
-import { getSearchResultsNew, getTopRatedRecentGames } from "./queries.server";
+import { getSearchResults, getTopRatedRecentGames } from "./queries.server";
 import { useLoaderData } from "@remix-run/react";
 import { GameSearch } from "./components/game-search";
 import { ResultsView } from "./components/results-view";
@@ -26,7 +26,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { search, page } = getSearchParams(request.url);
 
 	const results = await (search
-		? getSearchResultsNew(search, page)
+		? getSearchResults(search, page)
 		: getTopRatedRecentGames());
 
 	const genres = await fetchGenresFromIGDB().then((results) =>

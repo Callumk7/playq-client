@@ -1,6 +1,6 @@
 import { RateGameDialog } from "@/components";
 import { transformCollectionIntoGames } from "@/model";
-import { authenticate, createServerClient, getSession } from "@/services";
+import { authenticate } from "@/services";
 import { GameWithCollection } from "@/types";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import {
@@ -11,17 +11,6 @@ import {
 import { CollectionView } from "./components/CollectionView";
 import { useHandleRateGameDialog } from "./hooks/rate-game-dialog";
 import { getCollectionData } from "./queries.server";
-
-const getLimitAndOffset = (request: Request) => {
-	const url = new URL(request.url);
-	const queryParams = url.searchParams;
-	let limit: number | undefined = Number(queryParams.get("limit"));
-	const offset = Number(queryParams.get("offset"));
-	if (limit === 0) limit = undefined;
-	return { limit, offset };
-};
-
-// hello
 
 ///
 /// LOADER FUNCTION

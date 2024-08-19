@@ -35,6 +35,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	return json([]);
 };
 
+// WARN: Not currently used?
 const saveGameToDatabase = (gameId: number) => {
 	fetch(`${WORKER_URL}/games/${gameId}`, {
 		method: "POST",

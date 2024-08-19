@@ -1,22 +1,19 @@
+import { authenticate } from "@/services";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import {
-	Button,
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components";
-import { authenticate, createServerClient, getSession } from "@/services";
-import { useUserCacheStore } from "@/store/cache";
-import { User } from "@/types";
-import { LoaderFunctionArgs } from "@remix-run/node";
+	connectAsFriends,
+	getFriendSearchResults,
+	getUserFriendIds,
+} from "./queries.server";
+import { UserSearchTable } from "./components/user-search-table";
+import { UserSearchForm } from "./components/user-search-form";
+import { and, eq } from "drizzle-orm";
+import { friends } from "db/schema/users";
 import { db } from "db";
-import { typedjson, useTypedLoaderData, redirect } from "remix-typedjson";
-import { TopPlaylists } from "../res.friends-playlists";
-import { Cross1Icon, PlusCircledIcon } from "@radix-ui/react-icons";
-import { useFetcher } from "@remix-run/react";
-import { getUserFriends } from "./queries.server";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { string, z } from "zod";
+import { zx } from "zodix";
 
 ///
 /// LOADER
@@ -24,97 +21,73 @@ import { getUserFriends } from "./queries.server";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const session = await authenticate(request);
 
-	// for now just get all users, we can think up a good discovery pipeline in the future
-	const allUsers = await db.query.users.findMany();
+	const searchParams = new URL(request.url).searchParams;
+	const query = searchParams.get("query");
 
-	const userFriends = await getUserFriends(session.user.id).then((results) =>
-		results.map((result) => result.id),
-	);
+	const userFriendIds = await getUserFriendIds(session.user.id);
 
-	if (!session) {
-		return redirect("/?index");
+	if (query) {
+		const results = await getFriendSearchResults(query);
+		return typedjson({ results, userFriendIds, skipped: false });
 	}
 
-	return typedjson({ allUsers, userFriends });
+	return typedjson({ results: [], userFriendIds, skipped: true });
+};
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+	const session = await authenticate(request);
+	const { userId, friendId } = await parseRequest(request);
+
+	if (userId !== session.user.id) {
+		return json(ReasonPhrases.UNAUTHORIZED, { status: StatusCodes.UNAUTHORIZED });
+	}
+
+	if (request.method === "POST") {
+		try {
+			await connectAsFriends(userId, friendId);
+			return json({ success: true, userId, friendId });
+		} catch (error) {
+			console.error("There was an error connecting friends");
+			return json({ success: false });
+		}
+	}
+
+	if (request.method === "DELETE") {
+		const removeFriend = await db
+			.delete(friends)
+			.where(and(eq(friends.userId, session!.user.id), eq(friends.friendId, friendId)));
+
+		const removeConnection = await db
+			.delete(friends)
+			.where(and(eq(friends.userId, friendId), eq(friends.friendId, session!.user.id)));
+		return { removeFriend, removeConnection };
+	}
+	return new Response("Method not allowed", { status: 405 });
 };
 
 export default function ExplorePeopleRoute() {
-	const { allUsers, userFriends } = useTypedLoaderData<typeof loader>();
+	const { results, userFriendIds, skipped } = useTypedLoaderData<typeof loader>();
 
 	return (
-		<main className="mt-10">
-			<div className="grid gap-4">
-				{allUsers.map((user) => (
-					<UserPreview
-						key={user.id}
-						user={user}
-						isFriend={userFriends.includes(user.id)}
-					/>
-				))}
-			</div>
-		</main>
+		<div className="mt-10 space-y-6">
+			<UserSearchForm />
+			{!skipped && <UserSearchTable users={results} friendIds={userFriendIds} />}
+		</div>
 	);
 }
 
-// What do we want to see when viewing people?
-// 1. number of completed and saved games? How much compute is this?
-// 2. number of playlists
-// 3. top.. genres etc?
+const parseRequest = async (request: Request) => {
+	const result = await zx.parseFormSafe(request, {
+		userId: z.string(),
+		friendId: z.string(),
+	});
 
-interface UserPreviewProps {
-	user: User;
-	isFriend: boolean;
-}
-function UserPreview({ user, isFriend }: UserPreviewProps) {
-	const addFriendFetcher = useFetcher();
-	const removeFriendFetcher = useFetcher();
-	return (
-		<Card className={isFriend ? "border-primary" : ""}>
-			<CardHeader>
-				<CardTitle>{user.username} </CardTitle>
-				<CardDescription> {user.firstName} </CardDescription>
-			</CardHeader>
-			<CardContent>
-				<TopPlaylists userId={user.id} />
-			</CardContent>
-			<CardFooter>
-				{!isFriend ? (
-					<Button
-						onClick={() =>
-							addFriendFetcher.submit(
-								{ friend_id: user.id },
-								{ method: "POST", action: "/friends" },
-							)
-						}
-					>
-						{addFriendFetcher.state === "idle" ? (
-							<>
-								<PlusCircledIcon className="mr-2" /> <span>Add as Friend</span>
-							</>
-						) : (
-							<span>Saving..</span>
-						)}
-					</Button>
-				) : (
-					<Button
-						variant={"secondary"}
-						onClick={() =>
-							removeFriendFetcher.submit(
-								{ friend_id: user.id },
-								{ method: "DELETE", action: "/friends" },
-							)
-						}
-					>
-						{removeFriendFetcher.state === "idle" ? (
-							<>
-								<Cross1Icon className="mr-2" /> <span>Remove Friend</span>
-							</>
-						) : (
-							<span>Removing..</span>
-						)}
-					</Button>
-				)}
-			</CardFooter>
-		</Card>
-	);
-}
+	if (!result.success) {
+		throw new Response(ReasonPhrases.BAD_REQUEST, { status: StatusCodes.BAD_REQUEST });
+	}
+
+	return {
+		userId: result.data.userId,
+		friendId: result.data.friendId,
+	};
+};

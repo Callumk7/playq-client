@@ -2,24 +2,25 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { FilterState, SortState, ViewState } from "./types";
 
-interface UserCollectionStore extends SortState, FilterState, ViewState {
-	selectModeOn: boolean;
-	selectedGames: number[];
-	hideProgress: boolean;
-	setSelectedGames: (selectedGames: number[]) => void;
-	setHideProgress: (hideProgress: boolean) => void;
-	setSelectModeOn: (selectMode: boolean) => void;
+interface PlaylistViewStore extends ViewState, FilterState, SortState {
+	isEditing: boolean;
+	setIsEditing: (isEditing: boolean) => void;
+	isCommenting: boolean;
+	setIsCommenting: (isCommenting: boolean) => void;
+	renameDialogOpen: boolean;
+	setRenameDialogOpen: (renameDialogOpen: boolean) => void;
+	addGameDialogOpen: boolean;
+	setAddGameDialogOpen: (addGameDialogOpen: boolean) => void;
+	ratePlaylistDialogOpen: boolean;
+	setRatePlaylistDialogOpen: (ratePlaylistDialogOpen: boolean) => void;
 }
 
-export const useCollectionStore = create<UserCollectionStore>()(
+export const usePlaylistViewStore = create<PlaylistViewStore>()(
 	devtools((set) => ({
 		genreFilter: [],
 		searchTerm: "",
 		sortOption: "ratingDesc",
 		isTableView: false,
-		hideProgress: false,
-		selectModeOn: false,
-		selectedGames: [],
 		filterOnPlayed: false,
 		filterOnUnPlayed: false,
 		filterOnCompleted: false,
@@ -30,8 +31,6 @@ export const useCollectionStore = create<UserCollectionStore>()(
 		setGenreFilter: (genreFilter) => set({ genreFilter }),
 		setSearchTerm: (searchTerm) => set({ searchTerm }),
 		setSortOption: (sortOption) => set({ sortOption }),
-		setSelectedGames: (selectedGames) => set({ selectedGames }),
-		setHideProgress: (hideProgress) => set({ hideProgress }),
 		handleToggleFilterOnPlayed: () =>
 			set((state) => ({
 				filterOnPlayed: !state.filterOnPlayed,
@@ -57,7 +56,6 @@ export const useCollectionStore = create<UserCollectionStore>()(
 		setFilterOnUnPlayed: (filter) => set({ filterOnUnPlayed: filter }),
 		setFilterOnCompleted: (filter) => set({ filterOnCompleted: filter }),
 		setFilterOnUnCompleted: (filter) => set({ filterOnUnCompleted: filter }),
-		setSelectModeOn: (selectMode) => set({ selectModeOn: selectMode }),
 		handleGenreToggled: (genre) =>
 			set((state) => ({
 				genreFilter: state.genreFilter.includes(genre)
@@ -121,7 +119,16 @@ export const useCollectionStore = create<UserCollectionStore>()(
 			),
 		setIsTableView: (isTableView) => set({ isTableView }),
 		handleToggleView: () => set((state) => ({ isTableView: !state.isTableView })),
-		handleToggleHideProgress: () =>
-			set((state) => ({ hideProgress: !state.hideProgress })),
+		isEditing: false,
+		setIsEditing: (isEditing) => set({ isEditing }),
+		isCommenting: false,
+		setIsCommenting: (isCommenting) => set({ isCommenting }),
+		renameDialogOpen: false,
+		setRenameDialogOpen: (renameDialogOpen) => set({ renameDialogOpen }),
+		addGameDialogOpen: false,
+		setAddGameDialogOpen: (addGameDialogOpen) => set({ addGameDialogOpen }),
+		ratePlaylistDialogOpen: false,
+		setRatePlaylistDialogOpen: (ratePlaylistDialogOpen) =>
+			set({ ratePlaylistDialogOpen }),
 	})),
 );
