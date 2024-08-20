@@ -1,5 +1,5 @@
 {
-	"name": "remix-template",
+	"name": "playq-client",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
