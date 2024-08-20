@@ -1,8 +1,6 @@
 import {
   GameSortAndFilterMenu,
   Input,
-  ExternalSearchDialog,
-  Button,
   Toggle,
 } from "@/components";
 import { useCollectionStore } from "@/store/collection";
@@ -25,7 +23,6 @@ export function CollectionMenubar({
   return (
     <div className="flex justify-between">
       <div className="flex gap-4 justify-start w-full">
-        <ExternalSearchDialog userId={userId} />
         <GameSortAndFilterMenu />
         <Toggle
           variant={"outline"}

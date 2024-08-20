@@ -27,24 +27,16 @@ import { useCollectionStore } from "@/store/collection";
 import { Playlist } from "@/types";
 import { useFetcher } from "@remix-run/react";
 import { FilterState, SortState, ViewState } from "@/store/types";
+import { useAppData } from "@/routes/_app/route";
 
-interface GameSortAndFilterMenuProps {
-	userId: string;
-	userPlaylists: Playlist[];
-}
-
-export function GameSortAndFilterMenu({
-	userId,
-	userPlaylists,
-}: GameSortAndFilterMenuProps) {
+export function GameSortAndFilterMenu() {
 	const store = useCollectionStore();
+	const { session, userPlaylists } = useAppData();
 	return (
 		<Menubar>
-			<SortAndView
-      store={store}
-			/>
+			<SortAndView store={store} />
 			<Filters store={store} />
-			<Select userId={userId} userPlaylists={userPlaylists} />
+			<Select userId={session.user.id} userPlaylists={userPlaylists} />
 		</Menubar>
 	);
 }
@@ -52,13 +44,11 @@ export function GameSortAndFilterMenu({
 type Store = SortState & ViewState;
 
 interface SortAndViewProps {
-  store: Store;
+	store: Store;
 }
 
-export function SortAndView({
-  store
-}: SortAndViewProps) {
-  const {sortOption, setSortOption, isTableView, setIsTableView} = store;
+export function SortAndView({ store }: SortAndViewProps) {
+	const { sortOption, setSortOption, isTableView, setIsTableView } = store;
 	return (
 		<MenubarMenu>
 			<MenubarTrigger>View</MenubarTrigger>
