@@ -1,10 +1,11 @@
 import {
+    Button,
   GameSortAndFilterMenu,
   Input,
-  ExternalSearchDialog,
 } from "@/components";
 import { useCollectionStore } from "@/store/collection";
 import { Playlist } from "@/types";
+import { Link } from "@remix-run/react";
 
 interface CollectionMenubarProps {
   userId: string;
@@ -21,7 +22,9 @@ export function CollectionMenubar({
   return (
     <div className="flex justify-between">
       <div className="flex gap-4 justify-start w-full">
-        <ExternalSearchDialog userId={userId} />
+        <Button asChild variant={"outline"}>
+          <Link to="/explore/games">Add Games</Link>
+        </Button>
         <GameSortAndFilterMenu userId={userId} userPlaylists={userPlaylists} />
       </div>
       <Input
