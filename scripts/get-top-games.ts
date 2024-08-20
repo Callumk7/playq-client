@@ -1,13 +1,6 @@
-// we are going to get the top rated games from IGDB, with an offset, and write them to the database
-// we will also want to get a cache available for the games that we already have in the db. This
-// doesn't really need to be a full featured solution yet, as this script is going to be run ad-hoc
-// when needed.
-
-import { IGDB_BASE_URL } from "@/constants";
 import { IGDBClient, SaveGameService, fetchGamesFromIGDB } from "@/services";
 import { IGDBGameSchemaArray } from "@/types/igdb";
 import { db } from "db";
-import { games } from "db/schema/games";
 
 // Adding our own service instead of cloudflare
 const client = new IGDBClient(
