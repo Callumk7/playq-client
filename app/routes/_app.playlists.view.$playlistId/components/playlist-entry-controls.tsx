@@ -1,7 +1,6 @@
 import { Button, SaveToCollectionButton } from "@/components";
 import { CollectionMenu } from "@/routes/res.collection.$gameId.$userId";
-import { Game, GameWithCollection } from "@/types";
-import { HamburgerMenuIcon, MixIcon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
+import { TrashIcon } from "@radix-ui/react-icons";
 
 interface PlaylistEntryControlsProps {
 	gameId: number;

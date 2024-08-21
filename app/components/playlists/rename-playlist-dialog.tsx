@@ -19,7 +19,11 @@ export function RenamePlaylistDialog({
 				<DialogHeader>
 					<DialogTitle>Choose a new name</DialogTitle>
 				</DialogHeader>
-				<renameFetcher.Form method="PATCH" action={`/api/playlists/${playlistId}`}>
+				<renameFetcher.Form
+					method="PATCH"
+					action={`/api/playlists/${playlistId}`}
+					onSubmit={() => setRenameDialogOpen(false)}
+				>
 					<Input name="playlistName" type="text" />
 				</renameFetcher.Form>
 			</DialogContent>

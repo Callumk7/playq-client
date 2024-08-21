@@ -6,7 +6,7 @@ import * as playlistsSchema from "./schema/playlists";
 import * as activitySchema from "./schema/activity";
 import * as notesSchema from "./schema/notes";
 
-const pg = postgres(process.env.DATABASE_URL!);
+const pg = postgres(process.env.C_DATABASE_URL!);
 
 export const db = drizzle(pg, {
 	schema: { ...usersSchema, ...gamesSchema, ...playlistsSchema, ...activitySchema, ...notesSchema },

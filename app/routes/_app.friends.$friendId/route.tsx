@@ -19,7 +19,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { users } from "db/schema/users";
 import { eq } from "drizzle-orm";
-import { getFriendsCollection, getFriendsPlaylists } from "./loader";
+import { getFriendsCollection, getFriendsPlaylists } from "./queries.server";
 import { PlaylistProgress } from "../res.playlist-sidebar.$userId";
 import { PlaylistWithGamesTagsFollows } from "@/types";
 

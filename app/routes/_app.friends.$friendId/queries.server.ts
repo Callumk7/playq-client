@@ -1,7 +1,7 @@
 import { PlaylistWithGamesTagsFollows } from "@/types";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
-import { playlists, tags } from "db/schema/playlists";
+import { playlists } from "db/schema/playlists";
 import { desc, eq } from "drizzle-orm";
 
 export const getFriendsCollection = async (friendId: string, limit = 10) => {

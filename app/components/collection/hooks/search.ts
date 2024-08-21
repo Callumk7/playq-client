@@ -1,11 +1,8 @@
-import { useCollectionStore } from "@/store/collection";
-
 interface GameHasTitle {
 	title: string;
 }
 
-export const useSearch = <G extends GameHasTitle>(games: G[]) => {
-	const searchTerm = useCollectionStore((state) => state.searchTerm);
+export const useSearch = <G extends GameHasTitle>(games: G[], searchTerm: string) => {
 
 	let output: G[] = [...games];
 	if (searchTerm !== "") {

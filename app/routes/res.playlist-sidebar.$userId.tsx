@@ -40,6 +40,7 @@ interface StatsSidebarProps {
 }
 export function StatsSidebar({ userId, playlistId, max }: StatsSidebarProps) {
 	const fetcher = useFetcher<typeof loader>();
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: Only run the effect on mount
 	useEffect(() => {
 		fetcher.submit(
@@ -47,6 +48,7 @@ export function StatsSidebar({ userId, playlistId, max }: StatsSidebarProps) {
 			{ method: "get", action: `/res/playlist-sidebar/${userId}` },
 		);
 	}, []);
+
 	return (
 		<Card>
 			<CardHeader>
