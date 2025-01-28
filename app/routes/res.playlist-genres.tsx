@@ -40,12 +40,12 @@ export function PlaylistGenres({
 	const formData = new FormData();
 	gameIds.forEach((id) => formData.append("game_ids", String(id)));
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		genreFetcher.submit(formData, {
 			method: "get",
 			action: "/res/playlist-genres",
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
