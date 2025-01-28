@@ -1,5 +1,5 @@
 import { Outlet } from "@remix-run/react";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, data } from "@remix-run/node";
 import { authenticate } from "@/services";
 import { methodHandler } from "@/util/method-handling";
 import { postRequestHandler } from "./method-handlers";
@@ -10,7 +10,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	try {
 		await authenticate(request);
 	} catch (err) {
-		return json(ReasonPhrases.UNAUTHORIZED, {
+		return data(ReasonPhrases.UNAUTHORIZED, {
 			status: StatusCodes.UNAUTHORIZED,
 			statusText: ReasonPhrases.UNAUTHORIZED,
 		});

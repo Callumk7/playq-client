@@ -1,6 +1,6 @@
 import { activityManager } from "@/services/events/events.server";
 import { InsertUsersToGames } from "@/types";
-import { json } from "@remix-run/node";
+import { data } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { and, eq } from "drizzle-orm";
@@ -20,7 +20,7 @@ export const putRequestHandler = async (request: Request, params: { userId: stri
 	});
 
 	if (!result.success) {
-		return json(ReasonPhrases.BAD_REQUEST, { status: StatusCodes.BAD_REQUEST });
+		return data(ReasonPhrases.BAD_REQUEST, { status: StatusCodes.BAD_REQUEST });
 	}
 
 	const gameUpdate: InsertUsersToGames = {
@@ -65,5 +65,5 @@ export const putRequestHandler = async (request: Request, params: { userId: stri
 		activityManager.rateGame(userId, result.data.gameId, result.data.rating!);
 	}
 
-	return json({ updateGame }, { status: StatusCodes.OK });
+	return data({ updateGame }, { status: StatusCodes.OK });
 };

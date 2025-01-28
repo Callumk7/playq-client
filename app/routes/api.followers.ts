@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, data } from "@remix-run/node";
 import { db } from "db";
 import { followers } from "db/schema/playlists";
 import { and, eq } from "drizzle-orm";
@@ -7,7 +7,7 @@ import { zx } from "zodix";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	if (request.method !== "POST" && request.method !== "DELETE") {
-		return json("Method not allowed.", {
+		return data("Method not allowed.", {
 			status: 405,
 			statusText: "Method Not Allowed",
 		});
@@ -20,7 +20,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 	if (!result.success) {
 		console.error(result.error);
-		return json("error");
+		return data("error");
 	}
 
 	if (request.method === "POST") {
@@ -32,7 +32,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			})
 			.onConflictDoNothing();
 
-		return json({ newFollow });
+		return data({ newFollow });
 	}
 
 	if (request.method === "DELETE") {
@@ -45,6 +45,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				),
 			);
 
-		return json({ removeFollow });
+		return data({ removeFollow });
 	}
 };

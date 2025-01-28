@@ -1,6 +1,6 @@
 import { activityManager } from "@/services/events/events.server";
 import { uuidv4 } from "callum-util";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, data } from "@remix-run/node";
 import { db } from "db";
 import { notes } from "db/schema/notes";
 import { z } from "zod";
@@ -15,7 +15,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		});
 
 		if (!result.success) {
-			return json("failure", { status: 400 });
+			return data("failure", { status: 400 });
 		}
 
 		const noteId = `note_${uuidv4()}`;
@@ -30,8 +30,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 		activityManager.leaveComment(result.data.user_id, noteId)
 
-		return json({ newNote });
+		return { newNote };
 	}
 
-	return json("failure", { status: 400 });
+	return data("failure", { status: 400 });
 };

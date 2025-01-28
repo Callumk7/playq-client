@@ -1,6 +1,6 @@
 import { WORKER_URL } from "@/constants";
 import { activityManager } from "@/services/events/events.server";
-import { type ActionFunctionArgs, json } from "@remix-run/node";
+import { type ActionFunctionArgs, data } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { and, eq } from "drizzle-orm";
@@ -43,14 +43,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			// This.. seems to be working..
 			activityManager.addToCollection(userId, gameId);
 
-			return json(
+			return data(
 				{
 					success: savedGame,
 				},
 				{ status: StatusCodes.CREATED, statusText: ReasonPhrases.CREATED },
 			);
 		}
-		return json(
+		return data(
 			{
 				error: result.error,
 			},
@@ -79,11 +79,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 			activityManager.removeFromCollection(userId, gameId);
 
-			return json({
+			return data({
 				success: removedGame,
 			});
 		}
-		return json({
+		return data({
 			error: result.error,
 		});
 	}

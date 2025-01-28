@@ -1,5 +1,5 @@
 import { authenticate } from "@/services";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, data } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { db } from "db";
 import { friends } from "db/schema/users";
@@ -32,10 +32,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	if (request.method === "POST") {
 		try {
 			await connectAsFriends(userId, friendId);
-			return json({ success: true, userId, friendId });
+			return data({ success: true, userId, friendId });
 		} catch (error) {
 			console.error("There was an error connecting friends");
-			return json({ success: false });
+			return data({ success: false });
 		}
 	}
 

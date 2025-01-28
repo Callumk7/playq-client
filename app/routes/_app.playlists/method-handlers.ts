@@ -1,5 +1,5 @@
 import { activityManager } from "@/services/events/events.server";
-import { json } from "@remix-run/node";
+import { data } from "@remix-run/node";
 import { uuidv4 } from "callum-util";
 import { db } from "db";
 import { playlists } from "db/schema/playlists";
@@ -16,11 +16,11 @@ export const postRequestHandler = async (request: Request) => {
 	});
 
 	if (!result.success) {
-		return json({ error: result.error }, { status: 400 });
+		return data({ error: result.error }, { status: 400 });
 	}
 
 	const { playlistName, userId, isPrivate } = result.data;
-	const isPrivateBool = isPrivate === "on" ? true : false;
+	const isPrivateBool = isPrivate === "on";
 	const newId = `pl_${uuidv4()}`;
 
 	const createdPlaylist = await db

@@ -1,6 +1,6 @@
 import { DBImage } from "@/features/library/components/game-cover";
 import { UserWithActivityFeedEntry } from "@/types";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { LoaderFunctionArgs, data } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { db } from "db";
 import { games } from "db/schema/games";
@@ -23,7 +23,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 		},
 	});
 
-	return json({ gameData });
+	return data({ gameData });
 };
 
 export function GameComponent({ gameId }: { gameId: number }) {

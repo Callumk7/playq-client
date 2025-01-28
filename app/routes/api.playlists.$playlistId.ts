@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, data, redirect } from "@remix-run/node";
 import { db } from "db";
 import { gamesOnPlaylists, playlists } from "db/schema/playlists";
 import { eq } from "drizzle-orm";
@@ -11,11 +11,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 	const { playlistId } = params;
 
 	if (!playlistId) {
-		return json("No playlist id provided", { status: 400 });
+		return data("No playlist id provided", { status: 400 });
 	}
 
 	if (request.method !== "DELETE" && request.method !== "PATCH") {
-		return json("Method not allowed", { status: 405 });
+		return data("Method not allowed", { status: 405 });
 	}
 
 	if (request.method === "DELETE") {
@@ -37,7 +37,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		});
 
 		if (!result.success) {
-			return json({ error: result.error });
+			return data({ error: result.error });
 		}
 
 		if (result.data.playlistName) {
@@ -50,7 +50,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				})
 				.where(eq(playlists.id, playlistId));
 
-			return json({ updatedPlaylist });
+			return data({ updatedPlaylist });
 		}
 
 		if ("isPrivate" in result.data) {
@@ -63,7 +63,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				})
 				.where(eq(playlists.id, playlistId));
 
-			return json({ updatedPlaylist });
+			return data({ updatedPlaylist });
 		}
 
 		if ("pinned" in result.data) {
@@ -76,10 +76,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				})
 				.where(eq(playlists.id, playlistId));
 
-			return json({ updatedPlaylist });
+			return data({ updatedPlaylist });
 		}
 
-		return json({ fail: "You made a patch request, but nothing changed" });
+		return data({ fail: "You made a patch request, but nothing changed" });
 	}
-	return json({ fail: "You failed" });
+	return data({ fail: "You failed" });
 };

@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, data } from "@remix-run/node";
 import { db } from "db";
 import { followers } from "db/schema/playlists";
 import { and, eq } from "drizzle-orm";
@@ -7,7 +7,7 @@ import { zx } from "zodix";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
 	if (request.method !== "PATCH" && request.method !== "DELETE") {
-		return json("Method not allowed.", {
+		return data("Method not allowed.", {
 			status: 405,
 			statusText: "Method Not Allowed",
 		});
@@ -33,7 +33,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 					),
 				);
 
-			return json({ pinnedPlaylist });
+			return data({ pinnedPlaylist });
 		}
 	}
 };

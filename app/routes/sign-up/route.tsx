@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateIcon } from "@radix-ui/react-icons";
-import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { db } from "db";
 import { users } from "db/schema/users";
@@ -33,7 +33,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		});
 
 		if (res.error) {
-			return json({ failure: res.error });
+			return { failure: res.error };
 		}
 
 		if (!res.data.user) {
@@ -55,7 +55,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 		return redirect("/explore", { headers });
 	}
 
-  return json({ failure: result.error });
+  return { failure: result.error };
 };
 
 export default function SignUpPage() {

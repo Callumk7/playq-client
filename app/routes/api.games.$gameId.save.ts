@@ -1,5 +1,5 @@
 import { WORKER_URL } from "@/constants";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs } from "@remix-run/node";
 
 // /api/games/:gameId/save
 // I don't believe this route is in use right now.. we do the same thing in
@@ -18,5 +18,5 @@ export const action = ({ params }: ActionFunctionArgs) => {
 		}
 	});
 
-	return json("request received");
+	return "request received";
 };

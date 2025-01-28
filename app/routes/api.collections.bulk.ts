@@ -1,6 +1,6 @@
 import { activityManager } from "@/services/events/events.server";
 import { InsertUsersToGames, UsersToGames } from "@/types";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, data } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { and, eq, inArray } from "drizzle-orm";
@@ -35,11 +35,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				activityManager.addToCollection(userId, gameId);
 			}
 
-			return json({
+			return data({
 				success: true,
 			});
 		}
-		return json({
+		return data({
 			error: result.error,
 		});
 	}
@@ -66,11 +66,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				activityManager.removeFromCollection(userId, gameId);
 			}
 
-			return json({
+			return data({
 				success: removedGames,
 			});
 		}
-		return json({
+		return data({
 			error: result.error,
 		});
 	}
@@ -119,9 +119,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 				}
 			}
 
-			return json({ success: true });
+			return data({ success: true });
 		}
-		return json({
+		return data({
 			error: result.error,
 		});
 	}

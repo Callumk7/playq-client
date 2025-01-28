@@ -10,7 +10,7 @@ import {
 } from "@/components";
 import { createServerClient, getSession } from "@/services";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, data, redirect } from "@remix-run/node";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { users } from "db/schema/users";
@@ -60,7 +60,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			.where(eq(users.id, session.user.id));
 	}
 
-	return json({ updated: true });
+	return data({ updated: true });
 };
 
 ///
@@ -83,7 +83,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 		return redirect("/sign-up", { headers });
 	}
 
-	return json({ userProfile });
+	return data({ userProfile });
 };
 
 export default function ProfileRoute() {

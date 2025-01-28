@@ -1,6 +1,6 @@
 import { createServerClient, getSession } from "@/services";
 import { activityManager } from "@/services/events/events.server";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, data } from "@remix-run/node";
 import { db } from "db";
 import { gamesOnPlaylists, playlists } from "db/schema/playlists";
 import { and, eq } from "drizzle-orm";
@@ -15,10 +15,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 	const { playlistId, gameId } = params;
 
 	if (!playlistId) {
-		return json("No playlist id provided", { status: 400 });
+		return data("No playlist id provided", { status: 400 });
 	}
 	if (!gameId) {
-		return json("No game id provided", { status: 400 });
+		return data("No game id provided", { status: 400 });
 	}
 	const updatePlaylistPromise = db
 		.update(playlists)
@@ -53,10 +53,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				Number(gameId),
 			);
 
-			return json({ addedGame });
+			return data({ addedGame });
 		}
 
-		return json({ error: result.error }, { status: 400 });
+		return data({ error: result.error }, { status: 400 });
 	}
 
 	if (request.method === "DELETE") {
@@ -80,8 +80,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 			Number(gameId),
 		);
 
-		return json({ removedGame });
+		return data({ removedGame });
 	}
 
-	return json("Method not allowed", { status: 405 });
+	return data("Method not allowed", { status: 405 });
 };

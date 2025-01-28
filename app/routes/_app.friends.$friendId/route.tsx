@@ -14,7 +14,7 @@ import {
 	TagArray,
 } from "@/components";
 import { createServerClient, getSession } from "@/services";
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { LoaderFunctionArgs, data, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { db } from "db";
 import { users } from "db/schema/users";
@@ -48,7 +48,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 		friendProfilePromise,
 	]);
 
-	return json({ friendsPlaylists, friendProfile, friendCollection, session });
+	return data({ friendsPlaylists, friendProfile, friendCollection, session });
 };
 
 export default function FriendsRoute() {

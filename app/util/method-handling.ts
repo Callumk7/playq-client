@@ -1,5 +1,3 @@
-import { json } from "@remix-run/node";
-
 type AllowedMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 type MethodFunction<T = Record<string, string> | undefined> = {
@@ -18,5 +16,5 @@ export const methodHandler = async <T = Record<string, string> | undefined>(
 		}
 	}
 
-	return json("Incorrect Method", { status: 405 });
+	return new Response("Incorrect Method", { status: 405 });
 };

@@ -1,5 +1,5 @@
 import { authenticate } from "@/services";
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, data } from "@remix-run/node";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import {
 	connectAsFriends,
@@ -12,7 +12,7 @@ import { and, eq } from "drizzle-orm";
 import { friends } from "db/schema/users";
 import { db } from "db";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import { string, z } from "zod";
+import { z } from "zod";
 import { zx } from "zodix";
 
 ///
@@ -39,16 +39,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	const { userId, friendId } = await parseRequest(request);
 
 	if (userId !== session.user.id) {
-		return json(ReasonPhrases.UNAUTHORIZED, { status: StatusCodes.UNAUTHORIZED });
+		return data(ReasonPhrases.UNAUTHORIZED, { status: StatusCodes.UNAUTHORIZED });
 	}
 
 	if (request.method === "POST") {
 		try {
 			await connectAsFriends(userId, friendId);
-			return json({ success: true, userId, friendId });
+			return data({ success: true, userId, friendId });
 		} catch (error) {
 			console.error("There was an error connecting friends");
-			return json({ success: false });
+			return data({ success: false });
 		}
 	}
 

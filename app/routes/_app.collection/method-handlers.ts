@@ -1,6 +1,6 @@
 import { WORKER_URL } from "@/constants";
 import { activityManager } from "@/services/events/events.server";
-import { json } from "@remix-run/node";
+import { data } from "@remix-run/node";
 import { db } from "db";
 import { usersToGames } from "db/schema/games";
 import { and, eq } from "drizzle-orm";
@@ -18,7 +18,7 @@ export const postRequestHandler = async (request: Request) => {
 	});
 
 	if (!result.success) {
-		return json(ReasonPhrases.BAD_REQUEST, { status: StatusCodes.BAD_REQUEST });
+		return data(ReasonPhrases.BAD_REQUEST, { status: StatusCodes.BAD_REQUEST });
 	}
 
 	const { gameId, userId } = result.data;
@@ -46,7 +46,7 @@ export const postRequestHandler = async (request: Request) => {
 	// add to activity feed
 	activityManager.addToCollection(userId, gameId);
 
-	return json(
+	return data(
 		{ savedGame },
 		{ status: StatusCodes.CREATED, statusText: ReasonPhrases.CREATED },
 	);
@@ -63,7 +63,7 @@ export const deleteRequestHandler = async (request: Request) => {
 	});
 
 	if (!result.success) {
-		return json(ReasonPhrases.BAD_REQUEST, { status: StatusCodes.BAD_REQUEST });
+		return data(ReasonPhrases.BAD_REQUEST, { status: StatusCodes.BAD_REQUEST });
 	}
 
 	const { gameId, userId } = result.data;

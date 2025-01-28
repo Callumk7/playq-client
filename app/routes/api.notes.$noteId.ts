@@ -1,5 +1,5 @@
 import { createServerClient, getSession } from "@/services";
-import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, data, redirect } from "@remix-run/node";
 import { db } from "db";
 import { notes } from "db/schema/notes";
 import { eq } from "drizzle-orm";
@@ -26,7 +26,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		if (result.success) {
 			await db.delete(notes).where(eq(notes.id, result.data.noteId));
 
-			return json({ success: true, noteId: result.data.noteId }, { status: 201 });
+			return data({ success: true, noteId: result.data.noteId }, { status: 201 });
 		}
 	}
 
@@ -48,5 +48,5 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		}
 	}
 
-	return json("Nothing Happened");
+	return "Nothing Happened";
 };

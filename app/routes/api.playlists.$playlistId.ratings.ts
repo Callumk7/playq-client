@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, data } from "@remix-run/node";
 import { db } from "db";
 import { followers } from "db/schema/playlists";
 import { and, eq } from "drizzle-orm";
@@ -14,7 +14,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 		});
 
 		if (!result.success) {
-			return json("failure", { status: 400 });
+			return data("failure", { status: 400 });
 		}
 
 		await db
@@ -29,8 +29,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 				),
 			);
 
-		return json({ success: true });
+		return data({ success: true });
 	}
 
-	return json("failure", { status: 400 });
+	return data("failure", { status: 400 });
 };
