@@ -150,8 +150,6 @@ export default function SignUpPage() {
     fetcher.submit(values, { method: "POST" });
   };
 
-  console.log(watch("email"));
-
   return (
     <Container className="flex flex-col justify-center items-center mt-10 h-[80vh]">
       {serverError && <ErrorMessage error={serverError} />}

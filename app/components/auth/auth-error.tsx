@@ -8,9 +8,9 @@ export interface AuthError {
 }
 
 const errorStyles: Record<AuthErrorType, string> = {
-  auth: "bg-red-50 border-red-500 text-red-700",
-  validation: "bg-yellow-50 border-yellow-500 text-yellow-700",
-  database: "bg-orange-50 border-orange-500 text-orange-700",
+  auth: "bg-red-950/50 border-red-400 text-red-400",
+  validation: "bg-yellow-950/50 border-yellow-400 text-yellow-400",
+  database: "bg-orange-950/50 border-orange-400 text-orange-400",
 };
 
 export function AuthErrorMessage({
@@ -22,7 +22,9 @@ export function AuthErrorMessage({
 }) {
   return (
     <div
-      className={`p-4 border-l-4 rounded-md mb-4 ${errorStyles[error.type]}`}
+      className={`p-4 border-l-4 w-4/5 mx-auto absolute top-10 rounded-md mb-4 ${
+        errorStyles[error.type]
+      }`}
     >
       <p className="font-medium">{error.message}</p>
       {children}
