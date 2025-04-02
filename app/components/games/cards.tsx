@@ -38,7 +38,6 @@ interface DBImageProps {
   size: IGDBImage;
   className?: string;
 }
-
 export function DBImage({ imageId, size, className }: DBImageProps) {
   return (
     <img
@@ -48,6 +47,7 @@ export function DBImage({ imageId, size, className }: DBImageProps) {
     />
   );
 }
+
 interface GameWithControlsProps {
   children: ReactNode;
   coverId: string;
